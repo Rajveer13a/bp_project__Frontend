@@ -1,7 +1,7 @@
 import React from 'react'
 
+import { Button } from '../ui/button'
 import HoverMenu from './HoverMenu'
-import { Button } from './ui/button'
 
 
 function HoverCart({ count, className }) {
@@ -23,7 +23,7 @@ function HoverCart({ count, className }) {
 
     return (
         
-            <HoverMenu title={cart}>
+            <HoverMenu type={"dropdown-end"} title={cart} className={className}>
 
                 {
                     count == 0 ? empty : ""
