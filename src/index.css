@@ -3,7 +3,11 @@
   @tailwind utilities;
 
 
-
+  body{
+    margin: auto;
+    
+    position: relative;
+}
   
   @layer base {
     :root {

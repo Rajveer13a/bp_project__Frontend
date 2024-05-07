@@ -1,12 +1,16 @@
 import React from 'react'
 
+import { CarouselPlugin } from '@/components/Carousel'
 import HomeLayout from '@/Layouts/HomeLayout'
 
 function HomePage() {
   return (
-    <div>
-      <HomeLayout/>
-    </div>
+    
+    <HomeLayout>
+      
+  <CarouselPlugin/>
+    </HomeLayout>
+
   )
 }
 
