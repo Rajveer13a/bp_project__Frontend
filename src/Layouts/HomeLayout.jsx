@@ -5,14 +5,14 @@ import Navbar from '@/components/navbar/Navbar'
 
 function HomeLayout({children}) {
   return (
-    <>
+    <div>
       <Navbar/>
       
       {children}
 
       <Footer/>
       
-    </>
+    </div>
   )
 }
 

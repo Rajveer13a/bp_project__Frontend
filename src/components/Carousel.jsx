@@ -50,7 +50,7 @@ export function CarouselPlugin() {
             <div className="relative">
               
               <img src={value.image} />
-              <div className="bg-white absolute top-[60px] left-[85px] w-[420px] h-[180px] shadow-lg ">
+              <div className="hidden md:block   bg-white absolute top-[60px] left-[85px] w-[420px] h-[180px] shadow-lg ">
                     <h1 className="text-3xl text- font-semibold font-serif px-6 pt-6">{value.heading}</h1>
                     <h4 className="px-7 pt-3"> {value.text} </h4>
               </div>
