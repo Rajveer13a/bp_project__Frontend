@@ -1,10 +1,13 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 function Logo() {
   return (
-    <div className='text-2xl font-semibold'>
-      BrianyPath
-    </div>
+    <Link to={"/"}>
+      <div className='text-2xl font-semibold'>
+        BrianyPath
+      </div>
+    </Link>
   )
 }
 

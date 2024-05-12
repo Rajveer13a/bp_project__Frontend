@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 import Logo from '@/components/Logo'
 import Cart from '@/components/navbar/Cart'
@@ -9,8 +10,8 @@ import HoverMenu from '@/components/navbar/HoverMenu'
 import Search from '@/components/navbar/Search'
 import { Button } from "@/components/ui/button"
 
-import ProfileButton from './ProfileButton'
 import Favourite from './Favourite'
+import ProfileButton from './ProfileButton'
 
 
 const category = ["computer science", "business", "finance"];
@@ -77,7 +78,7 @@ function Navbar() {
         </HoverMenu>
 
         {
-            isLoggedIn && <HoverMenu className={"mt-[7px]"} title={"My learning"}>
+          isLoggedIn && <HoverMenu className={"mt-[7px]"} title={"My learning"}>
             <li className='font-bold text-base '>
               No courses purchased </li>
             <Button >Go To My Learning</Button>
@@ -86,11 +87,11 @@ function Navbar() {
 
 
         {
-          isLoggedIn && <Favourite count={0}  className={"mt-[10px]"}/>
+          isLoggedIn && <Favourite count={0} className={"mt-[10px]"} />
         }
 
 
-        
+
 
 
 
@@ -99,7 +100,9 @@ function Navbar() {
         {isLoggedIn ? <ProfileButton className={"mb-[4px]"} /> : <>
           <Button size="lg" variant="outline">Log in</Button>
 
-          <Button size="lg" >Sign up</Button>
+          <Link to={"/signup"}>
+            <Button size="lg" >Sign up</Button>
+          </Link>
         </>}
 
       </div>
