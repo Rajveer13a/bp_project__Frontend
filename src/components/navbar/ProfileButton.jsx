@@ -1,8 +1,24 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom';
+
+import { logout } from '@/Redux/Slices/AuthSlice';
 
 import HoverMenu from './HoverMenu'
 
 function ProfileButton({className}) {
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  function onlogout(){
+    const res = dispatch(logout());
+
+    if(res?.payload?.success){
+      navigate('/')
+    }
+  }
+
   return (
     <div className={`dropdown dropdown-end dropdown-hover h-[46px] ${className}`}>
     <div tabIndex={0} role="button" className="m-1 whitespace-nowrap hover:text-blue-600 h-[150%]">
@@ -26,7 +42,7 @@ function ProfileButton({className}) {
           </a>
         </li>
         <li><a>Settings</a></li>
-        <li><a>Logout</a></li>
+        <li><a onClick={onlogout}>Logout</a></li>
       
   
     </ul>

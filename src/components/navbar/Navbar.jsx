@@ -98,7 +98,10 @@ function Navbar() {
         <HoverCart className={"mt-[8px]"} count={0} />
 
         {isLoggedIn ? <ProfileButton className={"mb-[4px]"} /> : <>
-          <Button size="lg" variant="outline">Log in</Button>
+
+          <Link to={"/login"}>
+            <Button size="lg" variant="outline">Log in</Button>
+          </Link>
 
           <Link to={"/signup"}>
             <Button size="lg" >Sign up</Button>

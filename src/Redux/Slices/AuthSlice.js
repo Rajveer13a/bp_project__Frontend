@@ -41,7 +41,7 @@ export const createAccount = createAsyncThunk('/auth/signup', async (payload) =>
 
 export const verifyAccount = createAsyncThunk('/auth/verify', async (otp)=>{
     try{
-
+        
         const res = axiosInstance.post('/user/verifyUser',{
             token: otp
         });
@@ -73,20 +73,39 @@ export const sendVerifytoken = createAsyncThunk('auht/generateToken', async ()=>
             success: (data)=>{
                 return data.data.message
             },
-            error: (data)=>{
-                return data.data.messsage
-            }
+            error: "failed to send otp"
         })
 
         return (await res)?.data
 
     }catch(err){
         toast.error(err.response.data.message)
+        return err.response.data
     }
 })
 
 
+export const logout = createAsyncThunk('auth/logout', async ()=>{
 
+    try{
+
+        const res = axiosInstance.get('/user/logout');
+
+        toast.promise(res, {
+            loading:" logging out",
+            success: (data)=>{
+                return data.data.message
+            },
+            error: "failed to logout"
+        })
+
+        return (await res).data;
+
+    }catch(err){
+        toast.error(err.response.data.message)
+        
+    }
+})
 
 
 
@@ -94,7 +113,12 @@ export const sendVerifytoken = createAsyncThunk('auht/generateToken', async ()=>
 const authSlice = createSlice({
     name: "auth",
     initialState,
-    reducers: {},
+    reducers: {
+        accountState(state){
+            state.data.verifiedStatus = true;
+            localStorage.setItem('data', JSON.stringify(state.data))
+        },
+    },
     extraReducers: (builder) => {
         builder
         .addCase( createAccount.fulfilled , (state, action)=>{
@@ -113,9 +137,25 @@ const authSlice = createSlice({
                 state.role = data.role;
             }
         })
+
+        .addCase( logout.fulfilled, (state, action)=>{
+
+            if(action.payload){
+                localStorage.setItem('data', "");
+
+                localStorage.setItem('role', "" );
+
+                localStorage.setItem('isLoggedIn', "" );
+
+                state.data = {};
+                state.isLoggedIn = false;
+                state.role = "USER";
+            }
+        })
         
     }
 })
 
+export const {accountState} = authSlice.actions;
 
 export default authSlice.reducer;
