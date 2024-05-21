@@ -10,7 +10,7 @@ import HoverMenu from './HoverMenu'
 
 function ProfileButton({ className }) {
 
-  const image = useSelector((state) => state.auth.data.image) || "https://cdn-icons-png.flaticon.com/128/1326/1326377.png"
+  const image = useSelector((state) => state.auth.data.profileImage.secure_url) || "https://cdn-icons-png.flaticon.com/128/1326/1326377.png"
 
   const navigate = useNavigate();
 

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
+import { json } from "react-router-dom";
 
 import axiosInstance from "@/Helpers/axiosInstance";
 
@@ -169,6 +170,25 @@ export const updateUsername = createAsyncThunk('/auth/updateUsername', async (us
     }catch(err){
         toast.error(err.response.data.message);
     }
+});
+
+export const updateAvatar= createAsyncThunk('/auth/updateAvatar', async(data)=>{
+
+    try{
+
+        const res = axiosInstance.post('/user/updateUserAvatarImage',data);
+
+        toast.promise(res, {
+            loading: "updating avatar",
+            success: (data)=> data.data.message,
+            error: "failed to update avatar"
+        });
+
+        return (await res).data ;
+
+    }catch(err){
+        toast.error(err.response.data.message);
+    }
 })
 
 
@@ -256,6 +276,14 @@ const authSlice = createSlice({
             }
         })
         
+        .addCase(updateAvatar.fulfilled, (state, action)=>{
+            if(action.payload){
+                console.log(action.payload.data);
+                localStorage.setItem('data', JSON.stringify(action.payload.data));
+
+                state.data = action.payload.data;
+            }
+        })
         
     }
 })
