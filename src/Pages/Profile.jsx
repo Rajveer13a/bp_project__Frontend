@@ -7,6 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import HomeLayout from '@/Layouts/HomeLayout'
 import { updateAvatar, updateUsername } from '@/Redux/Slices/AuthSlice'
+import { ChangePassword } from '@/components/ChangePassword'
 
 
 function Profile() {
@@ -145,8 +146,10 @@ function Profile() {
                             </div>
                         </form>
                     </CardContent>
-                    <CardFooter className="flex ">
+                    <CardFooter className="flex space-x-[40%]">
                         <Button onClick={onSave} className={"w-[20%] ml-[10px] bg-slate-800 hover:bg-slate-700 disabled:bg-slate-600"} disabled={ButtonDisabled}>Save</Button>
+
+                        <ChangePassword />
                     </CardFooter>
                 </Card>
             </div>

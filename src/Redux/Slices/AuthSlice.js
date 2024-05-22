@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
-import { json } from "react-router-dom";
 
 import axiosInstance from "@/Helpers/axiosInstance";
 
@@ -189,9 +188,28 @@ export const updateAvatar= createAsyncThunk('/auth/updateAvatar', async(data)=>{
     }catch(err){
         toast.error(err.response.data.message);
     }
+});
+
+
+export const changePassword = createAsyncThunk('/auth/changePassword', async(data)=>{
+
+    try {
+        
+        const res = axiosInstance.post('/user/changePassword', data);
+
+        toast.promise(res, {
+            loading: "changing password",
+            success: (data)=> data.data.message,
+            error: "failed to change password"
+        });
+
+        return (await res).data;
+
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
 })
-
-
 
 
 const authSlice = createSlice({
@@ -278,12 +296,13 @@ const authSlice = createSlice({
         
         .addCase(updateAvatar.fulfilled, (state, action)=>{
             if(action.payload){
-                console.log(action.payload.data);
+                // console.log(action.payload.data);
                 localStorage.setItem('data', JSON.stringify(action.payload.data));
 
                 state.data = action.payload.data;
             }
         })
+        
         
     }
 })
