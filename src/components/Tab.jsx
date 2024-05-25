@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
     Carousel,
@@ -10,10 +11,12 @@ import {
 } from "@/components/ui/carousel"
 import { getAllCourses } from '@/Redux/Slices/CourseSlice';
 
-import { Button } from './ui/button'
 import Rating from './Rating';
+import { Button } from './ui/button'
 
 function Tab() {
+
+    const navigate = useNavigate();
 
     const dispatch = useDispatch();
 
@@ -116,24 +119,26 @@ function Tab() {
                                                 <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/4 ">
                                                     <div className="p ">
 
-                                                        <div className="card  bg-base-100 shadow-md transform hover:scale-105 transition-transform duration-300 hover:shadow-lg  ">
-                                                            <figure><img className='h-[162px]' src={course.thumbnail?.secure_url} alt="" /></figure>
-                                                            <div className="card-body  w-[186px] h-[245px]">
-                                                                <p2 className="card-title line-clamp-2 w-[190%] ">
-                                                                    {course.title}
+                                                        <Link to={`/course/${course._id}`}>
+                                                            <div className="card  bg-base-100 shadow-md transform hover:scale-105 transition-transform duration-300 hover:shadow-lg  ">
+                                                                <figure><img className='h-[162px]' src={course.thumbnail?.secure_url} alt="" /></figure>
+                                                                <div className="card-body  w-[186px] h-[245px]">
+                                                                    <p2 className="card-title line-clamp-2 w-[190%] ">
+                                                                        {course.title}
 
-                                                                </p2>
-                                                                <p>{course?.instructor?.username}</p>
+                                                                    </p2>
+                                                                    <p>{course?.instructor?.username}</p>
 
-                                                                <Rating />
+                                                                    <Rating />
 
-                                                                <p className='font-semibold text-lg'>₹ {course.price}</p>
+                                                                    <p className='font-semibold text-lg'>₹ {course.price}</p>
 
-                                                                <div className="card-actions justify-end">
+                                                                    <div className="card-actions justify-end">
 
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </Link>
 
                                                     </div>
                                                 </CarouselItem>

@@ -14,7 +14,7 @@ export function CarouselPlugin() {
 
     const cardContent =[
                 {
-            image:"https://img-c.udemycdn.com/notices/web_carousel_slide/image/beeee76b-b4f1-4dbc-a165-c825285f6fbb.jpg",
+            image:"https://img-c.udemycdn.com/notices/featured_carousel_slide/image/3ec4a7a2-a96f-4671-a784-462bdcb1afcc.jpg",
             heading:"We’ll get you to your goals",
             text:"Go from beginner to advanced in the topic of your choice. Courses from ₹549 through May 8."
         },
@@ -49,7 +49,7 @@ export function CarouselPlugin() {
           <CarouselItem key={index} >
             <div className="relative">
               
-              <img src={value.image} />
+              <img className="" src={value.image} />
               <div className="hidden md:block   bg-white absolute top-[60px] left-[85px] w-[420px] h-[180px] shadow-lg ">
                     <h1 className="text-3xl text- font-semibold font-serif px-6 pt-6">{value.heading}</h1>
                     <h4 className="px-7 pt-3"> {value.text} </h4>
