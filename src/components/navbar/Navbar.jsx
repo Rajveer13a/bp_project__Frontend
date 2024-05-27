@@ -27,7 +27,7 @@ function Navbar() {
 
 
   return (
-    <div className='flex w-[100%] h-[80px] items-center border-b border-black'>
+    <div className='flex w-[100%] h-[80px] items-center border-b bg-white  border-black relative z-50'>
 
 
       <div className='flex sm:hidden items-center w-[100%] justify-between'>
