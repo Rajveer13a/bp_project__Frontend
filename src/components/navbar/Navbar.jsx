@@ -78,11 +78,13 @@ function Navbar() {
         </HoverMenu>
 
         {
-          isLoggedIn && <HoverMenu className={"mt-[7px]"} title={"My learning"}>
-            <li className='font-bold text-base '>
-              No courses purchased </li>
-            <Button >Go To My Learning</Button>
-          </HoverMenu>
+          isLoggedIn && <Link to={"/mylearning"}>
+            <HoverMenu className={"mt-[7px]"} title={"My learning"}>
+              <li className='font-bold text-base '>
+                No courses purchased </li>
+              <Button >Go To My Learning</Button>
+            </HoverMenu>
+          </Link>
         }
 
 

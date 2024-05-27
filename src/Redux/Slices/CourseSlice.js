@@ -5,7 +5,8 @@ import axiosInstance from "@/Helpers/axiosInstance";
 
 const initialState = {
     data: [],
-    content: {}
+    content: {},
+    mylearning: []
 }
 
 export const getAllCourses = createAsyncThunk('/course/getAllCourses', async () => {
@@ -15,7 +16,7 @@ export const getAllCourses = createAsyncThunk('/course/getAllCourses', async () 
 
     return res.data;
 
-})
+});
 
 export const courseDetail = createAsyncThunk('/course/courseDetail', async (data) => {
     try {
@@ -27,6 +28,24 @@ export const courseDetail = createAsyncThunk('/course/courseDetail', async (data
 
         return (await res).data
     } catch (error) {
+        toast.error(error.response.data.message)
+    }
+});
+
+export const mylearning = createAsyncThunk('/course/mylearning', async () => {
+
+    try {
+        
+        const res = axiosInstance.get("/student/mylearning");
+
+        toast.promise(res, {
+            error: "failed to load your purchased courses"
+        })
+
+        return (await res).data
+
+    } catch (error) {
+        
         toast.error(error.response.data.message)
     }
 })
@@ -49,6 +68,10 @@ const courseSlice = createSlice({
 
                 state.content = action.payload.data;
             })
+           .addCase( mylearning.fulfilled , (state, action) =>{
+                
+                state.mylearning = action?.payload.data;
+           })
 
     }
 });
