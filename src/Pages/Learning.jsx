@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import HomeLayout from '@/Layouts/HomeLayout'
 import { mylearning } from '@/Redux/Slices/CourseSlice';
+import { Link } from 'react-router-dom';
 
 function Learning() {
 
@@ -30,7 +31,8 @@ function Learning() {
         {
           data?.map((value, indx) => {
             return (
-              <div key={indx} className="card card-compact w-[230px] h-[250px] bg-base-100 shadow-xl hover:scale-105 transition-transform duration-300">
+              <Link to={`/learn/lectures/${value._id}`} key={indx}>
+              <div className="card card-compact w-[230px] h-[250px] bg-base-100 shadow-xl hover:scale-105 transition-transform duration-300">
                 <figure>
 
                 <div className="absolute inset-0 bg-black bg-opacity-50 h-32  flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity duration-300">
@@ -53,6 +55,7 @@ function Learning() {
 
                 </div>
               </div>
+              </Link>
             )
           })
         }

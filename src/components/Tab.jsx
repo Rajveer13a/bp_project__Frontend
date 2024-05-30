@@ -122,7 +122,7 @@ function Tab() {
                                                         <Link to={`/course/${course._id}`}>
                                                             <div className="card  bg-base-100 shadow-md transform hover:scale-105 transition-transform duration-300 hover:shadow-lg  ">
                                                                 <figure><img className='h-[162px]' src={course.thumbnail?.secure_url} alt="" /></figure>
-                                                                <div className="card-body  w-[186px] h-[245px]">
+                                                                <div className="card-body  w-[158px] h-[245px]">
                                                                     <p2 className="card-title line-clamp-2 w-[190%] ">
                                                                         {course.title}
 

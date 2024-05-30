@@ -7,6 +7,7 @@ import LogIn from "./Pages/LogIn"
 import Profile from "./Pages/Profile"
 import SignUp from "./Pages/SignUp"
 import VerifyEmail from "./Pages/VerifyEmail"
+import LearnLectures from "./Pages/LearnLectures"
 
 
 
@@ -34,6 +35,8 @@ function App() {
         <Route path="/course/:course_id" element={ <CourseView/> }  /> 
 
         <Route path="/mylearning" element={ <Learning/> }  /> 
+
+        <Route path="/learn/lectures/:course_id" element={ <LearnLectures/> }  /> 
 
 
       </Routes>
