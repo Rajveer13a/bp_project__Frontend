@@ -5,3 +5,4 @@ export function isEmail(string){
 export function isValidPassword(string){
     return (string.match(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/))
 }
+

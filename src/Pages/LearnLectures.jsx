@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import HomeLayout from '@/Layouts/HomeLayout'
 import { getlectures } from '@/Redux/Slices/CourseSlice';
 import Logo from '@/components/Logo';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@radix-ui/react-accordion';
 
 function LearnLectures() {
 
@@ -34,16 +35,17 @@ function LearnLectures() {
           
         <div className='w-[70%]'>
           <div className='bg-[#2D2F31] w-full flex justify-center'>
-            <video className='w-[80%] px-8'  controls src={ data && data?.sections[0]?.lectures[0]?.resource?.secure_url }></video>
+            <video className='w-[80%] px-8'  controls src={ data?.sections ? (data?.sections[0]?.lectures[0]?.resource?.secure_url) : "" }></video>
           </div>
         </div>
 
-        <div className='w-[30%] bg-slate-700'>
-
+        <div className=' bg-slate-700'>
+          
         </div>
 
 
       </div>
+      
     </>
 
 
