@@ -8,10 +8,10 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@/components/ui/accordionView"
+import { Button } from '@/components/ui/button';
 import HomeLayout from '@/Layouts/HomeLayout';
 import { courseDetail } from '@/Redux/Slices/CourseSlice';
-import { Button } from '@/components/ui/button';
 
 
 function CourseView() {

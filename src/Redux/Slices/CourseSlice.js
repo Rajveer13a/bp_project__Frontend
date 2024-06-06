@@ -7,7 +7,7 @@ const initialState = {
     data: [],
     content: {},
     mylearning: [],
-    learn:{}
+    learn: null
 }
 
 export const getAllCourses = createAsyncThunk('/course/getAllCourses', async () => {
