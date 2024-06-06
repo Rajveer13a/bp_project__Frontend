@@ -11,6 +11,8 @@ import SignUp from "./Pages/SignUp"
 import VerifyEmail from "./Pages/VerifyEmail"
 import { resetData } from "./Redux/Slices/AuthSlice"
 import { store } from "./Redux/store"
+import ShoppingCart from "./Pages/ShoppingCart"
+
 
 
 
@@ -48,6 +50,8 @@ function App() {
       <Route path="/mylearning" element={<Learning />} />
 
       <Route path="/learn/lectures/:course_id" element={<LearnLectures />} />
+      
+      <Route path="/shoppingcart" element={<ShoppingCart/>} />
 
 
     </Routes>

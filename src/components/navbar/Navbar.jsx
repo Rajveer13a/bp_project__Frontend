@@ -97,7 +97,7 @@ function Navbar() {
 
 
 
-        <HoverCart className={"mt-[8px]"} count={0} />
+        <Link to={'/shoppingcart'}><HoverCart className={"mt-[8px]"} count={0} /></Link>
 
         {isLoggedIn ? <ProfileButton className={"mb-[4px]"} /> : <>
 
