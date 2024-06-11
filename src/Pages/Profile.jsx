@@ -12,7 +12,7 @@ import { ChangePassword } from '@/components/ChangePassword'
 
 function Profile() {
 
-    const image = useSelector((state) => state.auth.data.profileImage.secure_url) || "https://cdn-icons-png.flaticon.com/128/1326/1326377.png"
+    const image = useSelector((state) => state.auth.data?.profileImage?.secure_url) || "https://cdn-icons-png.flaticon.com/128/1326/1326377.png"
     console.log("updated", image);
     const dispatch = useDispatch();
 

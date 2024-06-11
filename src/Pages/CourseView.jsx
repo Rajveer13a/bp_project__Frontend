@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import Rating from '@/components/Rating';
 import {
@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import HomeLayout from '@/Layouts/HomeLayout';
 import { courseDetail } from '@/Redux/Slices/CourseSlice';
+import { updateCart } from '@/Redux/Slices/UserConfigSlice';
 
 
 function CourseView() {
@@ -32,6 +33,12 @@ function CourseView() {
 
   const data = useSelector((state) => state.course.content);
 
+  const cart = useSelector((state)=> state.config.cart);
+
+  const inCart = cart.some( (value)=> value._id=== course_id);
+
+  console.log(inCart)
+
   const sections = data?.sections?.length;
 
   const lectures = data?.sections?.reduce((total, sections) => total + sections?.lectures?.length, 0);
@@ -50,6 +57,16 @@ function CourseView() {
   const [showMoreDes, setShowMoreDes] = useState(false);
 
   const [showMoreBio, setShowMoreBio] = useState(false);
+
+  function addToCart(id,courseDetail){
+    dispatch( updateCart([
+      {
+        add: id
+      },
+      courseDetail
+    ]) )
+  }
+
 
   useEffect(() => {
     dispatch(courseDetail({ course_id }));
@@ -96,13 +113,21 @@ function CourseView() {
 
         <div className='absolute top-24 h-[85%] right-8'>
           <div className="card w-96 bg-base-100 shadow-xl sticky top-2  h-[415px] z-40  ">
-            <figure><img className=' w-full' src={data?.thumbnail?.secure_url} alt="Shoes" /></figure>
+            <figure><img className=' w-full' src={data?.thumbnail?.secure_url} alt="" /></figure>
             <div className="card-body">
 
 
               <p className='font-bold text-2xl'>  ₹ {data?.price} </p>
               <div className="card-actions justify-center mt-4 ">
-                <Button variant="bghost" className="w-full h-12 font-bold text-lg rounded-sm" size="new" >Add to Cart</Button>
+                {
+                  inCart ? (
+                    <Button variant="bghost" className="w-full h-12 font-bold text-lg rounded-sm" size="new" >
+                      <Link to={"/shoppingCart"}>Go to Cart</Link>
+                    </Button>
+                  ): (
+                    <Button onClick={()=> addToCart(data?._id , data)} variant="bghost" className="w-full h-12 font-bold text-lg rounded-sm" size="new" >Add to Cart</Button>
+                  )
+                }
               </div>
               <p className='font-normal text-xs text-center'>  30-Day Money-Back Guarantee <br />
                 Full Lifetime Access </p>

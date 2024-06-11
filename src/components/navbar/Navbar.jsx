@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import Logo from '@/components/Logo'
@@ -20,6 +20,10 @@ const category = ["computer science", "business", "finance"];
 
 function Navbar() {
 
+  const dispatch = useDispatch();
+
+  const count = useSelector( (state)=> state?.config?.cart.length)
+  
   const [searchToggle, setSearchToggle] = useState(false);
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
@@ -97,7 +101,7 @@ function Navbar() {
 
 
 
-        <Link to={'/shoppingcart'}><HoverCart className={"mt-[8px]"} count={0} /></Link>
+        <Link to={'/shoppingcart'}><HoverCart className={"mt-[8px]"} count={count} /></Link>
 
         {isLoggedIn ? <ProfileButton className={"mb-[4px]"} /> : <>
 
