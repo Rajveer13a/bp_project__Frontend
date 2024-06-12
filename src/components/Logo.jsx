@@ -5,7 +5,7 @@ function Logo() {
   return (
     <Link to={"/"}>
       <div className='text-2xl font-semibold'>
-        BrianyPath
+        BrainyPath
       </div>
     </Link>
   )

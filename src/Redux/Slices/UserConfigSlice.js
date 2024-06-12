@@ -9,7 +9,7 @@ const initialState = {
     cart:  localStorage.getItem('cart') ? JSON.parse(localStorage.getItem('cart')) :[],
 
     favourite: localStorage.getItem('favourite') !=undefined ?  JSON.parse(localStorage.getItem('favourite')) : [],
-    
+    total: 0
 
 };
 

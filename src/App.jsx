@@ -7,11 +7,11 @@ import Learning from "./Pages/Learning"
 import LearnLectures from "./Pages/LearnLectures"
 import LogIn from "./Pages/LogIn"
 import Profile from "./Pages/Profile"
+import ShoppingCart from "./Pages/ShoppingCart"
 import SignUp from "./Pages/SignUp"
 import VerifyEmail from "./Pages/VerifyEmail"
 import { resetData } from "./Redux/Slices/AuthSlice"
 import { store } from "./Redux/store"
-import ShoppingCart from "./Pages/ShoppingCart"
 
 
 

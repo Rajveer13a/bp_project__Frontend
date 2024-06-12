@@ -5,7 +5,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import Rating from '@/components/Rating'
 import { Button } from '@/components/ui/button'
 import HomeLayout from '@/Layouts/HomeLayout'
+import { createOrder, verifyPayment } from '@/Redux/Slices/PaymentSlice'
 import { getConfig, updateCart } from '@/Redux/Slices/UserConfigSlice'
+import { useNavigate } from 'react-router-dom'
 
 const dot = <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-dot" viewBox="0 0 16 16">
     <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
@@ -19,9 +21,74 @@ function ShoppingCart() {
 
     const dispatch = useDispatch();
 
+    const navigate = useNavigate();
+
     const {cart , total} = useSelector( (state)=> state.config );
+    
+     const userdata = useSelector( (state) => state.auth.data)
 
     const cartLength = cart?.length;
+
+    async function onVerifySuccess (response){
+        // alert(response.razorpay_payment_id);
+        // alert(response.razorpay_order_id);
+        // alert(response.razorpay_signature)
+
+        const {razorpay_payment_id, razorpay_order_id, razorpay_signature} = response ;
+
+        const res = await dispatch(verifyPayment({
+            payment_id: razorpay_payment_id,
+            order_id : razorpay_order_id,
+            signature : razorpay_signature
+        }));
+
+        if(res.payload.success){
+            navigate('/mylearning')
+        }
+    }
+
+    async function onCheckout(){
+        const courses = cart?.map((value)=> value?._id);
+
+        const res = await dispatch(createOrder(courses));
+        
+        if(res?.payload?.success){
+
+            const { order_id, razorpay_key_id } = res.payload.data ;
+
+            console.log(order_id, razorpay_key_id);
+
+            var options = {
+                "key": razorpay_key_id, // Enter the Key ID generated from the Dashboard
+                "amount": total*100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                "currency": "INR",
+                "name": "BrainyPath", //your business name
+                "description": "Course Purchase",
+                "image": "https://img.freepik.com/free-vector/colorful-company-logo-template-with-tagline_23-2148802643.jpg",
+                "order_id": order_id, 
+                "handler": onVerifySuccess ,
+                "prefill": { 
+                    "name": userdata.username,
+                    "email": userdata.email, 
+                    "contact": ""  
+                },
+                "notes": {
+                    "address": "Razorpay Corporate Office"
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+            var rzp1 = new Razorpay(options);
+            rzp1.on('payment.failed', function (response){
+                    
+                toast.error("failed to complete your payment")
+            });
+            rzp1.open();
+        }
+
+
+    }
 
     async function removeFromCart(id){
         await dispatch(updateCart([
@@ -108,7 +175,7 @@ function ShoppingCart() {
 
                         <h1 className='text-3xl font-bold'> ₹{total || total} </h1>
 
-                        <Button className=' bg-blue-600 rounded-none hover:bg-blue-700  text-lg h-10' >Checkout</Button>
+                        <Button onClick={onCheckout} className=' bg-blue-600 rounded-none hover:bg-blue-700  text-lg h-10' >Checkout</Button>
                         </div>
                         
                         <h5 className='font-bold mt-4 mb-4'>Promotions</h5>

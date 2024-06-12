@@ -121,9 +121,11 @@ function CourseView() {
               <div className="card-actions justify-center mt-4 ">
                 {
                   inCart ? (
-                    <Button variant="bghost" className="w-full h-12 font-bold text-lg rounded-sm" size="new" >
-                      <Link to={"/shoppingCart"}>Go to Cart</Link>
-                    </Button>
+                    <Link className='w-full' to={"/shoppingCart"}>
+                      <Button variant="bghost" className="w-full h-12 font-bold text-lg rounded-sm text-white bg-blue-600 r hover:bg-blue-700  hover:text-white border-none" size="new" >
+                      Go to Cart
+                    </Button> 
+                    </Link>
                   ): (
                     <Button onClick={()=> addToCart(data?._id , data)} variant="bghost" className="w-full h-12 font-bold text-lg rounded-sm" size="new" >Add to Cart</Button>
                   )
