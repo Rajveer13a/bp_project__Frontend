@@ -8,6 +8,7 @@ import HomeLayout from '@/Layouts/HomeLayout'
 import { createOrder, verifyPayment } from '@/Redux/Slices/PaymentSlice'
 import { getConfig, updateCart } from '@/Redux/Slices/UserConfigSlice'
 import { useNavigate } from 'react-router-dom'
+import { getUser } from '@/Redux/Slices/AuthSlice'
 
 const dot = <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-dot" viewBox="0 0 16 16">
     <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
@@ -43,8 +44,14 @@ function ShoppingCart() {
         }));
 
         if(res.payload.success){
+            await dispatch(getConfig())
+            await dispatch(getUser());
             navigate('/mylearning')
         }
+    }
+
+    async function onFailure (response){
+        toast.error(response.error.description)
     }
 
     async function onCheckout(){
@@ -80,10 +87,7 @@ function ShoppingCart() {
                 }
             };
             var rzp1 = new Razorpay(options);
-            rzp1.on('payment.failed', function (response){
-                    
-                toast.error("failed to complete your payment")
-            });
+            rzp1.on('payment.failed', onFailure);
             rzp1.open();
         }
 

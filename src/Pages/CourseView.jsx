@@ -35,9 +35,13 @@ function CourseView() {
 
   const cart = useSelector((state)=> state.config.cart);
 
+  const userCourses = useSelector( (state)=> state.auth.data.purchasedCourses) ;
+
+  const isPurchased = userCourses?.includes(course_id);
+
   const inCart = cart.some( (value)=> value._id=== course_id);
 
-  console.log(inCart)
+  
 
   const sections = data?.sections?.length;
 
@@ -53,6 +57,8 @@ function CourseView() {
 
   const dispatch = useDispatch();
   const [showMore, setShowMore] = useState(false);
+
+
 
   const [showMoreDes, setShowMoreDes] = useState(false);
 
@@ -117,22 +123,46 @@ function CourseView() {
             <div className="card-body">
 
 
-              <p className='font-bold text-2xl'>  ₹ {data?.price} </p>
+              {
+                // !isPurchased && (<p className='font-bold text-2xl'>  ₹ {data?.price} </p>)
+                isPurchased ? (
+                  <p className='font-bold text-xl flex gap-3'>  <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="blue" className="bi bi-exclamation-circle-fill " viewBox="0 0 16 16">
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4m.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/>
+                </svg>You have already purchased this course</p>
+                ): (<p className='font-bold text-2xl'>  ₹ {data?.price} </p>)
+              }
               <div className="card-actions justify-center mt-4 ">
                 {
-                  inCart ? (
-                    <Link className='w-full' to={"/shoppingCart"}>
+                 (inCart && !isPurchased) && (
+                  <Link className='w-full' to={"/shoppingCart"}>
                       <Button variant="bghost" className="w-full h-12 font-bold text-lg rounded-sm text-white bg-blue-600 r hover:bg-blue-700  hover:text-white border-none" size="new" >
                       Go to Cart
                     </Button> 
                     </Link>
-                  ): (
+                 )
+                }
+
+                {
+                  (!inCart && !isPurchased) && (
                     <Button onClick={()=> addToCart(data?._id , data)} variant="bghost" className="w-full h-12 font-bold text-lg rounded-sm" size="new" >Add to Cart</Button>
+                  )
+
+                }
+
+                {
+                  isPurchased && (
+                    <Link className='w-full' to={`/learn/lectures/${course_id}`}>
+                      <Button  className="w-full h-12 font-bold text-lg rounded-sm bg-slate-800 hover:bg-slate-700 " size="new" >
+                      Go to Course 😎
+                    </Button> 
+                    </Link>
                   )
                 }
               </div>
-              <p className='font-normal text-xs text-center'>  30-Day Money-Back Guarantee <br />
+              
+                  <p className='font-normal text-xs text-center'>  30-Day Money-Back Guarantee <br />
                 Full Lifetime Access </p>
+               
             </div>
           </div>
         </div>
