@@ -1,6 +1,7 @@
 import { Route, Routes, useNavigate } from "react-router-dom"
 
 import eventEmitter from "./Helpers/eventEmitter"
+import InstructorRoutes from "./InstructorRoutes"
 import CourseView from "./Pages/CourseView"
 import HomePage from "./Pages/HomePage"
 import Learning from "./Pages/Learning"
@@ -53,6 +54,7 @@ function App() {
       
       <Route path="/shoppingcart" element={<ShoppingCart/>} />
 
+      <Route path="/*" element={<InstructorRoutes/>}/>
 
     </Routes>
 

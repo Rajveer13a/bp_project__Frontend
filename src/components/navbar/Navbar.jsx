@@ -76,10 +76,12 @@ function Navbar() {
 
 
       <div className='hidden sm:flex w-[40%] justify-around '>
-        <HoverMenu className={"mt-[7px]"} title={"Teach on BrainyPath "}>
+        <Link to={'/instructor'}>
+        <HoverMenu  className={"mt-[7px]"} title={"Teach on BrainyPath "}>
           <li className='font-bold text-base'> Turn what you know into an opportunity and reach millions around the world. </li>
           <Button >Learn More</Button>
         </HoverMenu>
+        </Link>
 
         {
           isLoggedIn && <Link to={"/mylearning"}>
