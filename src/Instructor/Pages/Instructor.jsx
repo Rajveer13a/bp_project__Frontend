@@ -1,16 +1,13 @@
 import React from 'react'
 
-import Navbar from '../components/Navbar'
+import LayoutIn from '../components/LayoutIn'
+
 
 function Instructor() {
   return (
-    <div className="flex">
-      <Navbar />
-      <div className="flex-grow p-8">
-        <h1 className="text-2xl">Main Content</h1>
-        <p>This is the main content area.</p>
-      </div>
-    </div>
+    <LayoutIn>
+      <h1>hello welcome to the instructor section</h1>
+    </LayoutIn>
   )
 }
 
