@@ -76,7 +76,7 @@ function Navbar() {
 
 
       <div className='hidden sm:flex w-[40%] justify-around '>
-        <Link to={'/instructor'}>
+        <Link to={'/instructor/courses'}>
         <HoverMenu  className={"mt-[7px]"} title={"Teach on BrainyPath "}>
           <li className='font-bold text-base'> Turn what you know into an opportunity and reach millions around the world. </li>
           <Button >Learn More</Button>

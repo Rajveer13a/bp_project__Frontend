@@ -12,7 +12,7 @@ function Hover({children ,title,className, contentClass}) {
      
     </div>
 
-    <ul onMouseEnter={()=>(open && setOpen(true))} onMouseLeave={()=>setOpen(false)}  className={`w-[260px] min-w-min border-[2px]  absolute -right-1 z-10 top-[60px] bg-white text-[15px] ${!open ? "opacity-0 pointer-events-none" : ""} duration-300 ${contentClass}` }>
+    <ul onMouseEnter={()=>(open && setOpen(true))} onMouseLeave={()=>setOpen(false)}  className={`w-[260px] min-w-min border-[2px]  absolute right-2 z-10 top-[60px] bg-white text-[15px] ${!open ? "opacity-0 pointer-events-none" : ""} duration-300 ${contentClass}` }>
             {children}
         </ul>
 

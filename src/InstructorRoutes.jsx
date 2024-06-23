@@ -1,13 +1,14 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 
-import Instructor from './Instructor/Pages/Instructor'
+import Courses from './Instructor/Pages/Courses'
+
 
 function InstructorRoutes() {
   return (
     <Routes>
 
-        <Route path='/instructor' element={<Instructor/>} />
+        <Route path='/courses' element={<Courses/>} />
 
     </Routes>
   )

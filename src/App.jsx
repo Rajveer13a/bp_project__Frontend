@@ -54,7 +54,7 @@ function App() {
       
       <Route path="/shoppingcart" element={<ShoppingCart/>} />
 
-      <Route path="/*" element={<InstructorRoutes/>}/>
+      <Route path="/instructor/*" element={<InstructorRoutes/>}/>
 
     </Routes>
 
