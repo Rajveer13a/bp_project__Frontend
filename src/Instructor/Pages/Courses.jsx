@@ -45,7 +45,7 @@ function Courses() {
 
                 <div className='flex justify-between p-12 border-2 py-12 shadow-md'>
                     <h3 className=' '>Jump Into Course Creation</h3>
-                    <Link to={"/instructor/course/create"}>
+                    <Link to={"/instructor/course/create/1"}>
                         <div className='bg-blue-600 text-white font-bold py-3 px-[75px] cursor-pointer hover:bg-blue-700'>Create Your Course</div>
                     </Link>
                 </div>
@@ -153,7 +153,7 @@ function Courses() {
                             Are You Ready to Begin?
                         </h1>
 
-                        <Link className='block' to={"/instructor/course/create"}>
+                        <Link className='block' to={"/instructor/course/create/1"}>
                             <div className='bg-blue-600 text-center text-white font-bold py-3  cursor-pointer hover:bg-blue-700 m-auto w-[300px]'>Create Your Course</div>
                         </Link>
 
