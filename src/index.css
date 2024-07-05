@@ -121,3 +121,20 @@
   bottom: -11px;
   
 }
+
+.activeBlack::before{
+  content: "";
+  background: #2D2F31;
+  width: 5px;
+  height: 40px;
+  position: absolute;
+  left: 25px;
+
+}
+
+.dragging{
+  opacity: 1;
+  border-width: 1.5px ;
+  border-color: black;
+  
+}
