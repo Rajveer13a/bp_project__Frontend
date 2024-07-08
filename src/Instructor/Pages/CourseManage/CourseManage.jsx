@@ -4,7 +4,12 @@ import { IoIosArrowBack, IoMdCheckmark, IoMdSettings } from 'react-icons/io'
 import { Link, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from "uuid";
 
-import Goals from './Goals';
+import Footer from '@/components/Footer';
+
+import CourseStructure from './Pages/CourseStructure';
+import Film from './Pages/Film';
+import Goals from './Pages/Goals';
+import Setup from './Pages/Setup';
 
 
 function CourseManage() {
@@ -15,6 +20,22 @@ function CourseManage() {
 
     const { section: active, id } = useParams();
 
+    let render;
+    switch (active) {
+        case "goals":
+            render = <Goals />
+            break;
+        case "course-structure":
+            render = <CourseStructure />
+            break;
+        case "setup":
+            render = <Setup />
+            break;
+        case "film":
+            render = <Film />
+            break;
+
+    }
 
 
     const sections = [
@@ -108,11 +129,15 @@ function CourseManage() {
 
                 </div>
 
-                <div className='w-[80%] shadow-2xl border  pt-8'>
-                    <Goals />
+                <div className='w-[80%] shadow-2xl border  pt-8 pb-16 mb-24'>
+                    {/* <Goals /> */}
+                    {/* <CourseStructure/> */}
+                    {/* <Setup/> */}
+                    {render}
                 </div>
             </div>
 
+            <Footer />
 
         </div>
     )

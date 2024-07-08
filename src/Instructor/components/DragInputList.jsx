@@ -8,8 +8,8 @@ function DragInputList({ iscount = true, name, state, placeholders }) {
   const [data, setData] = state;
 
   const defaultLength = useRef(data[name].length);
-  console.log( defaultLength.current <= data[name].length);
-  console.log( defaultLength.current , data[name].length);
+  // console.log( defaultLength.current <= data[name].length);
+  // console.log( defaultLength.current , data[name].length);
   const draggingItem = useRef();
 
   const dragOverItem = useRef();
@@ -59,7 +59,7 @@ function DragInputList({ iscount = true, name, state, placeholders }) {
   }
 
   const addMoreObj = (key) => {
-
+    
     let updated = data[key]
 
     if (updated.some((value) => value.trim() === "")) {
@@ -133,7 +133,7 @@ function DragInputList({ iscount = true, name, state, placeholders }) {
         ))
       }
 
-      <button onClick={() => addMoreObj("objectives")} className=' items-center gap-2 pt-4 font-bold text-blue-700 hover:text-blue-800 duration-75 flex cursor-pointer'>
+      <button onClick={() => addMoreObj(name)} className=' items-center gap-2 pt-4 font-bold text-blue-700 hover:text-blue-800 duration-75 flex cursor-pointer'>
         <FaPlus />
         Add more to your response</button>
     </div>
