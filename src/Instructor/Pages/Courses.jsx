@@ -1,14 +1,66 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { BsQuestionSquareFill } from 'react-icons/bs';
 import { GiTalk } from "react-icons/gi";
-import { IoMdChatboxes } from "react-icons/io";
+import { IoIosArrowDown, IoMdChatboxes, IoMdSearch } from "react-icons/io";
 import { LiaChalkboardTeacherSolid } from "react-icons/lia";
 import { MdAutoGraph, MdOutlineOndemandVideo } from 'react-icons/md'
-
-import LayoutIn from '../Layout/LayoutIn'
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import { instructorDetails } from '@/Redux/Slices/Instructor/InstructorSlice';
+
+import LayoutIn from '../Layout/LayoutIn'
+
+
+const Select = ({ sortState }) => {
+
+    const [sortBy, setSortBy] = sortState;
+
+    const [dropdown, setDropDown] = useState(false)
+
+    const handleSort = (e) => {
+        setSortBy(e.target.textContent);
+        setDropDown(false)
+    }
+
+    return (
+        <div className='relative group'>
+
+            <button onClick={() => setDropDown(!dropdown)} className='border border-black px-4 py-3 font-bold flex items-center gap-2 hover:bg-[#E3E7EA]' htmlFor='dropdown-toggle'>
+                {sortBy} <IoIosArrowDown />
+            </button>
+
+            <div className={`shadow-lg opacity-0 pointer-events-none border-2  absolute top-14  bg-white w-52  ${dropdown && "pointer-events-auto opacity-100"}`}>
+                <ul className='p-4  text-sm cursor-pointer '>
+                    <li onClick={handleSort} className='pb-2 hover:text-blue-600 pee'>Newest</li>
+
+                    <li onClick={handleSort} className='py-2 hover:text-blue-600'>Oldest</li>
+
+                    <li onClick={handleSort} className='py-2 hover:text-blue-600'>A-Z</li>
+
+                    <li onClick={handleSort} className='py-2 hover:text-blue-600'>Z-A</li>
+
+                    <li onClick={handleSort} className='py-2 hover:text-blue-600'>Published First</li>
+
+                    <li onClick={handleSort} className='pt-2 hover:text-blue-600'>Unpublished First</li>
+                </ul>
+            </div>
+        </div>
+    )
+}
+
 function Courses() {
+
+    const dispatch = useDispatch();
+
+    const courselist = useSelector((state) => state.instructor.data.courses);
+
+    const sortState = useState("Newest")
+
+
+    useEffect(() => {
+        dispatch(instructorDetails())
+    }, [])
 
     const resources = [
         {
@@ -41,14 +93,80 @@ function Courses() {
 
     return (
         <LayoutIn tab={0}>
-            <div className='px-12 pt-32'>
+            <div className='px-12 pt-14'>
 
-                <div className='flex justify-between p-12 border-2 py-12 shadow-md'>
-                    <h3 className=' '>Jump Into Course Creation</h3>
-                    <Link to={"/instructor/course/create/1"}>
-                        <div className='bg-blue-600 text-white font-bold py-3 px-[75px] cursor-pointer hover:bg-blue-700'>Create Your Course</div>
+                {
+                    (courselist?.length == 0) && (
+                        <div className='flex justify-between p-12 border-2 py-12 shadow-md'>
+                            <h3 className=' '>Jump Into Course Creation</h3>
+                            <Link to={"/instructor/course/create/1"}>
+                                <div className='bg-blue-600 text-white font-bold py-3 px-[75px] cursor-pointer hover:bg-blue-700'>Create Your Course</div>
+                            </Link>
+                        </div>
+                    )
+                }
+
+                {/* Show courses */}
+
+                <h1 className='text-4xl font-semibold py-10'>Courses</h1>
+
+                <div className='flex gap-8'>
+
+                    <div className='relative h-12 w-[250px] '>
+
+                        <input className='border border-black h-full w-full p-4 pr-16 placeholder:text-slate-600 focus:outline-none' type="text" placeholder='Search your courses' />
+
+                        <button className=' absolute top-0 right-0 text-white bg-black h-full w-[50px] '>
+                            <IoMdSearch className='m-auto size-6' />
+                        </button>
+
+                    </div>
+
+                    <Select sortState={sortState} />
+
+                    <Link to={"/instructor/course/create/1"} className=' ml-auto mr-1'>
+                        <button className='bg-blue-600 font-bold text-white px-3 h-12 '>New Course</button>
                     </Link>
+
+
+
+
+
                 </div>
+
+                <div className='pt-5 space-y-6'>
+
+
+                    {
+                        courselist?.map((value, indx) => {
+                            return (
+                                <div key={indx} className='border-2  flex w-full group relative gap-2'>
+                                    <img className='size-32' src="https://s.udemycdn.com/course/200_H/placeholder.jpg" alt="" />
+
+                                    <div className='py-4 flex flex-col group-hover:opacity-10 duration-100 w-[300px] pl-4' >
+                                        <h1 className='font-bold'>{value?.title}</h1>
+
+                                        <h3 className='mt-auto text-sm font-semibold'>Draft  <span className='text-xs font-normal ml-1'>Public</span></h3>
+                                    </div>
+
+                                    <div className='flex flex-grow items-center justify-center space-x-5 group-hover:opacity-10 duration-100'>
+                                        <h1 className='font-bold h-7  '>Finish your course</h1>
+                                        <div className='h-2 w-[70%] bg-slate-300'></div>
+                                    </div>
+
+                                    <Link to={`http://localhost:5173/instructor/course/${value?._id}/manage/goals`}>
+                                        <h1 className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-0 group-hover:opacity-100 duration-100 px-[220px] cursor-pointer  right-[250px]'>Edit/ manage course</h1>
+                                    </Link>
+
+                                </div>
+                            )
+                        })
+                    }
+
+
+                </div>
+
+
 
                 {/* cards */}
                 <div className=''>
@@ -148,16 +266,20 @@ function Courses() {
 
                     </div>
 
-                    <div className='space-y-9 py-[30px]'>
-                        <h1 className='text-center'>
-                            Are You Ready to Begin?
-                        </h1>
+                    {
+                        courselist == 0 && (
+                            <div className='space-y-9 py-[30px]'>
+                                <h1 className='text-center'>
+                                    Are You Ready to Begin?
+                                </h1>
 
-                        <Link className='block' to={"/instructor/course/create/1"}>
-                            <div className='bg-blue-600 text-center text-white font-bold py-3  cursor-pointer hover:bg-blue-700 m-auto w-[300px]'>Create Your Course</div>
-                        </Link>
+                                <Link className='block' to={"/instructor/course/create/1"}>
+                                    <div className='bg-blue-600 text-center text-white font-bold py-3  cursor-pointer hover:bg-blue-700 m-auto w-[300px]'>Create Your Course</div>
+                                </Link>
 
-                    </div>
+                            </div>
+                        )
+                    }
 
 
                 </div>

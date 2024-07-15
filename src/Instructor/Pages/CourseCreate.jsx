@@ -47,7 +47,7 @@ function CourseCreate() {
         const res = await dispatch(createCourse({title: data.title, category: data.category}));
 
         if(res?.payload?.success){
-            navigate("/instructor/course/manage/")
+            navigate(`/instructor/course/${res?.payload?.data._id}/manage/goals`)
         }
 
 

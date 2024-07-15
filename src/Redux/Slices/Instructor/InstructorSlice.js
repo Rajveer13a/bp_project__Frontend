@@ -25,7 +25,20 @@ export const createCourse = createAsyncThunk("/instructor/createCourse", async(d
         toast.error(error.response.data.message)
     }
 
-})
+});
+
+export const instructorDetails = createAsyncThunk("/instructor/instructorDetails", async()=>{
+
+    try {
+        
+        const res = await axiosInstance.get("/instructor/instructorDetails");
+
+        return res;
+
+    } catch (error) {
+        toast.error(error.response.data.message);
+    }
+});
 
 
 const ManageCourseSlice = createSlice({
@@ -33,7 +46,11 @@ const ManageCourseSlice = createSlice({
     initialState,
     reducers : {},
     extraReducers: (builder)=>{
-        builder .addCase
+        builder .addCase(instructorDetails.fulfilled, (state, action)=>{
+            if(action?.payload){
+                state.data = action.payload.data.data.instructor;
+            }
+        })
     }
 })
 

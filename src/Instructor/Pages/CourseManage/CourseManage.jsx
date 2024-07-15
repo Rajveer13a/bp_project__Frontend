@@ -10,6 +10,7 @@ import CourseStructure from './Pages/CourseStructure';
 import Film from './Pages/Film';
 import Goals from './Pages/Goals';
 import Setup from './Pages/Setup';
+import Curriculum from './Pages/Curriculum';
 
 
 function CourseManage() {
@@ -33,6 +34,10 @@ function CourseManage() {
             break;
         case "film":
             render = <Film />
+            break;
+
+        case "curriculum":
+            render = <Curriculum />
             break;
 
     }
@@ -75,10 +80,12 @@ function CourseManage() {
             {/* top bar */}
             <div className='flex fixed bg-[#2D2F31] px-6 py-2  text-white w-full  gap-4 items-center shadow-lg z-10'>
 
-                <div className='font-medium flex items-center gap-1 cursor-pointer hover:text-[#E0E0E0]  '>
-                    <IoIosArrowBack className='w-[18px] h-[18px] ' />
-                    <h1 >Back to courses </h1>
-                </div>
+                <Link to={"/instructor/courses"}>
+                    <div className='font-medium flex items-center gap-1 cursor-pointer hover:text-[#E0E0E0]  '>
+                        <IoIosArrowBack className='w-[18px] h-[18px] ' />
+                        <h1 >Back to courses </h1>
+                    </div>
+                </Link>
 
                 <h1 className='font-bold text-xl'>Learn Photoshop from the scratch</h1>
 

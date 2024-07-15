@@ -30,7 +30,7 @@ function LayoutIn({children,tab}) {
       <div className='flex'>
   
   {/* side navbar */}
-  <div className={`${open ? "w-[295px] " : "w-[65px]"} bg-[#2D2F31] h-[100%] duration-500  overflow-hidden  text-lg font-bold flex flex-col items-start shadow-lg fixed`}
+  <div className={`${open ? "w-[295px] " : "w-[65px]"} bg-[#2D2F31] h-[100%] duration-500  overflow-hidden  text-lg font-bold flex flex-col items-start shadow-lg fixed z-50`}
     onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
 
     <ul className='py-6 text-white font-bold flex flex-col    space-y-4 w-[295px]'>
