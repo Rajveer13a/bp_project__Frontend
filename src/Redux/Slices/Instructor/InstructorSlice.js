@@ -4,7 +4,9 @@ import toast from "react-hot-toast";
 import axiosInstance from "@/Helpers/axiosInstance";
 
 const initialState = {
-    data : ""
+    data : "",
+    edit: "",
+
 }
 
 
@@ -40,18 +42,84 @@ export const instructorDetails = createAsyncThunk("/instructor/instructorDetails
     }
 });
 
+export const courseDetails = createAsyncThunk("/instructor/courseDetials", async(id)=>{
+    try {
+        
+        const res = await axiosInstance.get(`/course/${id}`);
+        
+        return res.data;
+
+    } catch (err) {
+        toast.error(err.response.data.message);
+    }
+})
+
+export const addSection = createAsyncThunk("/instructor/addSection",  async(data)=>{
+    try{
+        console.log(data)
+        const res = await axiosInstance.post(`/course/section/${data.id}`,{
+            title: data.title
+        });
+        
+        return res.data;
+
+    }catch(err){
+        toast.error(err.response.data.message);
+    }
+})
+
+export const deleteSection = createAsyncThunk("/instuctor/deleteSection", async(id)=>{
+    console.log("dispatched delete section",id);
+    try{
+        const res = await axiosInstance.delete(`/course/section/${id}`);
+        return res.data;
+
+    }catch(err){
+        toast.error(err.response.data.message);
+    }
+})
 
 const ManageCourseSlice = createSlice({
     name: "instructor",
     initialState,
-    reducers : {},
+    reducers : {
+        setAlert(state,action){
+            state.alertState= action.payload;
+        }
+    },
     extraReducers: (builder)=>{
         builder .addCase(instructorDetails.fulfilled, (state, action)=>{
             if(action?.payload){
                 state.data = action.payload.data.data.instructor;
             }
         })
+
+        builder.addCase(courseDetails.fulfilled, (state, action)=>{
+            if(action?.payload){
+                state.edit = action.payload.data;
+                
+                
+            }
+        })
+
+        builder.addCase(addSection.fulfilled, (state, action)=>{
+            if(action?.payload){
+                state.edit.sections.push(action.payload.data)
+            }
+        })
+        builder.addCase(deleteSection.fulfilled,(state,action)=>{
+            if(action?.payload){
+                // console.log("here",action.payload.data._id)
+                let arr= state.edit.sections.filter((value)=> value!= action.payload.data._id);
+                console.log(state.edit.sections)
+                
+            }
+        })
+    
+
     }
 })
+
+export const  {setAlert} = ManageCourseSlice.actions;
 
 export default ManageCourseSlice.reducer ;

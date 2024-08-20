@@ -1,19 +1,81 @@
 import { list } from 'postcss';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { IoIosArrowBack, IoMdCheckmark, IoMdSettings } from 'react-icons/io'
+import { RxCross2 } from 'react-icons/rx';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from "uuid";
 
 import Footer from '@/components/Footer';
+import { courseDetails, setAlert } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 import CourseStructure from './Pages/CourseStructure';
+import Curriculum from './Pages/Curriculum';
 import Film from './Pages/Film';
 import Goals from './Pages/Goals';
 import Setup from './Pages/Setup';
-import Curriculum from './Pages/Curriculum';
 
+
+const DeletingAlert = ({onCancel, onConfirm}) => {
+
+
+        useEffect(() => {
+          
+          document.body.classList.add('no-scroll');
+          return () => {
+            document.body.classList.remove('no-scroll');
+          };
+        }, []);
+    
+
+    return <>
+        <div className='fixed h-[100vh] w-[100vw] z-50' >
+            <div className='bg-black h-[100vh] w-[100vw] absolute -z-40  opacity-70'>
+            </div>
+
+            <div className='flex justify-center items-center h-[100vh] w-[100vw] z-50 '>
+                <div className='bg-white h-52 w-[45%] border border-black p-5 flex flex-col '>
+
+                    <div className=' flex justify-between items-center'>
+                        <h1 className='font-bold text-xl'>Please Confirm</h1>
+                        <button onClick={onCancel} ><RxCross2 className='size-5' /></button>
+                    </div>
+
+                    <h1 className='py-5'>
+                        You are about to remove a curriculum item. Are you sure you want to continue?
+                    </h1>
+
+                    <div className='ml-auto space-x-2'>
+                        <button onClick={onCancel} className=' h-11 w-20 font-bold '>Cancel</button>
+                        <button onClick={onConfirm} className='bg-slate-800 text-white h-11 w-20 font-bold hover:bg-slate-700'>OK</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </>
+}
 
 function CourseManage() {
+
+    const [showDialog, setShowDialog] = useState(false);
+    const [onConfirm, setOnConfirm] = useState(null);
+
+    const dispatch = useDispatch();
+
+    const handleDeleteRequest = (deleteThunk)=>{
+        setShowDialog(true);
+        setOnConfirm(()=>deleteThunk);
+        
+    }
+
+    const handleDialogClose = (confirmed)=>{
+        setShowDialog(false);
+        if(confirmed && onConfirm){
+            onConfirm();
+        }
+    }
 
     const checkbox = <div className='border border-black rounded-full p-[1.5px]'>
         <IoMdCheckmark className='w-[15px] h-[15px] opacity-0' />
@@ -37,7 +99,7 @@ function CourseManage() {
             break;
 
         case "curriculum":
-            render = <Curriculum />
+            render = <Curriculum onDeleteRequest={handleDeleteRequest} />
             break;
 
     }
@@ -75,8 +137,13 @@ function CourseManage() {
 
     ]
 
+    useEffect(() => {
+        dispatch(courseDetails(id));
+    })
+
     return (
         <div className=''>
+            {showDialog && <DeletingAlert onCancel={()=>handleDialogClose(false)} onConfirm={()=>handleDialogClose(true)} />}
             {/* top bar */}
             <div className='flex fixed bg-[#2D2F31] px-6 py-2  text-white w-full  gap-4 items-center shadow-lg z-10'>
 
