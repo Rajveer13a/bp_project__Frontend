@@ -69,13 +69,26 @@ export const addSection = createAsyncThunk("/instructor/addSection",  async(data
 })
 
 export const deleteSection = createAsyncThunk("/instuctor/deleteSection", async(id)=>{
-    console.log("dispatched delete section",id);
+    
     try{
         const res = await axiosInstance.delete(`/course/section/${id}`);
         return res.data;
 
     }catch(err){
         toast.error(err.response.data.message);
+    }
+});
+
+export const updateSection = createAsyncThunk("/instuctor/updateSection", async(data)=>{
+
+    try {
+        
+        const res = await axiosInstance.patch(`/course/section/${data._id}`,data.payload)
+
+        return res.data;
+
+    } catch (error) {
+        toast.error(error.response.data.message);
     }
 })
 
@@ -108,10 +121,22 @@ const ManageCourseSlice = createSlice({
             }
         })
         builder.addCase(deleteSection.fulfilled,(state,action)=>{
+            console.log(action.payload.data._id,"hereeeeeeeeeee")
             if(action?.payload){
-                // console.log("here",action.payload.data._id)
-                let arr= state.edit.sections.filter((value)=> value!= action.payload.data._id);
-                console.log(state.edit.sections)
+                state.edit.sections = state.edit.sections.filter((value)=> value._id!= action.payload.data._id);
+                
+            }
+        })
+        builder.addCase(updateSection.fulfilled,(state,action)=>{
+            if(action?.payload){
+                const idx = state.edit.sections.findIndex(
+                    (value) => value._id === action.payload.data._id
+                );
+                
+                if (idx !== -1) {
+                    state.edit.sections[idx].title = action.payload.data.title;
+                }
+                
                 
             }
         })

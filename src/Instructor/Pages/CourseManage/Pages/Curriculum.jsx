@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react'
+import { FaCheckCircle } from 'react-icons/fa';
+import { FaCircleCheck, FaPlus } from "react-icons/fa6";
 import { FiPlus } from "react-icons/fi";
+import { GiHamburgerMenu } from 'react-icons/gi';
 import { IoDocumentOutline } from "react-icons/io5";
 import { MdDelete, MdEdit } from 'react-icons/md';
+import { RiArrowDownSLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom'
 
-import { addSection, courseDetails, deleteSection } from '@/Redux/Slices/Instructor/InstructorSlice';
+import { addSection, courseDetails, deleteSection, updateSection } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 const Input = ({ count, placeholder, autoFocus = false, onChange, name, value }) => {
 
@@ -21,16 +25,84 @@ const Input = ({ count, placeholder, autoFocus = false, onChange, name, value })
     )
 }
 
+const Lecture = () => {
+
+    return (
+        <div className='bg-white ml-14 mt-8  mr-1 h-14 border border-black flex items-center px-4 group cursor-move'>
+
+            <div className='flex space-x-2 items-center'>
+                <FaCheckCircle className='' />
+                <h1>
+                    Lecture 1:
+                </h1>
+                <IoDocumentOutline />
+                <h1>
+                    what and why of github
+                </h1>
+
+                <div className='gap-2 flex opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto duration-100 cursor-pointer ml-2 py-4'>
+                    <MdEdit onClick={""} />
+                    <MdDelete onClick={""} />
+                </div>
+
+
+
+
+            </div>
+
+            <div className='ml-auto flex items-center space-x-2'>
+
+                <button className='flex items-center space-x-2  border border-black px-3 py-2 hover:bg-[#E3E7EA]'>
+                    <FiPlus className='size-5' />
+                    <h1 className='font-bold text-sm'>Content</h1>
+                </button>
+                <button><RiArrowDownSLine className='size-6' /></button>
+                <GiHamburgerMenu className='opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto duration-100' />
+
+            </div>
+
+        </div>
+    )
+}
+
+
 const SectionBox = ({ indx, value, handleSectionInput, sectionData, handleLectureInput, lectureData, onDeleteRequest }) => {
     const [editSection, setEditSection] = useState(false);
+    const [editSectionData, setEditSectionData] = useState({
+        title: value?.title,
+        learningObjective: ""
+    })
+
+
+
     const [curriculumActive, setCurriculumActive] = useState(false);
+
     const dispatch = useDispatch();
 
     const [lectureActive, setLectureActive] = useState(false);
 
+    const handleUserInput = (e) => {
+        e.preventDefault()
+        const { name, value } = e.target;
+        setEditSectionData({
+            ...editSectionData,
+            [name]: value
+        })
+
+    }
+
     const handleDeleteSection = () => {
         const thunk = () => dispatch(deleteSection(value._id));
         onDeleteRequest(thunk)
+    }
+
+    const onEditSectionSave = () => {
+        dispatch(updateSection({
+            _id: value?._id,
+            payload: editSectionData
+        }));
+
+        setEditSection(false)
     }
 
     return (
@@ -57,20 +129,30 @@ const SectionBox = ({ indx, value, handleSectionInput, sectionData, handleLectur
                         <div className='flex gap-1'>
                             <h1 className='font-bold'>Section 1:</h1>
 
-                            <Input count={80} placeholder={"Enter a title"} autoFocus={true} onChange={handleSectionInput} name={"title"} value={sectionData.title} />
+                            <Input count={80} placeholder={"Enter a title"} autoFocus={true} onChange={handleUserInput} name={"title"} value={editSectionData.title} />
                         </div>
 
                         <div className='pt-4 pl-20 space-y-2 w-[109%]'>
                             <h3 className='font-bold text-sm'>What will students be able to do at the end of this section?</h3>
-                            <Input count={200} placeholder={"Enter a learning objective"} onChange={handleSectionInput} name={"learningObjective"} value={sectionData.learningObjective} />
+                            <Input count={200} placeholder={"Enter a learning objective"} onChange={handleUserInput} name={"learningObjective"} value={editSectionData.learningObjective} />
                         </div>
 
                         <div className='text-sm font-bold space-x-4 ml-auto py-4 pr-3'>
-                            <button onClick={() => setEditSection(false)} className='text-slate-900 hover:text-slate-800 duration-150'>
+                            <button onClick={() => {
+                                setEditSection(false);
+                                setEditSectionData({
+                                    title: value?.title,
+                                    learningObjective: ""
+                                })
+
+                            }} className='text-slate-900 hover:text-slate-800 duration-150'>
                                 Cancel
                             </button>
 
-                            <button className='bg-gray-900 hover:bg-gray-800 text-white px-2 py-1 duration-150'>
+                            <button
+                                className='bg-gray-900 hover:bg-gray-800 text-white px-2 py-1 duration-150'
+                                onClick={onEditSectionSave}
+                            >
                                 Save Section
                             </button>
                         </div>
@@ -80,6 +162,12 @@ const SectionBox = ({ indx, value, handleSectionInput, sectionData, handleLectur
 
                 )
             }
+
+            {/* list lectures here */}
+
+            <Lecture/>
+
+
 
             <div className='relative ml-14 mt-8 '>
 
