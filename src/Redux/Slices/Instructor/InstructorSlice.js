@@ -92,13 +92,41 @@ export const updateSection = createAsyncThunk("/instuctor/updateSection", async(
     }
 })
 
+export const addLecture = createAsyncThunk("/instructor/addLecture", async(data)=>{
+    try{
+
+        const res = await axiosInstance.post(`/course/lecture/${data.course_id}/${data.section_id}`,{
+            title: data.title
+        });
+
+        return res.data;
+
+    }catch(error){
+        toast.error(error.response.data.message);
+    }
+})
+
+export const deleteLecture = createAsyncThunk("/instructor/deleteLecture", async(lecture_id)=>{
+    try{
+
+        const res = await axiosInstance.delete(`/course/lecture/${lecture_id}`);
+
+        return res.data;
+
+    
+    }catch(error){
+        toast.error(error.response.dat.message);
+    }
+})
+
+
 const ManageCourseSlice = createSlice({
     name: "instructor",
     initialState,
     reducers : {
-        setAlert(state,action){
-            state.alertState= action.payload;
-        }
+        // setAlert(state,action){
+        //     state.alertState= action.payload;
+        // }
     },
     extraReducers: (builder)=>{
         builder .addCase(instructorDetails.fulfilled, (state, action)=>{
@@ -145,6 +173,6 @@ const ManageCourseSlice = createSlice({
     }
 })
 
-export const  {setAlert} = ManageCourseSlice.actions;
+// export const  {setAlert} = ManageCourseSlice.actions;
 
 export default ManageCourseSlice.reducer ;

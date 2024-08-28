@@ -7,10 +7,10 @@ import { Link, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from "uuid";
 
 import Footer from '@/components/Footer';
-import { courseDetails, setAlert } from '@/Redux/Slices/Instructor/InstructorSlice';
+import { courseDetails,} from '@/Redux/Slices/Instructor/InstructorSlice';
 
 import CourseStructure from './Pages/CourseStructure';
-import Curriculum from './Pages/Curriculum';
+import Curriculum from './Pages/Curriculum/Curriculum';
 import Film from './Pages/Film';
 import Goals from './Pages/Goals';
 import Setup from './Pages/Setup';

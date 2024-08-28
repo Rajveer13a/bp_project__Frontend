@@ -142,3 +142,37 @@
 .no-scroll {
   overflow: hidden;
 }
+
+@keyframes wraploop {
+  0%{
+    transform: translate(0px);
+  }
+   25%{
+    transform: translateY(-60px);
+   }
+
+   25.1%{
+    transform: translateY(60px);
+   }
+
+}
+
+.wraploopparent:hover .anim-wraploop{
+  animation: wraploop 0.5s ease-in-out;
+}
+
+@keyframes wraploopReverse {
+  0% {
+    transform: translateY(60px);
+  }
+  25% {
+    transform: translateY(-60px);
+  }
+  50% {
+    transform: translateY(0px);
+  }
+}
+
+.wraploopparent:not(:hover) .anim-wraploop {
+  animation: wraploopReverse 0.5s ease-in-out;
+}
