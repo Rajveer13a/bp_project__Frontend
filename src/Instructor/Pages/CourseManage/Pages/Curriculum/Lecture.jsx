@@ -1,12 +1,13 @@
 import { useRef, useState } from 'react'
 import toast from 'react-hot-toast';
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaCheckCircle } from 'react-icons/fa';
 import { FiPlus } from 'react-icons/fi';
 import { GiCrossMark, GiHamburgerMenu } from 'react-icons/gi';
 import { GoPlus } from 'react-icons/go';
 import { IoIosPlayCircle, IoMdDocument } from 'react-icons/io';
 import { IoDocumentOutline } from 'react-icons/io5';
-import { MdDelete, MdEdit, MdErrorOutline } from 'react-icons/md';
+import { MdDelete, MdEdit, MdErrorOutline, MdKeyboardArrowDown } from 'react-icons/md';
 import { RiArrowDownSLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -17,8 +18,13 @@ import { deleteLecture, } from '@/Redux/Slices/Instructor/InstructorSlice';
 import ContentTypeBox from './ContentTypeBox';
 // import formattedDate from './helperGetDate';
 
-function Lecture({ indx, title, onDeleteRequest, lecture_id }) {
+function Lecture({ indx, onDeleteRequest, data }) {
     const dispatch = useDispatch();
+
+    const[ currentData, setCurrentData] = useState(data);
+
+    const { _id: lecture_id, title } = currentData;
+
 
     const handleDeleteLecture = () => {
         const thunk = () => {
@@ -60,7 +66,7 @@ function Lecture({ indx, title, onDeleteRequest, lecture_id }) {
             toast.error("brrr")
             setUploadProgress({
                 progress: 0,
-                status: null, 
+                status: null,
                 error: null
             })
 
@@ -85,12 +91,15 @@ function Lecture({ indx, title, onDeleteRequest, lecture_id }) {
                 },
                 signal: controllerRef.current.signal
             });
-
+            toast.error("server responded")
             setUploadProgress((prevstate) => ({
                 ...prevstate, status: "succeeded"
             }))
 
-            return res.data;
+            setCurrentData(res.data.data) ;
+            setAddContentActive(false);
+            setSelectedFile(null);
+            setAddVideoActive(false);
 
         } catch (error) {
             toast.error(error.response.data.message);
@@ -112,6 +121,18 @@ function Lecture({ indx, title, onDeleteRequest, lecture_id }) {
         })
     }
 
+    function formatTime(seconds) {
+        return new Date(seconds * 1000).toISOString().substr(14, 5);
+    }
+
+    const thumbnail = currentData?.resource?.secure_url.replace(".mp4", ".jpg");
+    console.log("cccccccccc",currentData);
+    
+    let formattedTime;
+
+    if (currentData?.resource?.duration) {
+        formattedTime = formatTime(currentData?.resource?.duration);
+    }
 
     //get current date
     const date = new Date();
@@ -146,44 +167,46 @@ function Lecture({ indx, title, onDeleteRequest, lecture_id }) {
                 <div className='ml-auto flex items-center space-x-2'>
 
                     {
-                        addContentActive ? (
-                            <div className='bg-white border-t px-2 pt-1  border-x border-black flex relative top-2.5 cursor-text'>
+                        (!currentData?.resource?.secure_url || addContentActive )&& (
+                            addContentActive ? (
+                                <div className='bg-white border-t px-2 pt-1  border-x border-black flex relative top-2.5 cursor-text'>
 
-                                {
-                                    addvideoActive ? (
-                                        <h1 className='font-bold text-[15px] '>
-                                            Add Video
-                                        </h1>) :
-                                        (
+                                    {
+                                        addvideoActive ? (
                                             <h1 className='font-bold text-[15px] '>
-                                                Select content type
-                                            </h1>
-                                        )
-                                }
+                                                Add Video
+                                            </h1>) :
+                                            (
+                                                <h1 className='font-bold text-[15px] '>
+                                                    Select content type
+                                                </h1>
+                                            )
+                                    }
 
-                                <GoPlus onClick={() => {
-                                    setAddContentActive(false);
-                                    setAddVideoActive(false);
-                                    setSelectedFile(null);
-                                    setFileName("No file selected");
-                                    setUploadProgress({
-                                        progress: 0,
-                                        status: null,
-                                        error: null
-                                    })
-                                }}
-                                    className='size-6 rotate-45 m-auto cursor-pointer fill-slate-800 hover:fill-black transition-all duration-150'
-                                />
+                                    <GoPlus onClick={() => {
+                                        setAddContentActive(false);
+                                        setAddVideoActive(false);
+                                        setSelectedFile(null);
+                                        setFileName("No file selected");
+                                        setUploadProgress({
+                                            progress: 0,
+                                            status: null,
+                                            error: null
+                                        })
+                                    }}
+                                        className='size-6 rotate-45 m-auto cursor-pointer fill-slate-800 hover:fill-black transition-all duration-150'
+                                    />
 
-                            </div>
-                        ) : (
-                            <>
-                                <button onClick={() => setAddContentActive(true)} className='flex items-center space-x-2  border border-black px-3 py-2 hover:bg-[#E3E7EA]'>
-                                    <FiPlus className='size-5' />
-                                    <h1 className='font-bold text-sm'>Content</h1>
-                                </button>
-                                <button><RiArrowDownSLine className='size-6' /></button>
-                            </>
+                                </div>
+                            ) : (
+                                <>
+                                    <button onClick={() => setAddContentActive(true)} className='flex items-center space-x-2  border border-black px-3 py-2 hover:bg-[#E3E7EA]'>
+                                        <FiPlus className='size-5' />
+                                        <h1 className='font-bold text-sm'>Content</h1>
+                                    </button>
+                                    <button><RiArrowDownSLine className='size-6' /></button>
+                                </>
+                            )
                         )
                     }
 
@@ -192,6 +215,44 @@ function Lecture({ indx, title, onDeleteRequest, lecture_id }) {
                 </div>
 
             </div>
+
+            {/* lecture video display */}
+
+            {
+                !addContentActive && currentData?.resource && (
+                    <div className='border-t border-black py-4 px-2 flex gap-4' >
+
+                <img className='w-36 border border-black' src={thumbnail} alt="thumbnail" />
+
+                <div className='w-[55%]'>
+                    <h1 className='font-bold overflow-hidden text-ellipsis whitespace-nowrap'>
+                        {currentData?.resource?.filename}
+                    </h1>
+
+                    <h3 className=''>
+                        {formattedTime}
+                    </h3>
+
+                    <div onClick={()=>setAddContentActive(true)} className=' flex gap-1 items-center cursor-pointer group'>
+                        <MdEdit className='fill-blue-700 size-5 group-hover:fill-blue-900 duration-150' />
+                        <h2 className='text-blue-700 group-hover:text-blue-900 duration-150'>
+                            Edit Content
+                        </h2>
+
+                    </div>
+                </div>
+
+                <button onClick={()=>window.open(currentData?.resource?.secure_url,"_blank")} className='bg-slate-800 text-white h-9 px-3 font-bold ml-auto hover:bg-slate-900 flex items-center text-sm'>
+                    <h2>
+                    Preview 
+                    </h2>
+                    <MdKeyboardArrowDown className='size-5' />
+                </button>
+
+
+            </div>
+                )
+            }
 
             {/* add lecture content box */}
 
@@ -281,7 +342,7 @@ function Lecture({ indx, title, onDeleteRequest, lecture_id }) {
                                         <div className='w-80 border-b border-slate-300'>
                                             <h1 className='font-bold border-b border-slate-300 pb-2 pr-4'>Filename</h1>
                                             <div className='py-1 h-20 overflow-hidden  w-72 '>
-                                                <h2 className='py-1 text-wrap break-words'>
+                                                <h2 className='py-1 text-wrap break-words '>
                                                     {fileName}
                                                 </h2>
                                             </div>
@@ -302,7 +363,7 @@ function Lecture({ indx, title, onDeleteRequest, lecture_id }) {
                                             <h2 className='py-1 flex items-center  gap-2 h-20'>
 
                                                 {
-                                                    !uploadProgress.error && (
+                                                    !uploadProgress.error && (uploadProgress.progress < 100) && (
                                                         <div className='relative w-24'>
                                                             <div className='h-2 bg-slate-200'></div>
                                                             <div
@@ -325,8 +386,22 @@ function Lecture({ indx, title, onDeleteRequest, lecture_id }) {
                                                     )
                                                 }
 
+                                                {
+                                                    (!uploadProgress.error &&
+                                                        (uploadProgress.progress == 100) &&
+                                                        (uploadProgress.status != "succeeded")) && (
+                                                        <div className='flex items-center gap-1'>
+                                                            <h1>
+                                                                Processing
 
-                                                {!uploadProgress.error && <h4 className='text-sm'>{uploadProgress.progress}%</h4>}
+                                                            </h1>
+                                                            <AiOutlineLoading3Quarters className='animate-spin' />
+                                                        </div>
+                                                    )
+                                                }
+
+
+                                                {!uploadProgress.error && (uploadProgress.progress < 100) && <h4 className='text-sm'>{uploadProgress.progress}%</h4>}
 
                                             </h2>
                                         </div>
@@ -339,6 +414,7 @@ function Lecture({ indx, title, onDeleteRequest, lecture_id }) {
                                                 </h2>
                                             </div>
                                         </div>
+
                                         <div className='flex-grow border-b border-slate-300'>
                                             <h1 className='font-bold  border-b border-slate-300 pb-2'>
                                                 Action
@@ -351,7 +427,7 @@ function Lecture({ indx, title, onDeleteRequest, lecture_id }) {
                                                 }
 
                                                 {
-                                                    uploadProgress.status == 'uploading' && (
+                                                    uploadProgress.status == 'uploading' && uploadProgress.progress < 100 && (
                                                         <button onClick={onAbortUplaod}>
                                                             <GoPlus className='rotate-45 size-6' />
                                                         </button>
@@ -370,6 +446,11 @@ function Lecture({ indx, title, onDeleteRequest, lecture_id }) {
                                         </div>
 
                                     </div>
+
+                                    {(!uploadProgress.error &&
+                                        (uploadProgress.progress == 100) &&
+                                        (uploadProgress.status != "succeeded")) &&
+                                        <h2 className='pt-2'> <span className='font-bold'>Note:</span> This video is still being processed. until then you can upload others </h2>}
 
                                 </div>
                             )

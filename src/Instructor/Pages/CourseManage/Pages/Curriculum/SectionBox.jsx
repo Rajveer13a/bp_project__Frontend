@@ -137,7 +137,7 @@ export default function SectionBox({ indx, value,onDeleteRequest }) {
 
             {
                 value?.lectures?.map(
-                    (data, indx) => <Lecture key={indx} indx={indx} title={data.title} onDeleteRequest={onDeleteRequest} lecture_id={data._id} />
+                    (data, indx) => <Lecture key={indx} indx={indx} title={data.title} onDeleteRequest={onDeleteRequest} lecture_id={data._id} data={data} />
                 )
             }
 
