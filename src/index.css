@@ -176,3 +176,18 @@
 .wraploopparent:not(:hover) .anim-wraploop {
   animation: wraploopReverse 0.5s ease-in-out;
 }
+
+@keyframes circularMotion {
+  0% {
+    transform: rotate(0deg) translateY(-20px) rotate(0deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotate(360deg) translateY(-20px) rotate(-360deg);
+    opacity: 1;
+  }
+}
+
+.searchParent:hover .searchAnimate {
+  animation: circularMotion 4s linear infinite ;
+}
