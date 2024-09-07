@@ -3,8 +3,10 @@ import { configureStore } from "@reduxjs/toolkit"
 import AuthSliceReducer from "./Slices/AuthSlice"
 import CourseSliceReducer from "./Slices/CourseSlice"
 import InstructorSliceReducer from "./Slices/Instructor/InstructorSlice";
+import ManagementSliceReducer from "./Slices/Management/ManagementSlice"
 import PaymentSliceReducer from "./Slices/PaymentSlice"
 import UserConfigSliceReducer from "./Slices/UserConfigSlice"
+
 export const store = configureStore({
     reducer: {
         auth:  AuthSliceReducer,
@@ -12,6 +14,8 @@ export const store = configureStore({
         config: UserConfigSliceReducer,
         payment: PaymentSliceReducer,
         instructor: InstructorSliceReducer,
+        management: ManagementSliceReducer
+
     },
     devTools: true
 })

@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
-import { FaCheckCircle } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react'
 import { IoIosArrowBack, IoMdCheckmark, IoMdSettings } from 'react-icons/io';
-import { IoDocumentOutline } from 'react-icons/io5';
-import { useDispatch } from 'react-redux';
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useLocation, } from 'react-router-dom'
 
 import Footer from '@/components/Footer';
+import { addReviewData } from '@/Redux/Slices/Management/ManagementSlice';
+
 import DisplayCurriculum from './DisplayCurriculum';
 
 
@@ -15,14 +15,9 @@ function ReviewCourse() {
 
     const location = useLocation();
     const state  =  location.state;
-
-    const [showDialog, setShowDialog] = useState(false);
-    const [onConfirm, setOnConfirm] = useState(null);
-
-    
-
     const dispatch = useDispatch();
 
+    
 
     const checkbox = <div className='border border-black rounded-full p-[1.5px]'>
         <IoMdCheckmark className='w-[15px] h-[15px] opacity-0' />
@@ -65,6 +60,10 @@ function ReviewCourse() {
         
 
     ]
+
+    useEffect(()=>{
+        dispatch(addReviewData({data:state}))
+    },[])
 
 
     return (
