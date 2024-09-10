@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IoIosArrowBack, IoMdCheckmark, IoMdSettings } from 'react-icons/io';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLocation, } from 'react-router-dom'
+import { useDispatch,} from 'react-redux';
+import { Link, useLocation, useNavigate, } from 'react-router-dom'
 
 import Footer from '@/components/Footer';
-import { addReviewData } from '@/Redux/Slices/Management/ManagementSlice';
+import { addReviewData, reviewCourse } from '@/Redux/Slices/Management/ManagementSlice';
 
 import DisplayCurriculum from './DisplayCurriculum';
 
@@ -14,16 +14,18 @@ import DisplayCurriculum from './DisplayCurriculum';
 function ReviewCourse() {
 
     const location = useLocation();
-    const state  =  location.state;
+    const state = location.state;
     const dispatch = useDispatch();
 
-    
+    const navigate = useNavigate();
+
+
 
     const checkbox = <div className='border border-black rounded-full p-[1.5px]'>
         <IoMdCheckmark className='w-[15px] h-[15px] opacity-0' />
     </div>;
 
-    const [active ,  setActive] = useState("curriculum");
+    const [active, setActive] = useState("curriculum");
 
 
     let render;
@@ -42,13 +44,13 @@ function ReviewCourse() {
         {
             title: "TO Check",
             list: [
-              
+
                 { name: "Intended learners", active: "goals" },
-                
+
                 { name: "Course landing page", active: "basics" },
-                
+
                 { name: "Course messages", active: "messages" },
-                
+
                 { name: "Curriculum", active: "curriculum" },
 
                 { name: "Captions (optional)", active: "captions" },
@@ -57,18 +59,41 @@ function ReviewCourse() {
             ]
         },
 
-        
+
 
     ]
 
-    useEffect(()=>{
-        dispatch(addReviewData({data:state}))
-    },[])
+    const onCourseApprove = async()=>{
+        const res = await dispatch(reviewCourse({
+            course_id:state._id,
+            flag:true
+        }));
+
+        if(res.payload){
+            navigate("/management/mode/")
+        }
+    }
+
+    const onCourseDisapprove = async()=>{
+        const res = await dispatch(reviewCourse({
+            course_id:state._id,
+            flag:false
+        })
+        );
+
+        if(res.payload){
+            navigate("/management/mode/")
+        }
+    }
+
+    useEffect(() => {
+        dispatch(addReviewData({ data: state }))
+    }, [])
 
 
     return (
         <div className=''>
-            
+
             {/* top bar */}
             <div className='flex fixed bg-[#2D2F31] px-6 py-2  text-white w-full  gap-4 items-center shadow-lg z-10'>
 
@@ -94,22 +119,22 @@ function ReviewCourse() {
 
                 <div className='w-[20%]  pt-8  space-y-10 '>
 
-                    {sections.map((section,indx) => {
+                    {sections.map((section, indx) => {
                         const comp = <ul key={indx} className=''>
                             <h1 className='font-bold py-2 pl-8'>{section.title}</h1>
 
                             {
-                                section.list.map((value,indx) => {
+                                section.list.map((value, indx) => {
                                     return (
-                                        <li key={indx} onClick={()=> setActive(value.active)} className={`flex items-center gap-2 cursor-pointer  py-2 hover:bg-[#F7F9FA] duration-75 ${(value.active === active) && "activeBlack"} pl-8`}>
+                                        <li key={indx} onClick={() => setActive(value.active)} className={`flex items-center gap-2 cursor-pointer  py-2 hover:bg-[#F7F9FA] duration-75 ${(value.active === active) && "activeBlack"} pl-8`}>
 
-                                                {checkbox}
+                                            {checkbox}
 
-                                                <h1 className=''>
-                                                    {value.name}
-                                                </h1>
+                                            <h1 className=''>
+                                                {value.name}
+                                            </h1>
 
-                                            </li>
+                                        </li>
                                     )
                                 })
                             }
@@ -121,7 +146,18 @@ function ReviewCourse() {
                         return comp
                     })}
 
-                    <button className='bg-blue-600 text-white  font-bold  px-10 py-3 '>Approve Course</button>
+
+                    <div className='space-y-2'>
+                        <h1 className='text-center font-semibold text-lg '>
+                            Course Action
+                        </h1>
+
+                        <div className='flex  justify-between px-6'>
+                            <button onClick={onCourseApprove} className='bg-blue-600 hover:bg-blue-700 text-white  font-bold  px-3 py-1 hover:scale-105 transition-all duration-300 '>Approve</button>
+
+                            <button onClick={onCourseDisapprove} className='bg-red-600 hover:bg-red-700 text-white  font-bold  px-2 py-1 hover:scale-105 transition-all duration-300'>Diapprove</button>
+                        </div>
+                    </div>
 
                 </div>
 

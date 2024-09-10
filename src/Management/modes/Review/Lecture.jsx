@@ -3,9 +3,11 @@ import { FaCheckCircle, } from 'react-icons/fa';
 import { FcApproval } from 'react-icons/fc';
 import { GrPowerReset } from "react-icons/gr";
 import { MdCancel, } from 'react-icons/md';
+import { TiPointOfInterestOutline } from 'react-icons/ti';
+import { VscDebugBreakpointData } from "react-icons/vsc";
 import { useDispatch, useSelector } from 'react-redux';
 
-import { approveLecture, disapproveLecture } from '@/Redux/Slices/Management/ManagementSlice';
+import { approveLecture, disapproveLecture, feedbackLecture } from '@/Redux/Slices/Management/ManagementSlice';
 
 import VideoPlayer from './VideoPlayer'
 
@@ -21,23 +23,42 @@ function Lecture({ lecture, section_indx, lecture_indx }) {
 
     const [data, setdata] = useState(lecture.feedback);
 
-    const onApproveLecture = () => {
+    const onApproveLecture = async() => {
 
-        dispatch(approveLecture({
-            lecture_indx,
-            section_indx
+        const res = await dispatch(feedbackLecture({
+            lecture_id : lecture._id,
+            flag : true
         }))
-        setApprove(lecture.approved)
+
+        if(res.payload){
+            dispatch(approveLecture({
+                lecture_indx,
+                section_indx
+            }))
+            setApprove(true)
+        }
+
+        
 
     }
 
-    const onDisapproveLecture = () => {
+    const onDisapproveLecture = async() => {
 
-        dispatch(disapproveLecture({
-            lecture_indx,
-            section_indx,
-            feedback: data
-        }))
+        const res = await dispatch(feedbackLecture({
+            lecture_id : lecture._id,
+            flag : false,
+            feedback : data
+        }))        
+
+        if(res.payload){
+
+            dispatch(disapproveLecture({
+                lecture_indx,
+                section_indx,
+                feedback: data
+            }))
+
+        }
 
         setFeedback(data)
 
@@ -64,7 +85,7 @@ function Lecture({ lecture, section_indx, lecture_indx }) {
                         </button>
 
                        {
-                        feedback=="" ? (
+                        feedback=="" && approve == false ? (
                             <>
                             
                             <textarea onChange={(e) => setdata(e.target.value)} placeholder='write lecture feedback here..' className='w-[100%] h-[100px]   border border-info  focus:outline-none resize-none p-2 bg-[#f0f8ff8a] mt-auto placeholder:text-slate-600 ' value={data} name="" id="">
@@ -74,8 +95,9 @@ function Lecture({ lecture, section_indx, lecture_indx }) {
                             <button onClick={onDisapproveLecture} className=' bg-blue-500 text-white mb-auto font-semibold py-1 hover:bg-blue-600 transition-all duration-300'>Add</button>
                             </>
                         ): (
-                            <h1>
-                                #{lecture.feedback}
+                            <h1 className='text-center text-xl m-auto flex items-center gap-2 '>
+                                <TiPointOfInterestOutline className='' />
+                                {lecture.feedback}
                             </h1>
                         )
                        }

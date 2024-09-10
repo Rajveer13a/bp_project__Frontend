@@ -7,13 +7,15 @@ import { Link, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from "uuid";
 
 import Footer from '@/components/Footer';
-import { courseDetails,} from '@/Redux/Slices/Instructor/InstructorSlice';
+import { courseDetails, submitForApproval,} from '@/Redux/Slices/Instructor/InstructorSlice';
 
 import CourseStructure from './Pages/CourseStructure';
 import Curriculum from './Pages/Curriculum/Curriculum';
 import Film from './Pages/Film';
 import Goals from './Pages/Goals';
+import Settings from './Pages/Settings';
 import Setup from './Pages/Setup';
+import LandingPage from './Pages/LandingPage';
 
 
 const DeletingAlert = ({onCancel, onConfirm}) => {
@@ -77,6 +79,8 @@ function CourseManage() {
         }
     }
 
+    
+
     const checkbox = <div className='border border-black rounded-full p-[1.5px]'>
         <IoMdCheckmark className='w-[15px] h-[15px] opacity-0' />
     </div>;
@@ -101,6 +105,13 @@ function CourseManage() {
         case "curriculum":
             render = <Curriculum onDeleteRequest={handleDeleteRequest} />
             break;
+
+        case "settings":
+            render = <Settings onDeleteRequest={handleDeleteRequest} />
+            break;
+
+        case "basics":
+            render = <LandingPage />
 
     }
 
@@ -137,6 +148,12 @@ function CourseManage() {
 
     ]
 
+    const onSubmitForApproval = ()=>{
+        dispatch(submitForApproval({
+            course_id : id
+        }))
+    }
+
     useEffect(() => {
         dispatch(courseDetails(id));
     })
@@ -162,7 +179,7 @@ function CourseManage() {
 
                 <button className='bg-[#969798] text-black px-6 py-1 font-bold ml-auto'>Save</button>
 
-                <IoMdSettings className='size-6 cursor-pointer  h-[40px]' />
+                <Link to={`/instructor/course/${id}/manage/settings`}><IoMdSettings className='size-6 cursor-pointer  h-[40px]' /></Link>
             </div>
 
             {/* main */}
@@ -199,7 +216,7 @@ function CourseManage() {
                         return comp
                     })}
 
-                    <button className='bg-blue-600 text-white  font-bold  px-10 py-3 '>Submit for Review</button>
+                    <button onClick={onSubmitForApproval} className='bg-blue-600 text-white  font-bold  px-10 py-3 '>Submit for Review</button>
 
                 </div>
 

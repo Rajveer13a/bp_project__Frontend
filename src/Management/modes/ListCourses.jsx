@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
 import { BsQuestionSquareFill } from 'react-icons/bs';
+import { FaPhotoVideo } from 'react-icons/fa';
+import { FcSearch } from "react-icons/fc";
 import { HiSearch } from "react-icons/hi";
 import { IoIosArrowDown, IoMdChatboxes, IoMdSearch } from 'react-icons/io';
 import { LiaChalkboardTeacherSolid } from 'react-icons/lia';
 import { MdAutoGraph, MdOutlineOndemandVideo } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-import { FcSearch } from "react-icons/fc";
+
 import axiosInstance from '@/Helpers/axiosInstance';
-import { FaPhotoVideo } from 'react-icons/fa';
 
 
 const Select = ({ sortState }) => {
@@ -69,9 +70,17 @@ function ListCourses() {
         });
 
         res.then((res) => {
-            let id_arr = res?.data?.data?.map((value) => value.course_id);
+            let id_arr = res?.data?.data?.filter((value) => {
+                if(value.reviewed == false ){
+                    return value.course_id 
+                }
+            });
 
-            setIds(id_arr)
+            id_arr =  id_arr.map((value)=> value.course_id)
+
+            setIds(id_arr);
+            console.log(id_arr);
+            
 
         }).catch((error) => {
             toast.error(error.response.data.message);
@@ -183,41 +192,39 @@ function ListCourses() {
 
 
                 {
-                    data?.map((value, indx) => {
-                        return (
-                            <div key={indx} className='border-2  flex w-full group relative gap-2 searchParent'>
-                                <img className='size-32' src={value.thumbnial || "https://s.udemycdn.com/course/200_H/placeholder.jpg"} alt="" />
+                    data?.map((value, indx) => (
+                        <div key={indx} className='border-2  flex w-full group relative gap-2 searchParent'>
+                            <img className='size-32' src={value.thumbnial || "https://s.udemycdn.com/course/200_H/placeholder.jpg"} alt="" />
 
-                                <div className='py-4 flex flex-col group-hover:opacity-10 duration-100 w-[300px] pl-4' >
-                                    <h1 className='font-bold'>{value.title}</h1>
+                            <div className='py-4 flex flex-col group-hover:opacity-10 duration-100 w-[300px] pl-4' >
+                                <h1 className='font-bold'>{value.title}</h1>
 
-                                    <h3 className='mt-auto text-sm font-bold '>
-                                        Category:
-                                        <span className='font-semibold pl-2'>
-                                            {value.category}
-                                        </span>
-                                    </h3>
-                                </div>
+                                <h3 className='mt-auto text-sm font-bold '>
+                                    Category:
+                                    <span className='font-semibold pl-2'>
+                                        {value.category}
+                                    </span>
+                                </h3>
+                            </div>
 
-                                <div className='flex flex-grow items-center justify-center space-x-5 group-hover:opacity-10 duration-100'>
-                                    <h1 className='font-bold h-7  '></h1>
-
-                                </div>
-
-                                <Link to={"/management/mode/review/curriculum"} state={value} >
-                                    <h1 className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-0 group-hover:opacity-100 duration-100 px-[220px] cursor-pointer  right-[200px] flex searchParent space-x-5' >
-
-                                        <h1>Review course </h1>
-                                        <FaPhotoVideo className='fill-black size-7' />
-
-                                        {/* <HiSearch className='relative right-8 searchAnimate   size-8 fill-black ' /> */}
-                                        <FcSearch className='relative right-8 searchAnimate   size-8 fill-black '  />
-                                    </h1>
-                                </Link>
+                            <div className='flex flex-grow items-center justify-center space-x-5 group-hover:opacity-10 duration-100'>
+                                <h1 className='font-bold h-7  '></h1>
 
                             </div>
-                        )
-                    })
+
+                            <Link to={"/management/mode/review/curriculum"} state={value} >
+                                <h1 className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-0 group-hover:opacity-100 duration-100 px-[220px] cursor-pointer  right-[200px] flex searchParent space-x-5' >
+
+                                    <h1>Review course </h1>
+                                    <FaPhotoVideo className='fill-black size-7' />
+
+                                    {/* <HiSearch className='relative right-8 searchAnimate   size-8 fill-black ' /> */}
+                                    <FcSearch className='relative right-8 searchAnimate   size-8 fill-black ' />
+                                </h1>
+                            </Link>
+
+                        </div>
+                    ))
                 }
 
 

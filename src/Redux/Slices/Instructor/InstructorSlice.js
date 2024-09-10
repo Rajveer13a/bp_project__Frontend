@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 
 import axiosInstance from "@/Helpers/axiosInstance";
-import { useDispatch } from "react-redux";
 
 const initialState = {
     data: "",
@@ -117,6 +117,42 @@ export const deleteLecture = createAsyncThunk("/instructor/deleteLecture", async
 
     } catch (error) {
         toast.error(error.response.data.message);
+    }
+})
+
+export const submitForApproval = createAsyncThunk("/instructor/submitforapproval", async (data) =>{
+
+    try {
+
+        const res = axiosInstance.post("/course/submit", {
+            course_id : data.course_id
+        });
+
+        toast.promise(res, {
+            loading: "submitting for approval",
+            success: (data)=> data.data.message
+        })
+
+        return (await res).data;
+        
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
+export const deleteCourse = createAsyncThunk("/instuctor/deleteCourse", async(data)=>{
+    try{
+        const res = axiosInstance.delete(`course/${data.course_id}`);
+
+        toast.promise(res, {
+            loading: "deleting course",
+            success:(data)=> data.data.message
+        })
+
+        return (await res).data;
+
+    }catch(error){
+        toast.error(error.response.data.message)
     }
 })
 

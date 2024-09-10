@@ -1,4 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
+
+import axiosInstance from "@/Helpers/axiosInstance";
 
 
 const initialState = {
@@ -13,27 +16,60 @@ const initialState = {
 }
 
 
+export const reviewCourse = createAsyncThunk("/management/approveCourse", async(data)=>{
+
+    try {
+        
+        const res =  axiosInstance.post("/manage/review", {
+            course_id: data.course_id,
+            flag: data.flag
+        })
+
+        toast.promise(res, {
+            loading:"approving course",
+            success:(data)=> data.data.message
+        })
+
+        return (await res).data;
+
+    } catch (error) {
+        toast.error(error.response.data.message);
+    }
+
+})
+
+export const feedbackLecture = createAsyncThunk("/management/approveLecture", async(data)=>{
+    try {
+        
+        const res = axiosInstance.post("manage/review/lecture", {
+            lecture_id : data.lecture_id,
+            feedback : data?.feedback,
+            flag : data.flag
+        })
+
+        toast.promise(res, {
+            loading : "updating lecture status",
+            success: (data)=> data.data.message
+        })
+
+        return (await res).data;
+
+    } catch (error) {
+        toast.error(error.response.data.message);
+    }
+})
+
+
 const manangeSlice = createSlice({
     name: "management",
     initialState,
     reducers: {
+
         addReviewData: (state,action)=>{
 
             const {data} = action.payload;
 
-            state.feedback.curr = data.sections.map((section) => {
-               
-                section.approved = null;
-        
-                
-                section.lectures = section.lectures.map((lecture) => {
-                  lecture.approved = null; 
-                  lecture.feedback = "";
-                  return lecture;
-                });
-        
-                return section;
-              });
+            state.feedback.curr = data.sections;
 
         },
 
