@@ -60,7 +60,8 @@ const DeletingAlert = ({onCancel, onConfirm}) => {
 }
 
 function CourseManage() {
-
+    
+    const data = useSelector((state)=>state?.instructor?.edit)
     const [showDialog, setShowDialog] = useState(false);
     const [onConfirm, setOnConfirm] = useState(null);
 
@@ -77,6 +78,17 @@ function CourseManage() {
         if(confirmed && onConfirm){
             onConfirm();
         }
+    }
+
+    const [saveEnable ,setSaveEnable] = useState(false);
+
+    const [saveThunk, setSaveThunk] = useState(null);
+
+    const handleOnSave = ()=>{
+        if (saveEnable && saveThunk) {
+            saveThunk();
+        }
+        setSaveEnable(false)
     }
 
     
@@ -111,7 +123,7 @@ function CourseManage() {
             break;
 
         case "basics":
-            render = <LandingPage />
+            render = <LandingPage setSaveThunk={setSaveThunk} setSaveEnable={setSaveEnable} />
 
     }
 
@@ -156,7 +168,7 @@ function CourseManage() {
 
     useEffect(() => {
         dispatch(courseDetails(id));
-    })
+    },[])
 
     return (
         <div className=''>
@@ -171,13 +183,13 @@ function CourseManage() {
                     </div>
                 </Link>
 
-                <h1 className='font-bold text-xl'>Learn Photoshop from the scratch</h1>
+                <h1 className='font-bold text-xl'>{data?.title}</h1>
 
                 <h4 className='bg-[#6A6F73] px-2 text-sm font-bold my-auto py-[2px]'>DRAFT</h4>
 
                 <h3 className='font-semibold'>0min of video content uploaded</h3>
 
-                <button className='bg-[#969798] text-black px-6 py-1 font-bold ml-auto'>Save</button>
+                <button onClick={handleOnSave} className={` text-black px-6 py-1 font-bold ml-auto ${!saveEnable ? "cursor-not-allowed bg-[#969798] " : " bg-white hover:bg-[#E0E0E0] "}`}>Save</button>
 
                 <Link to={`/instructor/course/${id}/manage/settings`}><IoMdSettings className='size-6 cursor-pointer  h-[40px]' /></Link>
             </div>

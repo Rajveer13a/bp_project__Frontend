@@ -156,6 +156,28 @@ export const deleteCourse = createAsyncThunk("/instuctor/deleteCourse", async(da
     }
 })
 
+export const updateCourseDetails = createAsyncThunk("/instructor/updateCourse/details", async(data)=>{
+    
+    try {
+
+        console.log(data,"------here in thunk");
+        
+        
+        const res = axiosInstance.patch(`/course/${data.course_id}`, data);
+
+        toast.promise(res, {
+            loading: "updating course details",
+            success: (data)=> data.data.message
+        })
+
+        return (await res).data;
+
+    } catch (error) {
+        toast.error(error.response.data.message);
+    }
+
+})
+
 
 const ManageCourseSlice = createSlice({
     name: "instructor",
