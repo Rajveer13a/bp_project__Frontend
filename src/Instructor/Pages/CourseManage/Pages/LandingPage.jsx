@@ -1,10 +1,11 @@
-import { courseDetails, updateCourseDetails } from '@/Redux/Slices/Instructor/InstructorSlice'
 import React, { useEffect, useRef, useState } from 'react'
 import { FaItalic } from 'react-icons/fa'
-import { IoIosArrowDown } from 'react-icons/io'
+import { IoIosArrowDown, IoIosCloudDone, IoMdDoneAll } from 'react-icons/io'
 import { MdFormatBold, MdFormatItalic, MdFormatListBulleted, MdFormatListNumbered, MdInfo, MdList } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+
+import { courseDetails, updateCourseDetails, updatethumbnail_promo } from '@/Redux/Slices/Instructor/InstructorSlice'
 
 const Input = ({ onChange, value, name, count }) => {
 
@@ -21,24 +22,135 @@ const Input = ({ onChange, value, name, count }) => {
 
 }
 
-function LandingPage({setSaveThunk,setSaveEnable}) {
+const FileUpload = ({ type, name, course_id }) => {
 
-    const dispatch= useDispatch();
+    const dispatch = useDispatch();
 
-    const stateData = useSelector((state)=> state.instructor.edit);
+    const [selectedFile, setSelectedFile] = useState(null);
+
+    const [fileName, setFileName] = useState("No file selected");
+
+    const [uploadProgress, setUploadProgress] = useState({
+        progress: 0,
+        status: null, // or 'loading', 'succeeded', 'failed'
+        error: null
+    })
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+            setFileName(file.name);
+        }
+
+        setUploadProgress({
+            progress: 0,
+            status: null, // or 'loading', 'succeeded', 'failed'
+            error: null
+        })
+    };
+
+    let controllerRef = useRef(null);
+
+    const onFileUpload = async() => {
+        if(!selectedFile){
+            return;
+        }
+
+        setUploadProgress({
+            progress: 0,
+            status: null, // or 'loading', 'succeeded', 'failed'
+            error: null
+        })
+
+
+        controllerRef.current = new AbortController();
+
+        const formdata = new FormData();
+
+        formdata.append(name, selectedFile);
+
+        const res = await dispatch(
+            updatethumbnail_promo({
+                file: formdata,
+                setUploadProgress,
+                signal: controllerRef.current.signal,
+                course_id
+            })
+        );
+
+        if(res.payload){
+            dispatch(courseDetails(course_id));
+        }
+    }
+
+    const onAbortUplaod = () => {
+        controllerRef.current.abort();
+        setUploadProgress({
+            progress: 0,
+            status: null,
+            error: null
+        })
+    }
+
+
+
+    return (
+        <>
+            <div  className='h-12 w-[100%] border border-black flex items-center pl-3 bg-[#F7F9FA] cursor-pointer relative'>
+                <label htmlFor={name} className='overflow-hidden text-ellipsis whitespace-nowrap w-[70%]' > {fileName || "No file selected"} </label>
+                {
+                    uploadProgress.status == null && (
+                        <button onClick={onFileUpload} className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' >Upload File </button>
+                    )
+                }
+
+                {
+                    uploadProgress.progress==100 && !uploadProgress.error &&(
+                        <button className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100 flex' ><IoMdDoneAll  className=' size-8  m-auto fill-blue-900' /> </button>
+                    )
+                }
+                {
+                    uploadProgress.error && (
+                        <button onClick={onFileUpload}  className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' > Retry </button>
+                    )
+                }
+
+                {
+                    uploadProgress.progress < 100 && uploadProgress.status =="uploading" && (
+                        <button onClick={onAbortUplaod} className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' >Cancel </button>
+                    )
+                }
+
+                <label
+                    htmlFor={name}
+                    style={{ width: `${uploadProgress.progress  == 0 ? 0 : uploadProgress.progress-29}%`, transition: 'width 0.3s ease-in-out' }}
+                    className='absolute bg-blue-600 h-[100%] left-0  flex items-center justify-center text-white'>
+                    {uploadProgress.status && uploadProgress.progress} %
+                </label>
+
+            </div>
+            <input name={name} onChange={handleFileChange} id={name} type="file" accept={`${type}/*`} hidden />
+        </>
+    )
+}
+
+function LandingPage({ setSaveThunk, setSaveEnable }) {
+
+    const dispatch = useDispatch();
+
+    const stateData = useSelector((state) => state.instructor.edit);
 
     const [data, setData] = useState({
         title: "",
         subtitle: "",
-        description:  "",
+        description: "",
         language: "",
         level: "",
         category: "",
         subcategory: ""
     });
 
-    console.log(data?.title);
-    
 
     const onUserInput = (e) => {
         const { value, name } = e.target;
@@ -54,25 +166,25 @@ function LandingPage({setSaveThunk,setSaveEnable}) {
         //         ...data
         //     }))
         // }
-        
+
         // setSaveThunk(()=>thunk)
     }
 
     useEffect(() => {
-        const thunk = async() => {
+        const thunk = async () => {
             const res = await dispatch(updateCourseDetails({
                 course_id: stateData._id,
                 ...data  // Use the latest `data` here
             }));
 
-            if(res?.payload){
+            if (res?.payload) {
                 dispatch(courseDetails(stateData._id));
             }
         };
-        
+
         setSaveThunk(() => thunk);  // Set the thunk function to be triggered later
-    }, [data, dispatch, setSaveThunk, stateData._id]); 
-    
+    }, [data, dispatch, setSaveThunk, stateData._id]);
+
 
     const textAreaRef = useRef(null);
 
@@ -83,7 +195,7 @@ function LandingPage({setSaveThunk,setSaveEnable}) {
         }
     }, [data.description]);
 
-    useEffect(()=>{
+    useEffect(() => {
         setData({
             title: stateData?.title || "",
             subtitle: stateData?.subtitle || "",
@@ -93,7 +205,7 @@ function LandingPage({setSaveThunk,setSaveEnable}) {
             category: stateData?.category || "",
             subcategory: stateData?.subcategory || ""
         })
-    },[stateData])
+    }, [stateData])
 
     return (
         <div className='w-[96%]'>
@@ -215,7 +327,7 @@ function LandingPage({setSaveThunk,setSaveEnable}) {
                         {/* Category Select */}
                         <div className='group relative'>
                             <select
-                            value={data?.category}
+                                value={data?.category}
                                 onChange={onUserInput}
                                 name="category"
                                 className="border border-black w-[250px] h-11 px-4 outline-none appearance-none bg-transparent relative z-10 cursor-pointer">
@@ -273,19 +385,15 @@ function LandingPage({setSaveThunk,setSaveEnable}) {
                     <h1 className='font-semibold text-lg'>Course image</h1>
 
                     <div className='flex gap-4'>
-                        <img className='size-[50%] border border-slate-300' src="https://s.udemycdn.com/course/750x422/placeholder.jpg" alt="" />
+                        <img className='size-[50%] border border-slate-300' src={stateData?.thumbnail?.secure_url || "https://s.udemycdn.com/course/750x422/placeholder.jpg"} alt="" />
 
-                        <div className='space-y-2'>
+                        <div className='space-y-2 w-[50%]'>
                             <h1>
                                 Upload your course image here. It must meet our <span className='link-primary underline cursor-pointer'>course image quality standards</span> to be accepted. Important guidelines: 750x422 pixels; .jpg, .jpeg,. gif, or .png. no text on the image.</h1>
 
-                            <div className='h-12 w-[100%] border border-black flex items-center pl-3 bg-[#F7F9FA]'>
-                                <h1 >No file selected</h1>
-                                <button className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' >Upload File</button>
-                            </div>
 
+                            <FileUpload type={"Image"} name={"thumbnail"} course_id={stateData._id} />
 
-                            <input type="file" hidden />
                         </div>
                     </div>
 
@@ -297,19 +405,20 @@ function LandingPage({setSaveThunk,setSaveEnable}) {
                     <h1 className='font-semibold text-lg'>Promotional video</h1>
 
                     <div className='flex gap-4'>
-                        <img className='size-[50%] border border-slate-300' src="https://s.udemycdn.com/course/750x422/placeholder.jpg" alt="" />
+                        
+                        {
+                            stateData?.trailerVideo ? (
+                                <video controls src={stateData?.trailerVideo?.secure_url}></video>
+                            ) : (
+                                <img className='size-[50%] border border-slate-300' src="https://s.udemycdn.com/course/750x422/placeholder.jpg" alt="" />
+                            )
+                        }
 
-                        <div className='space-y-2'>
+                        <div className='space-y-2 w-[50%]'>
                             <h1>
                                 Your promo video is a quick and compelling way for students to preview what they’ll learn in your course. Students considering your course are more likely to enroll if your promo video is well-made.<span className='link-primary underline cursor-pointer'> Learn how to make your promo video awesome!</span> </h1>
 
-                            <div className='h-12 w-[100%] border border-black flex items-center pl-3 bg-[#F7F9FA]'>
-                                <h1 >No file selected</h1>
-                                <button className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' >Upload File</button>
-                            </div>
-
-
-                            <input type="file" hidden />
+                                <FileUpload type={"Video"} name={"trailerVideo"} course_id={stateData._id} />
                         </div>
                     </div>
 

@@ -159,9 +159,6 @@ export const deleteCourse = createAsyncThunk("/instuctor/deleteCourse", async(da
 export const updateCourseDetails = createAsyncThunk("/instructor/updateCourse/details", async(data)=>{
     
     try {
-
-        console.log(data,"------here in thunk");
-        
         
         const res = axiosInstance.patch(`/course/${data.course_id}`, data);
 
@@ -178,6 +175,42 @@ export const updateCourseDetails = createAsyncThunk("/instructor/updateCourse/de
 
 })
 
+
+export const updatethumbnail_promo = createAsyncThunk("/instructro/updateCourse/media", async(data)=>{
+
+    try {
+
+        console.log("here inside",data);
+        
+        const res = axiosInstance.patch(`/course/${data.course_id}/media`, data.file ,{
+            headers: {
+                "Content-Type": "multipart/form-data"
+            },
+            onUploadProgress: (progressEvent) => {
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                data.setUploadProgress((prevstate) => ({
+                    ...prevstate, progress: percentCompleted, status: "uploading"
+                }))
+
+
+            },
+            signal: data.signal
+        });
+
+        toast.promise(res, {
+            loading:"updating course",
+            success: (data)=> data.data.message
+        })
+
+        return (await res).data;
+
+    } catch (error) {
+        toast.error(error.response.data.message);
+        data.setUploadProgress({
+            error: error.response.data.message, progress: 0, status: "failed"
+        })
+    }
+})
 
 const ManageCourseSlice = createSlice({
     name: "instructor",

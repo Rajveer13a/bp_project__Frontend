@@ -13,9 +13,9 @@ import CourseStructure from './Pages/CourseStructure';
 import Curriculum from './Pages/Curriculum/Curriculum';
 import Film from './Pages/Film';
 import Goals from './Pages/Goals';
+import LandingPage from './Pages/LandingPage';
 import Settings from './Pages/Settings';
 import Setup from './Pages/Setup';
-import LandingPage from './Pages/LandingPage';
 
 
 const DeletingAlert = ({onCancel, onConfirm}) => {
