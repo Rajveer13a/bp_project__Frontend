@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { AiOutlineReload } from "react-icons/ai";
 import { FaItalic } from 'react-icons/fa'
 import { IoIosArrowDown, IoIosCloudDone, IoMdDoneAll } from 'react-icons/io'
 import { MdFormatBold, MdFormatItalic, MdFormatListBulleted, MdFormatListNumbered, MdInfo, MdList } from 'react-icons/md'
@@ -52,8 +53,8 @@ const FileUpload = ({ type, name, course_id }) => {
 
     let controllerRef = useRef(null);
 
-    const onFileUpload = async() => {
-        if(!selectedFile){
+    const onFileUpload = async () => {
+        if (!selectedFile) {
             return;
         }
 
@@ -79,9 +80,21 @@ const FileUpload = ({ type, name, course_id }) => {
             })
         );
 
-        if(res.payload){
+        if (res.payload) {
+            setUploadProgress({
+                progress: 0,
+                error: null,
+                status: "succeeded"
+            })
             dispatch(courseDetails(course_id));
         }
+
+        // setUploadProgress({
+        //     progress: 0,
+        //     status: null, // or 'loading', 'succeeded', 'failed'
+        //     error: null
+        // })
+
     }
 
     const onAbortUplaod = () => {
@@ -97,8 +110,9 @@ const FileUpload = ({ type, name, course_id }) => {
 
     return (
         <>
-            <div  className='h-12 w-[100%] border border-black flex items-center pl-3 bg-[#F7F9FA] cursor-pointer relative'>
-                <label htmlFor={name} className='overflow-hidden text-ellipsis whitespace-nowrap w-[70%]' > {fileName || "No file selected"} </label>
+            <div>
+            <div className='h-12 w-[380px] border border-black flex items-center pl-3 bg-[#F7F9FA] cursor-pointer relative'>
+                <label htmlFor={name} className='overflow-hidden text-ellipsis whitespace-nowrap w-[70%]' > {uploadProgress.status && uploadProgress.progress == 100 ? `processing ${name}...` : fileName || "No file selected"} </label>
                 {
                     uploadProgress.status == null && (
                         <button onClick={onFileUpload} className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' >Upload File </button>
@@ -106,31 +120,50 @@ const FileUpload = ({ type, name, course_id }) => {
                 }
 
                 {
-                    uploadProgress.progress==100 && !uploadProgress.error &&(
-                        <button className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100 flex' ><IoMdDoneAll  className=' size-8  m-auto fill-blue-900' /> </button>
+                    uploadProgress.progress == 100 && !uploadProgress.error && (
+                        <button className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100 flex' ><AiOutlineReload className=' size-7  m-auto fill-blue-900  animate-spin' /> </button>
+                    )
+                }
+                {
+                    uploadProgress.status == "succeeded" && (
+                        <button className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100 flex' ><IoMdDoneAll className=' size-8  m-auto fill-blue-800' /> </button>
                     )
                 }
                 {
                     uploadProgress.error && (
-                        <button onClick={onFileUpload}  className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' > Retry </button>
+                        <button onClick={onFileUpload} className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' > Retry </button>
                     )
                 }
 
                 {
-                    uploadProgress.progress < 100 && uploadProgress.status =="uploading" && (
+                    uploadProgress.progress < 100 && uploadProgress.status == "uploading" && (
                         <button onClick={onAbortUplaod} className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' >Cancel </button>
                     )
                 }
 
-                <label
-                    htmlFor={name}
-                    style={{ width: `${uploadProgress.progress  == 0 ? 0 : uploadProgress.progress-29}%`, transition: 'width 0.3s ease-in-out' }}
-                    className='absolute bg-blue-600 h-[100%] left-0  flex items-center justify-center text-white'>
-                    {uploadProgress.status && uploadProgress.progress} %
-                </label>
+                {
+                    uploadProgress.progress < 100 && (
+                        <label
+                            htmlFor={name}
+                            style={{ width: `${uploadProgress.progress == 0 ? 0 : uploadProgress.progress - 29}%`, transition: 'width 0.3s ease-in-out' }}
+                            className='absolute bg-blue-600 h-[100%] left-0  flex items-center justify-center text-white'>
+                            {uploadProgress.status && uploadProgress.progress} %
+                        </label>
+                    )
+                }
+
 
             </div>
             <input name={name} onChange={handleFileChange} id={name} type="file" accept={`${type}/*`} hidden />
+        </div>
+        
+        {
+            uploadProgress.status && uploadProgress.progress == 100 && (
+                <h1 className='text-sm font-semibold text-blue-800'>you can proceed, changes will reflect shortly.</h1>
+            )
+        }
+        
+
         </>
     )
 }
@@ -405,10 +438,10 @@ function LandingPage({ setSaveThunk, setSaveEnable }) {
                     <h1 className='font-semibold text-lg'>Promotional video</h1>
 
                     <div className='flex gap-4'>
-                        
+
                         {
                             stateData?.trailerVideo ? (
-                                <video controls src={stateData?.trailerVideo?.secure_url}></video>
+                                <video className='size-[50%]' controls src={stateData?.trailerVideo?.secure_url}></video>
                             ) : (
                                 <img className='size-[50%] border border-slate-300' src="https://s.udemycdn.com/course/750x422/placeholder.jpg" alt="" />
                             )
@@ -418,7 +451,7 @@ function LandingPage({ setSaveThunk, setSaveEnable }) {
                             <h1>
                                 Your promo video is a quick and compelling way for students to preview what they’ll learn in your course. Students considering your course are more likely to enroll if your promo video is well-made.<span className='link-primary underline cursor-pointer'> Learn how to make your promo video awesome!</span> </h1>
 
-                                <FileUpload type={"Video"} name={"trailerVideo"} course_id={stateData._id} />
+                            <FileUpload type={"Video"} name={"trailerVideo"} course_id={stateData._id} />
                         </div>
                     </div>
 

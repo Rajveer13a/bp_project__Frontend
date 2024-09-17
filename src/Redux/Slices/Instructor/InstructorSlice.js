@@ -197,10 +197,10 @@ export const updatethumbnail_promo = createAsyncThunk("/instructro/updateCourse/
             signal: data.signal
         });
 
-        toast.promise(res, {
-            loading:"updating course",
-            success: (data)=> data.data.message
-        })
+        // toast.promise(res, {
+        //     loading:"updating course",
+        //     success: (data)=> data.data.message
+        // })
 
         return (await res).data;
 
