@@ -16,6 +16,7 @@ import Goals from './Pages/Goals';
 import LandingPage from './Pages/LandingPage';
 import Settings from './Pages/Settings';
 import Setup from './Pages/Setup';
+import Price from './Pages/Price';
 
 
 const DeletingAlert = ({onCancel, onConfirm}) => {
@@ -124,6 +125,10 @@ function CourseManage() {
 
         case "basics":
             render = <LandingPage setSaveThunk={setSaveThunk} setSaveEnable={setSaveEnable} />
+            break;
+        case "pricing":
+            render = <Price/>
+            break;
 
     }
 
