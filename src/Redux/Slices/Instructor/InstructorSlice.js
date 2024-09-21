@@ -176,7 +176,7 @@ export const updateCourseDetails = createAsyncThunk("/instructor/updateCourse/de
 })
 
 
-export const updatethumbnail_promo = createAsyncThunk("/instructro/updateCourse/media", async(data)=>{
+export const updatethumbnail_promo = createAsyncThunk("/instructor/updateCourse/media", async(data)=>{
 
     try {
 
@@ -209,6 +209,15 @@ export const updatethumbnail_promo = createAsyncThunk("/instructro/updateCourse/
         data.setUploadProgress({
             error: error.response.data.message, progress: 0, status: "failed"
         })
+    }
+})
+
+export const updateInstructorDetails = createAsyncThunk("/instructor/updateInstructorDetails", async(data)=>{
+
+    try {
+        const res = axiosInstance.patch()
+    } catch (error) {
+        toast.error(error.response.data.message)
     }
 })
 

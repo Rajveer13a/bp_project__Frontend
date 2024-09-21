@@ -191,3 +191,14 @@
 .searchParent:hover .searchAnimate {
   animation: circularMotion 4s linear infinite ;
 }
+
+.underBlack::after{
+  content: "";
+  background: #2D2F31;
+  width: 150%;
+  height: 2px;
+  position: absolute;
+  top: 38px;
+  z-index: 1;
+  left: -25px;
+}
