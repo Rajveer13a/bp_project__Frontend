@@ -215,7 +215,15 @@ export const updatethumbnail_promo = createAsyncThunk("/instructor/updateCourse/
 export const updateInstructorDetails = createAsyncThunk("/instructor/updateInstructorDetails", async(data)=>{
 
     try {
-        const res = axiosInstance.patch()
+        const res = axiosInstance.patch("/instructor/details",data);
+
+        toast.promise(res, {
+            loading:"updating course",
+            success: (data)=> data.data.message
+        })
+
+        return (await res).data;
+
     } catch (error) {
         toast.error(error.response.data.message)
     }

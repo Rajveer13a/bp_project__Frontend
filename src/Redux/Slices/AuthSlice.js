@@ -175,10 +175,23 @@ export const updateAvatar = createAsyncThunk('/auth/updateAvatar', async (data) 
 
     try {
 
-        const res = axiosInstance.post('/user/updateUserAvatarImage', data);
+        const res = axiosInstance.post('/user/updateUserAvatarImage', data.file,{
+            headers: {
+                "Content-Type": "multipart/form-data"
+            },
+            onUploadProgress: (progressEvent) => {
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                data.setUploadProgress((prevstate) => ({
+                    ...prevstate, progress: percentCompleted, status: "uploading"
+                }))
+
+
+            },
+            signal: data.signal
+        });
 
         toast.promise(res, {
-            loading: "updating avatar",
+            // loading: "updating avatar",
             success: (data) => data.data.message,
             error: "failed to update avatar"
         });

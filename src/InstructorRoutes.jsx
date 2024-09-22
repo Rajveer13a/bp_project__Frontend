@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 import CourseCreate from './Instructor/Pages/CourseCreate'
 import CourseManage from './Instructor/Pages/CourseManage/CourseManage'
 import Courses from './Instructor/Pages/Courses'
-import InstructorProfile from './Instructor/Pages/InstructorProfile'
+import InstructorProfile from './Instructor/Pages/InstructorProfile/InstructorProfile'
 
 
 function InstructorRoutes() {
