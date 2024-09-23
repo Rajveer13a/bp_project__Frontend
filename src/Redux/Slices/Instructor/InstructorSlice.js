@@ -229,6 +229,24 @@ export const updateInstructorDetails = createAsyncThunk("/instructor/updateInstr
     }
 })
 
+
+export const connectBankAccount = createAsyncThunk("/instructor/payouts/link-bank", async (data)=>{
+    try {
+        
+        const res = axiosInstance.post("/payouts/link-bank",data);
+
+        toast.promise(res, {
+            loading:"updating course",
+            success: (data)=> data.data.message
+        })
+
+        return (await res).data;
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
 const ManageCourseSlice = createSlice({
     name: "instructor",
     initialState,

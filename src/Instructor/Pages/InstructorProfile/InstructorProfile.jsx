@@ -8,6 +8,9 @@ import { instructorDetails, updateInstructorDetails } from '@/Redux/Slices/Instr
 import LayoutIn from '../../Layout/LayoutIn'
 import PersonalInfo from './PersonalInfo';
 import ProfilePicture from './ProfilePicture';
+import Terms from './Terms';
+import Marketing from './Marketing';
+import Payouts from './Payouts';
 
 
 
@@ -41,7 +44,13 @@ function InstructorProfile() {
 
         {/* <PersonalInfo/> */}
 
-        <ProfilePicture/>
+        {/* <ProfilePicture/> */}
+
+        {/* <Terms/> */}
+
+        {/* <Marketing/> */}
+
+        <Payouts/>
 
       </div>
 
