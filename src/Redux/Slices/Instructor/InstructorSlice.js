@@ -247,6 +247,23 @@ export const connectBankAccount = createAsyncThunk("/instructor/payouts/link-ban
     }
 })
 
+export const getAccount = createAsyncThunk("/instructor/payouts/getAccount", async ()=>{
+    try {
+        
+        const res = axiosInstance.get("/payouts/account");
+
+        toast.promise(res, {
+            loading:"updating course",
+            success: (data)=> data.data.message
+        })
+
+        return (await res).data;
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
 const ManageCourseSlice = createSlice({
     name: "instructor",
     initialState,

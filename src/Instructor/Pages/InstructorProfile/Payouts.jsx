@@ -1,9 +1,53 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { BiLinkExternal } from "react-icons/bi";
 import { MdInfo } from 'react-icons/md'
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom'
 
+import { connectBankAccount, getAccount } from '@/Redux/Slices/Instructor/InstructorSlice';
+
 function Payouts() {
+
+    const[connected, setConnected] = useState(false);
+
+    const dispatch = useDispatch();
+    
+    const [data ,setData]  = useState({
+        account_number:"",
+        ifsc:"",
+        name:""
+    })
+
+    console.log(data);
+    
+
+    const onUserInput = (e)=>{
+        let {value , name} = e.target;
+        if(name=="name"){
+            value = value.replace(/[^a-zA-Z]/g, '');
+        }
+
+        setData({
+            ...data,
+            [name] : value
+        })
+    }
+
+    const onConnect = (e)=>{
+        e.preventDefault();
+        dispatch(connectBankAccount(data));
+    }
+
+    useEffect(()=>{
+        dispatch(getAccount()).then((res)=>{
+            if(res.payload){
+                setData(res.payload.data);
+                setConnected(true)
+            }
+        });
+
+    },[])
+
     return (
         <div className='space-y-6'>
 
@@ -24,10 +68,14 @@ function Payouts() {
 
             <h1 className='font-semibold text-lg'>Add Bank Account</h1>
 
-            <form className='space-x-10 flex flex-row ' action="">
+            <form onSubmit={onConnect} className='space-x-10 flex flex-row ' action="">
 
                 <div className='flex gap-4'>
                     <input
+                        disabled={connected}
+                        value={data.account_number}
+                        name='account_number'
+                        onChange={onUserInput}
                         required
                         onInput={(e) => {
                             e.target.value = e.target.value.replace(/[^0-9]/g, '');  // Allow only numbers
@@ -39,6 +87,10 @@ function Payouts() {
                         placeholder='Account number' />
 
                     <input
+                        disabled={connected}
+                        value={data.ifsc}
+                        name="ifsc"
+                        onChange={onUserInput}
                         required
                         maxLength="11"
                         className='border border-black placeholder:text-slate-600 px-4 w-[220px] py-1 outline-none'
@@ -46,6 +98,10 @@ function Payouts() {
                         placeholder='IFSC Code' />
 
                     <input
+                        disabled={connected}
+                        value={data.name}
+                        name='name'
+                        onChange={onUserInput}
                         required
                         maxLength="25"
                         className='border border-black placeholder:text-slate-600 px-4 w-[220px] py-1 outline-none'
@@ -56,7 +112,9 @@ function Payouts() {
 
 
                 <div className='flex justify-end w-full'>
-                    <button className='border border-black font-bold px-8 py-1 text-sm hover:bg-[#E3E7EA] mr-12'>Connect</button>
+                    {
+                        connected ? <button disabled className='border border-black bg-green-400 font-bold px-8 py-1 text-sm  mr-12'>Connected</button> : <button className='border border-black font-bold px-8 py-1 text-sm hover:bg-[#E3E7EA] mr-12'>Connect</button>
+                    }
                 </div>
 
             </form>
