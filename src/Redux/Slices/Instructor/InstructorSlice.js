@@ -5,7 +5,8 @@ import { useDispatch } from "react-redux";
 import axiosInstance from "@/Helpers/axiosInstance";
 
 const initialState = {
-    data: "",
+    data: localStorage.getItem('instructor_data') ? JSON.parse(localStorage.getItem('instructor_data')) : "" ,
+
     edit: "",
 
 }
@@ -218,7 +219,7 @@ export const updateInstructorDetails = createAsyncThunk("/instructor/updateInstr
         const res = axiosInstance.patch("/instructor/details",data);
 
         toast.promise(res, {
-            loading:"updating course",
+            loading:"updating details",
             success: (data)=> data.data.message
         })
 
@@ -236,7 +237,7 @@ export const connectBankAccount = createAsyncThunk("/instructor/payouts/link-ban
         const res = axiosInstance.post("/payouts/link-bank",data);
 
         toast.promise(res, {
-            loading:"updating course",
+            loading:"adding new account",
             success: (data)=> data.data.message
         })
 
@@ -251,6 +252,41 @@ export const getAccount = createAsyncThunk("/instructor/payouts/getAccount", asy
     try {
         
         const res = axiosInstance.get("/payouts/account");
+
+        toast.promise(res, {
+            loading:"fetching account",
+            success: (data)=> data.data.message
+        })
+
+        return (await res).data;
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
+export const updatePrice = createAsyncThunk("/instructor/course/updatePrice", async (data)=>{
+    try {
+        
+        const res = axiosInstance.patch(`/course/${data.course_id}/price`,data);
+
+        toast.promise(res, {
+            loading:"updating course",
+            success: (data)=> data.data.message
+        })
+
+        return (await res).data;
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
+export const updateGoals = createAsyncThunk("/instructor/course/goals", async (data)=>{
+    try {
+        console.log(data.course_id);
+        
+        const res = axiosInstance.patch(`/course/${data.course_id}/goals`,data);
 
         toast.promise(res, {
             loading:"updating course",
@@ -271,11 +307,19 @@ const ManageCourseSlice = createSlice({
         // setAlert(state,action){
         //     state.alertState= action.payload;
         // }
+        saveAndContinue(state){
+            console.log("herreee");
+            
+            state.data.profileCompleted.step = state.data.profileCompleted.step+1;
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(instructorDetails.fulfilled, (state, action) => {
             if (action?.payload) {
                 state.data = action.payload.data.data.instructor;
+
+                localStorage.setItem("instructor_data",JSON.stringify(action.payload.data.data.instructor));
+
             }
         })
 
@@ -313,10 +357,18 @@ const ManageCourseSlice = createSlice({
             }
         })
 
+        builder.addCase(updateInstructorDetails.fulfilled, (state, action)=>{
+            if(action?.payload){
+                state.data.profileCompleted = {
+                    step :2,
+                }
+            }
+        })
+
 
     }
 })
 
-// export const  {setAlert} = ManageCourseSlice.actions;
+export const  {saveAndContinue} = ManageCourseSlice.actions;
 
 export default ManageCourseSlice.reducer;

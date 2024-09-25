@@ -1,13 +1,32 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { IoIosArrowDown } from 'react-icons/io'
 import { MdOutlineWarning } from 'react-icons/md';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom'
+
+import { updatePrice } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 function Price() {
 
+    const dispatch = useDispatch();
     const stateData = useSelector((state) => state.instructor.edit);
+    const instructor = useSelector((state) => state.instructor.data);
 
+    const [price, setPrice] = useState(0);
+
+    console.log(price);
+
+
+    const onSave = () => {
+        dispatch(updatePrice({
+            course_id: stateData._id,
+            price: Number(price)
+        }))
+    }
+
+    useEffect(()=>{
+        setPrice(stateData.price)
+    },[stateData])
 
     return (
         <div className='w-[96%] min-h-[120vh]'>
@@ -21,7 +40,7 @@ function Price() {
             <div className='px-12 space-y-6 py-8'>
 
                 {
-                    !stateData?.profileCompleted && (
+                    !instructor?.profileCompleted?.status && (
                         <div className='bg-[#F3CA8C] p-4 flex gap-4 '>
                             <MdOutlineWarning className='size-8' />
                             <div>
@@ -69,21 +88,24 @@ function Price() {
 
                             <div className='group relative '>
                                 <select
+                                value={price}
+                                    onChange={(e) => setPrice(e.target.value)}
 
                                     className="border border-black w-full  h-11 px-4 outline-none appearance-none bg-transparent relative z-10 cursor-pointer">
 
-                                    <option value="tier1">Free</option>
-                                    <option value="tier2">₹799 (tier 2)</option>
-                                    <option value="tier3">₹1,199 (tier 3)</option>
-                                    <option value="tier4">₹1,499 (tier 4)</option>
-                                    <option value="tier5">₹1,699 (tier 5)</option>
-                                    <option value="tier6">₹1,799 (tier 6)</option>
-                                    <option value="tier7">₹1,999 (tier 7)</option>
-                                    <option value="tier8">₹2,299 (tier 8)</option>
-                                    <option value="tier9">₹2,499 (tier 9)</option>
-                                    <option value="tier10">₹2,699 (tier 10)</option>
-                                    <option value="tier11">₹2,799 (tier 11)</option>
-                                    <option value="tier12">₹2,899 (tier 12)</option>
+                                    <option value={0}>Free</option>
+                                    <option value={799}>₹799 (tier 2)</option>
+                                    <option value={1199}>₹1,199 (tier 3)</option>
+                                    <option value={1499}>₹1,499 (tier 4)</option>
+                                    <option value={1699}>₹1,699 (tier 5)</option>
+                                    <option value={1799}>₹1,799 (tier 6)</option>
+                                    <option value={1999}>₹1,999 (tier 7)</option>
+                                    <option value={2299}>₹2,299 (tier 8)</option>
+                                    <option value={2499}>₹2,499 (tier 9)</option>
+                                    <option value={2699}>₹2,699 (tier 10)</option>
+                                    <option value={2799}>₹2,799 (tier 11)</option>
+                                    <option value={2899}>₹2,899 (tier 12)</option>
+
 
 
                                 </select>
@@ -102,7 +124,7 @@ function Price() {
                 </div>
 
 
-                <button disabled={!stateData.profileCompleted} className={`font-bold  text-white px-6 py-3 mt-4  transition-all duration-100 bg-slate-800 hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-[#6A6F73] `}>
+                <button onClick={onSave} disabled={!instructor.profileCompleted} className={`font-bold  text-white px-6 py-3 mt-4  transition-all duration-100 bg-slate-800 hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-[#6A6F73] `}>
                     Save
                 </button>
 

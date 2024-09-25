@@ -1,13 +1,23 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
+
+import { saveAndContinue } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 import { CustomCheckbox } from './Terms'
 
 function Marketing() {
+    const dispatch = useDispatch();
+
+    const onSave = (e)=>{
+        e.preventDefault();
+        dispatch(saveAndContinue())
+    }
+
     return (
         <div className='flex'>
 
-            <form action="">
+            <form onSubmit={onSave} action="">
                 <div className='m-auto  w-[46%] space-y-4'>
 
                     <h1 className='font-bold text-xl'>Brainy’s Instructor Programs</h1>

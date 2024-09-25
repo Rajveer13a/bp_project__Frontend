@@ -6,20 +6,58 @@ import { useDispatch, useSelector } from 'react-redux';
 import { instructorDetails, updateInstructorDetails } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 import LayoutIn from '../../Layout/LayoutIn'
+import Marketing from './Marketing';
+import Payouts from './Payouts';
 import PersonalInfo from './PersonalInfo';
 import ProfilePicture from './ProfilePicture';
 import Terms from './Terms';
-import Marketing from './Marketing';
-import Payouts from './Payouts';
 
 
 
 function InstructorProfile() {
 
+  const dispatch = useDispatch();
 
+  const step = useSelector((state)=>state.instructor.data?.profileCompleted?.step)
 
   const [active, setActive] = useState("personal-info");
 
+  const [ render , setRender] = useState(null);
+
+  
+  
+
+  useEffect(()=>{
+    switch (step) {
+      case 1:
+        setRender(<PersonalInfo/>);
+        setActive("personal-info");
+        break;
+      case 2:
+        setRender(<ProfilePicture/>);
+        setActive("profile-picture");
+        break;
+      case 3:
+        setRender(<Terms/>);
+        setActive("terms");
+        break;
+      case 4:
+        setRender(<Marketing/>);
+        setActive("marketing");
+        break;
+      case 5:
+        setRender(<Payouts/>);
+        setActive("payouts");
+        break;
+    
+      default:
+        break;
+    }
+  },[step])
+
+  useEffect(()=>{
+    dispatch(instructorDetails())
+  },[])
   
 
   return (
@@ -43,14 +81,16 @@ function InstructorProfile() {
         </div>
 
         {/* <PersonalInfo/> */}
-
+        
         {/* <ProfilePicture/> */}
 
         {/* <Terms/> */}
 
         {/* <Marketing/> */}
 
-        <Payouts/>
+        {/* <Payouts/> */}
+
+        {render}
 
       </div>
 

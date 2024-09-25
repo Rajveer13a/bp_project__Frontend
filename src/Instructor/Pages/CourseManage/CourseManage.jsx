@@ -103,7 +103,7 @@ function CourseManage() {
     let render;
     switch (active) {
         case "goals":
-            render = <Goals />
+            render = <Goals setSaveThunk={setSaveThunk} setSaveEnable={setSaveEnable} />
             break;
         case "course-structure":
             render = <CourseStructure />

@@ -49,6 +49,7 @@ function PersonalInfo() {
       headline
     }));
     
+    
   }
 
   useEffect(() => {

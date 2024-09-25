@@ -4,49 +4,56 @@ import { MdInfo } from 'react-icons/md'
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom'
 
-import { connectBankAccount, getAccount } from '@/Redux/Slices/Instructor/InstructorSlice';
+import { connectBankAccount, getAccount, instructorDetails } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 function Payouts() {
 
-    const[connected, setConnected] = useState(false);
+    const [connected, setConnected] = useState(false);
+
 
     const dispatch = useDispatch();
-    
-    const [data ,setData]  = useState({
-        account_number:"",
-        ifsc:"",
-        name:""
+
+    const [data, setData] = useState({
+        account_number: "",
+        ifsc: "",
+        name: ""
     })
 
     console.log(data);
-    
 
-    const onUserInput = (e)=>{
-        let {value , name} = e.target;
-        if(name=="name"){
+
+    const onUserInput = (e) => {
+        let { value, name } = e.target;
+        if (name == "name") {
             value = value.replace(/[^a-zA-Z]/g, '');
         }
 
         setData({
             ...data,
-            [name] : value
+            [name]: value
         })
     }
 
-    const onConnect = (e)=>{
+    const onConnect = (e) => {
         e.preventDefault();
-        dispatch(connectBankAccount(data));
+        dispatch(connectBankAccount(data)).then((res)=>{
+            if(res?.payload){
+                setConnected(true);
+            }
+        });
+
+
     }
 
-    useEffect(()=>{
-        dispatch(getAccount()).then((res)=>{
-            if(res.payload){
+    useEffect(() => {
+        dispatch(getAccount()).then((res) => {
+            if (res.payload) {
                 setData(res.payload.data);
                 setConnected(true)
             }
         });
 
-    },[])
+    }, [connected])
 
     return (
         <div className='space-y-6'>
@@ -66,9 +73,36 @@ function Payouts() {
                 </div>
             </div>
 
-            <h1 className='font-semibold text-lg'>Add Bank Account</h1>
+            <h1 className='font-semibold text-lg'>{connected ? "Account Details":"Add Bank Account"}</h1>
 
-            <form onSubmit={onConnect} className='space-x-10 flex flex-row ' action="">
+            {connected && (
+                <div>
+
+                    <table className="min-w-[80%] table-auto border-collapse border border-gray-300 shadow-lg">
+                        <thead>
+                            <tr className="bg-blue-500 text-white">
+                                <th className="px-6 py-3 border border-gray-300 text-left">Account Holder Name</th>
+                                <th className="px-6 py-3 border border-gray-300 text-left">Account Number</th>
+                                <th className="px-6 py-3 border border-gray-300 text-left">IFSC</th>
+                                <th className="px-6 py-3 border border-gray-300 text-left">Bank</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr className="bg-white hover:bg-gray-100">
+                                <td className="px-6 py-4 border border-gray-300">{data.name}</td>
+                                <td className="px-6 py-4 border border-gray-300">{data.account_number}</td>
+                                <td className="px-6 py-4 border border-gray-300">{data.ifsc}</td>
+                                <td className="px-6 py-4 border border-gray-300">{data.bank_name}</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+            )}
+
+            {!connected && <form onSubmit={onConnect} className='space-x-10 flex flex-row ' action="">
 
                 <div className='flex gap-4'>
                     <input
@@ -112,12 +146,10 @@ function Payouts() {
 
 
                 <div className='flex justify-end w-full'>
-                    {
-                        connected ? <button disabled className='border border-black bg-green-400 font-bold px-8 py-1 text-sm  mr-12'>Connected</button> : <button className='border border-black font-bold px-8 py-1 text-sm hover:bg-[#E3E7EA] mr-12'>Connect</button>
-                    }
+                    <button className='border border-black font-bold px-8 py-1 text-sm hover:bg-[#E3E7EA] mr-12'>Connect</button>
                 </div>
 
-            </form>
+            </form>}
 
             <div className='space-y-4'>
                 <h1 className='text-xl font-semibold'>

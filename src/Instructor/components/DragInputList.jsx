@@ -52,24 +52,27 @@ function DragInputList({ iscount = true, name, state, placeholders }) {
   const handleUserInput = (e, indx) => {
     const { name, value } = e.target;
 
-    let updated = data[name];
+    let updated = [...data[name]];
+  
     updated[indx] = value;
-
+  
     setData({ ...data, [name]: updated });
-  }
+  };
+  
 
   const addMoreObj = (key) => {
-    
-    let updated = data[key]
-
+    let updated = [...data[key]]; 
+     
     if (updated.some((value) => value.trim() === "")) {
-      return
+      return;
     }
-
+  
+   
     updated.push("");
-
-    setData({ ...data, [key]: updated })
-  }
+  
+    setData({ ...data, [key]: updated });
+  };
+  
 
   const [active, setActive] = useState(undefined);
 

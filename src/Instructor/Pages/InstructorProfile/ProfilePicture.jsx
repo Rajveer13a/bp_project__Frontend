@@ -4,6 +4,7 @@ import { IoMdDoneAll } from 'react-icons/io';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { updateAvatar } from '@/Redux/Slices/AuthSlice';
+import { instructorDetails } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 const FileUpload = ({ type, name}) => {
 
@@ -154,10 +155,16 @@ const FileUpload = ({ type, name}) => {
     )
 }
 
+ 
+
 function ProfilePicture() {
 
+    const dispatch = useDispatch();
     const currImage = useSelector((state)=>state?.auth?.data?.profileImage?.secure_url);
- 
+    
+    const onContinue = ()=>{
+        dispatch(instructorDetails())
+    }
    
     return (
         <div className='flex'>
@@ -187,7 +194,7 @@ function ProfilePicture() {
 
                 <div></div>
                 
-                <button className='bg-slate-800 text-white font-bold mt-8  px-3 py-3 hover:bg-slate-700 transition-all duration-100 '>Save and Continue</button>
+                <button onClick={onContinue} className='bg-slate-800 text-white font-bold mt-8  px-3 py-3 hover:bg-slate-700 transition-all duration-100 '>Save and Continue</button>
 
                 {/* <input onChange={handleImageChange} id='profilePic' type="file" hidden accept='Image/*' /> */}
 

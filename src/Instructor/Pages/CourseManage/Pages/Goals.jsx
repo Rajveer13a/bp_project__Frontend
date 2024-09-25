@@ -1,35 +1,76 @@
 
 import { data } from 'autoprefixer';
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FaPlus } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom'
+
+import { courseDetails, updateGoals } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 import DragInputList from '../../../components/DragInputList';
 
 
 
-function Goals() {
+function Goals({ setSaveThunk, setSaveEnable }) {
+
+  const stateData = useSelector((state) => state.instructor.edit);
+
+  const dispatch = useDispatch();
 
   const placeholders = [
     "Example: Define the roles and responsibilities of a project manager",
-    "Example: Estimate project timelines and budgets", 
+    "Example: Estimate project timelines and budgets",
     "Example: Identify and manage project risks",
     "Example: Complete a case study to manage a project from conception to completion"
   ]
 
   const placeholders2 = ["Example: No programming experience needed. You will learn everything you need to know"]
 
-  const placeholders3 = [ "Example: Beginner Python developers curious about data science"]
+  const placeholders3 = ["Example: Beginner Python developers curious about data science"]
 
 
   const [data, setData] = useState({
     objectives: Array(4).fill(""),
-    prerequisites : [""],
-    "intended-learners" : [""]
+    prerequisites: [""],
+    "intended_learners": [""]
   })
 
-  
+  const prevData = useRef(JSON.parse(JSON.stringify(data)));
 
+  useEffect(() => {
+
+    if (JSON.stringify(prevData.current) != JSON.stringify(data)) {
+      setSaveEnable(true);
+    }else{
+      setSaveEnable(false);
+    }
+
+    const thunk = async () => {
+      const res = await dispatch(updateGoals({
+        course_id: stateData._id,
+        ...data
+      }));
+
+      if (res?.payload) {
+        dispatch(courseDetails(stateData._id));
+      }
+    };
+
+    setSaveThunk(() => thunk);  // Set the thunk function to be triggered later
+  }, [data, dispatch, stateData, setSaveThunk, setSaveEnable]);
+
+
+  useEffect(()=>{
+    if(stateData.goals){
+      setData({
+        ...data,
+        objectives: stateData.goals.objectives,
+        prerequisites: stateData.goals.prerequisites,
+        intended_learners: stateData.goals.intended_learners,
+      })
+    }
+    
+  },[stateData])
 
 
 
@@ -46,13 +87,13 @@ function Goals() {
           <h1 className='font-bold'>What will students learn in your course?</h1>
           <p className=''>You must enter at least 4 learning <Link className='link link-primary'>objectives or outcomes</Link> that learners can expect to achieve after completing your course.</p>
 
-          <DragInputList  name={"objectives"} state={[data, setData]} placeholders={placeholders} />
+          <DragInputList name={"objectives"} state={[data, setData]} placeholders={placeholders} />
         </div>
 
         <div className=' space-y-2 pt-8'>
           <h1 className='font-bold'>What are the requirements or prerequisites for taking your course?</h1>
           <p className=''>List the required skills, experience, tools or equipment learners should have prior to taking your course.
-          If there are no requirements, use this space as an opportunity to lower the barrier for beginners.</p>
+            If there are no requirements, use this space as an opportunity to lower the barrier for beginners.</p>
 
           <DragInputList name={"prerequisites"} state={[data, setData]} placeholders={placeholders2} />
         </div>
@@ -60,9 +101,9 @@ function Goals() {
         <div className=' space-y-2 pt-8'>
           <h1 className='font-bold'>Who is this course for?</h1>
           <p className=''>Write a clear description of the <Link className='link link-primary'>intended learners</Link>  for your course who will find your course content valuable.
-          This will help you attract the right learners to your course.</p>
+            This will help you attract the right learners to your course.</p>
 
-          <DragInputList name={"intended-learners"} state={[data, setData]} placeholders={placeholders3} />
+          <DragInputList name={"intended_learners"} state={[data, setData]} placeholders={placeholders3} />
         </div>
 
       </div>

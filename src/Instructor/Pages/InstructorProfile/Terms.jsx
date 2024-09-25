@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
 import { FaCheck } from 'react-icons/fa6';
 import { IoMdCheckmark } from 'react-icons/io'
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom'
+
+import { saveAndContinue } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 export function CustomCheckbox({className}) {
     const [isChecked, setIsChecked] = useState(false);
@@ -26,10 +29,17 @@ export function CustomCheckbox({className}) {
 }
 
 function Terms() {
+    const dispatch = useDispatch();
+
+    const onSave = (e)=>{
+        e.preventDefault();
+        dispatch(saveAndContinue())
+    }
+
     return (
         <div className='flex'>
 
-            <form action="">
+            <form onSubmit={onSave} action="">
                 <div className='m-auto  w-[46%] space-y-4'>
 
                     <h1>When you sign up to become an instructor on the Udemy platform, you agree to abide by the <Link className='link-primary'>Instructor Terms.</Link></h1>
