@@ -68,6 +68,12 @@ function Goals({ setSaveThunk, setSaveEnable }) {
         prerequisites: stateData.goals.prerequisites,
         intended_learners: stateData.goals.intended_learners,
       })
+    }else{
+      setData({
+        objectives: Array(4).fill(""),
+        prerequisites: [""],
+        "intended_learners": [""]
+      })
     }
     
   },[stateData])

@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import axiosInstance from "@/Helpers/axiosInstance";
 
 const initialState = {
-    data: localStorage.getItem('instructor_data') ? JSON.parse(localStorage.getItem('instructor_data')) : "" ,
+    data: localStorage.getItem('instructor_data') ? JSON.parse(localStorage.getItem('instructor_data')) : "",
 
     edit: "",
 
@@ -121,51 +121,51 @@ export const deleteLecture = createAsyncThunk("/instructor/deleteLecture", async
     }
 })
 
-export const submitForApproval = createAsyncThunk("/instructor/submitforapproval", async (data) =>{
+export const submitForApproval = createAsyncThunk("/instructor/submitforapproval", async (data) => {
 
     try {
 
         const res = axiosInstance.post("/course/submit", {
-            course_id : data.course_id
+            course_id: data.course_id
         });
 
         toast.promise(res, {
             loading: "submitting for approval",
-            success: (data)=> data.data.message
+            success: (data) => data.data.message
         })
 
         return (await res).data;
-        
+
     } catch (error) {
         toast.error(error.response.data.message)
     }
 })
 
-export const deleteCourse = createAsyncThunk("/instuctor/deleteCourse", async(data)=>{
-    try{
+export const deleteCourse = createAsyncThunk("/instuctor/deleteCourse", async (data) => {
+    try {
         const res = axiosInstance.delete(`course/${data.course_id}`);
 
         toast.promise(res, {
             loading: "deleting course",
-            success:(data)=> data.data.message
+            success: (data) => data.data.message
         })
 
         return (await res).data;
 
-    }catch(error){
+    } catch (error) {
         toast.error(error.response.data.message)
     }
 })
 
-export const updateCourseDetails = createAsyncThunk("/instructor/updateCourse/details", async(data)=>{
-    
+export const updateCourseDetails = createAsyncThunk("/instructor/updateCourse/details", async (data) => {
+
     try {
-        
+
         const res = axiosInstance.patch(`/course/${data.course_id}`, data);
 
         toast.promise(res, {
             loading: "updating course details",
-            success: (data)=> data.data.message
+            success: (data) => data.data.message
         })
 
         return (await res).data;
@@ -177,13 +177,13 @@ export const updateCourseDetails = createAsyncThunk("/instructor/updateCourse/de
 })
 
 
-export const updatethumbnail_promo = createAsyncThunk("/instructor/updateCourse/media", async(data)=>{
+export const updatethumbnail_promo = createAsyncThunk("/instructor/updateCourse/media", async (data) => {
 
     try {
 
-        console.log("here inside",data);
-        
-        const res = axiosInstance.patch(`/course/${data.course_id}/media`, data.file ,{
+        console.log("here inside", data);
+
+        const res = axiosInstance.patch(`/course/${data.course_id}/media`, data.file, {
             headers: {
                 "Content-Type": "multipart/form-data"
             },
@@ -213,14 +213,14 @@ export const updatethumbnail_promo = createAsyncThunk("/instructor/updateCourse/
     }
 })
 
-export const updateInstructorDetails = createAsyncThunk("/instructor/updateInstructorDetails", async(data)=>{
+export const updateInstructorDetails = createAsyncThunk("/instructor/updateInstructorDetails", async (data) => {
 
     try {
-        const res = axiosInstance.patch("/instructor/details",data);
+        const res = axiosInstance.patch("/instructor/details", data);
 
         toast.promise(res, {
-            loading:"updating details",
-            success: (data)=> data.data.message
+            loading: "updating details",
+            success: (data) => data.data.message
         })
 
         return (await res).data;
@@ -231,14 +231,14 @@ export const updateInstructorDetails = createAsyncThunk("/instructor/updateInstr
 })
 
 
-export const connectBankAccount = createAsyncThunk("/instructor/payouts/link-bank", async (data)=>{
+export const connectBankAccount = createAsyncThunk("/instructor/payouts/link-bank", async (data) => {
     try {
-        
-        const res = axiosInstance.post("/payouts/link-bank",data);
+
+        const res = axiosInstance.post("/payouts/link-bank", data);
 
         toast.promise(res, {
-            loading:"adding new account",
-            success: (data)=> data.data.message
+            loading: "adding new account",
+            success: (data) => data.data.message
         })
 
         return (await res).data;
@@ -248,14 +248,14 @@ export const connectBankAccount = createAsyncThunk("/instructor/payouts/link-ban
     }
 })
 
-export const getAccount = createAsyncThunk("/instructor/payouts/getAccount", async ()=>{
+export const getAccount = createAsyncThunk("/instructor/payouts/getAccount", async () => {
     try {
-        
+
         const res = axiosInstance.get("/payouts/account");
 
         toast.promise(res, {
-            loading:"fetching account",
-            success: (data)=> data.data.message
+            loading: "fetching account",
+            success: (data) => data.data.message
         })
 
         return (await res).data;
@@ -265,14 +265,14 @@ export const getAccount = createAsyncThunk("/instructor/payouts/getAccount", asy
     }
 })
 
-export const updatePrice = createAsyncThunk("/instructor/course/updatePrice", async (data)=>{
+export const updatePrice = createAsyncThunk("/instructor/course/updatePrice", async (data) => {
     try {
-        
-        const res = axiosInstance.patch(`/course/${data.course_id}/price`,data);
+
+        const res = axiosInstance.patch(`/course/${data.course_id}/price`, data);
 
         toast.promise(res, {
-            loading:"updating course",
-            success: (data)=> data.data.message
+            loading: "updating course",
+            success: (data) => data.data.message
         })
 
         return (await res).data;
@@ -282,15 +282,15 @@ export const updatePrice = createAsyncThunk("/instructor/course/updatePrice", as
     }
 })
 
-export const updateGoals = createAsyncThunk("/instructor/course/goals", async (data)=>{
+export const updateGoals = createAsyncThunk("/instructor/course/goals", async (data) => {
     try {
         console.log(data.course_id);
-        
-        const res = axiosInstance.patch(`/course/${data.course_id}/goals`,data);
+
+        const res = axiosInstance.patch(`/course/${data.course_id}/goals`, data);
 
         toast.promise(res, {
-            loading:"updating course",
-            success: (data)=> data.data.message
+            loading: "updating course",
+            success: (data) => data.data.message
         })
 
         return (await res).data;
@@ -307,21 +307,66 @@ const ManageCourseSlice = createSlice({
         // setAlert(state,action){
         //     state.alertState= action.payload;
         // }
-        saveAndContinue(state){
+        saveAndContinue(state) {
             console.log("herreee");
-            
-            state.data.profileCompleted.step = state.data.profileCompleted.step+1;
+
+            state.data.profileCompleted.step = state.data.profileCompleted.step + 1;
         }
     },
     extraReducers: (builder) => {
         builder.addCase(instructorDetails.fulfilled, (state, action) => {
             if (action?.payload) {
-                state.data = action.payload.data.data.instructor;
+                let courselist = action.payload.data.data.instructor.courses;
+        
+                const updatedCourses = courselist?.map((course) => {
+                    // let contentDuration = 0;
+                    let totalSections = course?.sections?.length;
+                    console.log(totalSections,"toatlsections");
+                    
+        
+                    // course?.sections?.forEach((section) => {
+                    //     section?.lectures?.forEach((lecture) => {
+                    //         contentDuration += lecture?.resource?.duration || 0;
+                    //         if (lecture?.resource?.duration) totalLectures++;
+                    //     });
+                    // });
+        
+                    // contentDuration = contentDuration / 60;
+                    // contentDuration = Math.round(contentDuration * 10) / 10;
+        
+                    let intendLearners = false;
+                    let curr = false;
+                    let lanPage = false;
+        
+                    let goals = course.goals;
+                    let flag = goals?.objectives.filter(Boolean)?.length >= 4;
+                    flag = flag && goals?.prerequisites.filter(Boolean)?.length >= 1;
+                    flag = flag && goals?.intended_learners.filter(Boolean)?.length >= 1;
+                    intendLearners = flag;
+        
+                
+                    curr = totalSections >= 1;
+        
+                    lanPage = course?.trailerVideo && course?.thumbnail && course?.subtitle && course?.language && course?.description;
+        
+                    let percentageCompleted = 0;
 
-                localStorage.setItem("instructor_data",JSON.stringify(action.payload.data.data.instructor));
-
+                    if (lanPage) percentageCompleted += 1;
+                    if (intendLearners) percentageCompleted += 1;
+                    if (curr) percentageCompleted += 1;  
+                    if (course.price != undefined) percentageCompleted += 1;
+                    console.log(lanPage, intendLearners, curr, course.price!=undefined);
+                    
+                    percentageCompleted = (percentageCompleted/4)*100;
+        
+                    return { ...course, percentageCompleted };
+                });
+        
+                state.data = { ...action.payload.data.data.instructor, courses: updatedCourses };
+                localStorage.setItem("instructor_data", JSON.stringify(state.data));
             }
-        })
+        });
+        
 
         builder.addCase(courseDetails.fulfilled, (state, action) => {
             if (action?.payload) {
@@ -332,9 +377,9 @@ const ManageCourseSlice = createSlice({
         })
 
         builder.addCase(addSection.fulfilled, (state, action) => {
-            if (action?.payload) {
-                state.edit.sections.push(action.payload.data)
-            }
+            // if (action?.payload) {
+            //     state.edit.sections.push(action.payload.data)
+            // }
         })
         builder.addCase(deleteSection.fulfilled, (state, action) => {
             console.log(action.payload.data._id, "hereeeeeeeeeee")
@@ -357,10 +402,10 @@ const ManageCourseSlice = createSlice({
             }
         })
 
-        builder.addCase(updateInstructorDetails.fulfilled, (state, action)=>{
-            if(action?.payload){
+        builder.addCase(updateInstructorDetails.fulfilled, (state, action) => {
+            if (action?.payload) {
                 state.data.profileCompleted = {
-                    step :2,
+                    step: 2,
                 }
             }
         })
@@ -369,6 +414,6 @@ const ManageCourseSlice = createSlice({
     }
 })
 
-export const  {saveAndContinue} = ManageCourseSlice.actions;
+export const { saveAndContinue } = ManageCourseSlice.actions;
 
 export default ManageCourseSlice.reducer;

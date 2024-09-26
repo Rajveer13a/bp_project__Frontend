@@ -57,6 +57,8 @@ function Courses() {
 
     const sortState = useState("Newest")
 
+    
+
 
     useEffect(() => {
         dispatch(instructorDetails())
@@ -151,7 +153,10 @@ function Courses() {
 
                                     <div className='flex flex-grow items-center justify-center space-x-5 group-hover:opacity-10 duration-100'>
                                         <h1 className='font-bold h-7  '>Finish your course</h1>
-                                        <div className='h-2 w-[70%] bg-slate-300'></div>
+                                        <div className='h-2 w-[70%] bg-slate-300 relative'>
+                                        <div className={`h-2 w-[${value.percentageCompleted}%] bg-blue-600 absolute`}></div>
+                                        </div>
+                                        
                                     </div>
 
                                     <Link to={`http://localhost:5173/instructor/course/${value?._id}/manage/goals`}>

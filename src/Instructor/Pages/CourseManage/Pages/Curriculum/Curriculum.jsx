@@ -3,7 +3,7 @@ import { FiPlus } from "react-icons/fi";
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom'
 
-import { addSection } from '@/Redux/Slices/Instructor/InstructorSlice';
+import { addSection, courseDetails } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 import Input from './Input';
 import SectionBox from './SectionBox';
@@ -13,7 +13,7 @@ function Curriculum({ onDeleteRequest }) {
 
     const dispatch = useDispatch();
 
-    const data = useSelector((data) => data.instructor.edit);
+    const data = useSelector((data) => data?.instructor?.edit);
 
     const [sectionData, setSectionData] = useState({
         index: "",
@@ -28,7 +28,7 @@ function Curriculum({ onDeleteRequest }) {
         setSectionData({ ...sectionData, [name]: value })
     }
 
-    const onAddSection = () => {
+    const onAddSection = async() => {
         setAddSectionActive(false);
         setSectionData({
             index: "",
@@ -36,10 +36,14 @@ function Curriculum({ onDeleteRequest }) {
             learningObjective: ""
         })
 
-        dispatch(addSection({
+        const res = await dispatch(addSection({
             id: data._id,
             title: sectionData.title
         }));
+
+        if(res?.payload){
+            dispatch(courseDetails(data._id))
+        }
     }
 
     return (

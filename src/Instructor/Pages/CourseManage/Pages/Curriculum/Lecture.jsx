@@ -13,22 +13,31 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import axiosInstance from '@/Helpers/axiosInstance';
-import { deleteLecture, } from '@/Redux/Slices/Instructor/InstructorSlice';
+import { courseDetails, deleteLecture, } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 import ContentTypeBox from './ContentTypeBox';
 // import formattedDate from './helperGetDate';
 
 function Lecture({ indx, onDeleteRequest, data }) {
     const dispatch = useDispatch();
+    
+    const course_id = useSelector((state)=>state.instructor.edit._id)
 
     const[ currentData, setCurrentData] = useState(data);
 
     const { _id: lecture_id, title } = currentData;
 
-
+    console.log(currentData);
+    
     const handleDeleteLecture = () => {
         const thunk = () => {
-            dispatch(deleteLecture(lecture_id));
+            dispatch(deleteLecture(lecture_id)).then((res)=>{
+                if(res.payload){
+                    dispatch(courseDetails(course_id))
+                }
+            });
+
+
         }
 
         onDeleteRequest(thunk);
@@ -63,7 +72,6 @@ function Lecture({ indx, onDeleteRequest, data }) {
     const onUploadVideo = async () => {
 
         try {
-            toast.error("brrr")
             setUploadProgress({
                 progress: 0,
                 status: null,
@@ -91,10 +99,11 @@ function Lecture({ indx, onDeleteRequest, data }) {
                 },
                 signal: controllerRef.current.signal
             });
-            toast.error("server responded")
             setUploadProgress((prevstate) => ({
                 ...prevstate, status: "succeeded"
             }))
+
+            dispatch(courseDetails(course_id));
 
             setCurrentData(res.data.data) ;
             setAddContentActive(false);

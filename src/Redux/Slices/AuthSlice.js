@@ -262,8 +262,7 @@ const authSlice = createSlice({
 
             .addCase(logout.fulfilled, (state, action) => {
 
-                if (action.payload) {
-                    localStorage.setItem('data', "");
+                localStorage.setItem('data', "");
 
                     localStorage.setItem('role', "");
 
@@ -272,7 +271,6 @@ const authSlice = createSlice({
                     state.data = {};
                     state.isLoggedIn = false;
                     state.role = "USER";
-                }
             })
 
             .addCase(login.fulfilled, (state, action) => {

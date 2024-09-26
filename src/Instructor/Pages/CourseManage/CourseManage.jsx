@@ -2,34 +2,34 @@ import { list } from 'postcss';
 import React, { useEffect, useState } from 'react'
 import { IoIosArrowBack, IoMdCheckmark, IoMdSettings } from 'react-icons/io'
 import { RxCross2 } from 'react-icons/rx';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from "uuid";
 
 import Footer from '@/components/Footer';
-import { courseDetails, submitForApproval,} from '@/Redux/Slices/Instructor/InstructorSlice';
+import { courseDetails, submitForApproval, } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 import CourseStructure from './Pages/CourseStructure';
 import Curriculum from './Pages/Curriculum/Curriculum';
 import Film from './Pages/Film';
 import Goals from './Pages/Goals';
 import LandingPage from './Pages/LandingPage';
+import Price from './Pages/Price';
 import Settings from './Pages/Settings';
 import Setup from './Pages/Setup';
-import Price from './Pages/Price';
 
 
-const DeletingAlert = ({onCancel, onConfirm}) => {
+const DeletingAlert = ({ onCancel, onConfirm }) => {
 
 
-        useEffect(() => {
-          
-          document.body.classList.add('no-scroll');
-          return () => {
+    useEffect(() => {
+
+        document.body.classList.add('no-scroll');
+        return () => {
             document.body.classList.remove('no-scroll');
-          };
-        }, []);
-    
+        };
+    }, []);
+
 
     return <>
         <div className='fixed h-[100vh] w-[100vw] z-50' >
@@ -61,42 +61,89 @@ const DeletingAlert = ({onCancel, onConfirm}) => {
 }
 
 function CourseManage() {
-    
-    const data = useSelector((state)=>state?.instructor?.edit)
+
+    const data = useSelector((state) => state?.instructor?.edit)
     const [showDialog, setShowDialog] = useState(false);
     const [onConfirm, setOnConfirm] = useState(null);
 
+    const [contentDuration, setContentDuration] = useState(0);
+    const [totalLectures, setTotalLectures] = useState(0);
+
     const dispatch = useDispatch();
 
-    const handleDeleteRequest = (deleteThunk)=>{
+    const handleDeleteRequest = (deleteThunk) => {
         setShowDialog(true);
-        setOnConfirm(()=>deleteThunk);
-        
+        setOnConfirm(() => deleteThunk);
+
     }
 
-    const handleDialogClose = (confirmed)=>{
+    const handleDialogClose = (confirmed) => {
         setShowDialog(false);
-        if(confirmed && onConfirm){
+        if (confirmed && onConfirm) {
             onConfirm();
         }
     }
 
-    const [saveEnable ,setSaveEnable] = useState(false);
+    const [saveEnable, setSaveEnable] = useState(false);
 
     const [saveThunk, setSaveThunk] = useState(null);
 
-    const handleOnSave = ()=>{
+    const handleOnSave = () => {
         if (saveEnable && saveThunk) {
             saveThunk();
         }
         setSaveEnable(false)
     }
 
-    
+    const [checked, setChecked] = useState({
+        "Intended learners": false,
+        "Curriculum": false,
+        "Course landing page": false,
+        "Pricing":false,
 
-    const checkbox = <div className='border border-black rounded-full p-[1.5px]'>
-        <IoMdCheckmark className='w-[15px] h-[15px] opacity-0' />
-    </div>;
+    });
+
+
+    useEffect(() => {
+
+        let intendLearners = false;
+        let curr = false;
+        let lanPage = false;
+
+        let goals = data.goals;
+
+        let flag = goals?.objectives.filter(Boolean)?.length >= 4;
+        flag = flag && goals?.prerequisites.filter(Boolean)?.length >= 1;
+        flag = flag && goals?.intended_learners.filter(Boolean)?.length >= 1;
+        intendLearners = flag;
+
+
+        curr = contentDuration >= 120;
+        curr = curr && totalLectures >= 5;
+
+        lanPage = data?.trailerVideo && data?.thumbnail && data?.subtitle && data?.language && data?.description;
+        console.log("lannn",lanPage)
+
+        setChecked({
+            "Intended learners": intendLearners,
+            "Curriculum": curr,
+            "Course landing page": lanPage || false,
+            "Pricing" : data.price!=undefined && true
+        })
+
+    }, [data])
+
+
+
+
+
+    console.log(checked);
+
+
+
+    // const checkbox = <div className='border border-black rounded-full p-[1.5px]'>
+    //     <IoMdCheckmark className='w-[15px] h-[15px] opacity-0' />
+    // </div>;
 
     const { section: active, id } = useParams();
 
@@ -127,7 +174,7 @@ function CourseManage() {
             render = <LandingPage setSaveThunk={setSaveThunk} setSaveEnable={setSaveEnable} />
             break;
         case "pricing":
-            render = <Price/>
+            render = <Price />
             break;
 
     }
@@ -165,19 +212,40 @@ function CourseManage() {
 
     ]
 
-    const onSubmitForApproval = ()=>{
+    const onSubmitForApproval = () => {
         dispatch(submitForApproval({
-            course_id : id
+            course_id: id
         }))
     }
 
     useEffect(() => {
         dispatch(courseDetails(id));
-    },[])
+    }, [])
+
+    useEffect(() => {
+        let accum = 0
+        let lec_count = 0
+        data.sections?.forEach((section) => {
+            section?.lectures.forEach((lecture) => {
+                accum += lecture?.resource?.duration || 0;
+                if (lecture?.resource?.duration) lec_count++
+
+            })
+        });
+
+        accum = accum / 60;
+
+        accum = Math.round(accum * 10) / 10;
+
+        setContentDuration(accum);
+        setTotalLectures(lec_count);
+
+
+    }, [data])
 
     return (
         <div className=''>
-            {showDialog && <DeletingAlert onCancel={()=>handleDialogClose(false)} onConfirm={()=>handleDialogClose(true)} />}
+            {showDialog && <DeletingAlert onCancel={() => handleDialogClose(false)} onConfirm={() => handleDialogClose(true)} />}
             {/* top bar */}
             <div className='flex fixed bg-[#2D2F31] px-6 py-2  text-white w-full  gap-4 items-center shadow-lg z-10'>
 
@@ -192,7 +260,7 @@ function CourseManage() {
 
                 <h4 className='bg-[#6A6F73] px-2 text-sm font-bold my-auto py-[2px]'>DRAFT</h4>
 
-                <h3 className='font-semibold'>0min of video content uploaded</h3>
+                <h3 className='font-semibold'>{contentDuration} min of video content uploaded</h3>
 
                 <button onClick={handleOnSave} className={` text-black px-6 py-1 font-bold ml-auto ${!saveEnable ? "cursor-not-allowed bg-[#969798] " : " bg-white hover:bg-[#E0E0E0] "}`}>Save</button>
 
@@ -214,7 +282,9 @@ function CourseManage() {
                                         <Link to={`/instructor/course/${id}/manage/${value.link}`} key={uuidv4()}>
                                             <li className={`flex items-center gap-2 cursor-pointer  py-2 hover:bg-[#F7F9FA] duration-75 ${(value.link === active) && "activeBlack"} pl-8`}>
 
-                                                {checkbox}
+                                                <div className='border border-black rounded-full p-[1.5px]'>
+                                                    <IoMdCheckmark className={`w-[15px] h-[15px] ${checked[value.name] ==false && "opacity-0"}`} />
+                                                </div>
 
                                                 <h1 className=''>
                                                     {value.name}
