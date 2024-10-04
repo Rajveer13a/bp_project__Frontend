@@ -60,6 +60,107 @@ const DeletingAlert = ({ onCancel, onConfirm }) => {
     </>
 }
 
+const SubmitRequirement = ({ onCancel }) => {
+
+    const list = [
+        {
+            heading: <Link className='link-primary underline'>Intended learners</Link>,
+            subheadings: [
+                "Specify any course requirements or prerequisites",
+                "Specify at least 4 of your course’s learning objectives",
+                "Specify who this course if for"
+            ]
+        },
+        {
+            heading: <Link className='link-primary underline'>Curriculum</Link>,
+            subheadings: [
+                "Have at least 30 minutes of video content",
+                "Have at least 5 lectures",
+
+            ]
+        },
+        {
+            heading: <Link className='link-primary underline'>Course landing page</Link>,
+            subheadings: [
+                "Have a course description with at least 200 words",
+                "Have a course subtitle",
+                "Select the category of your course",
+                "Select the level of your course",
+                "Select the subcategory of your course",
+                "Select what is primarily taught in your course",
+                "Upload a course image"
+
+            ]
+        },
+        {
+            heading: <Link className='link-primary underline'>Pricing </Link>,
+            subheadings: [
+                "Select a price for your course",
+            ]
+        }
+    ]
+
+    useEffect(() => {
+
+        document.body.classList.add('no-scroll');
+        return () => {
+            document.body.classList.remove('no-scroll');
+        };
+    }, []);
+
+
+    return <>
+        <div className='fixed h-[100vh] w-[100vw] z-50 ' >
+            <div className='bg-black h-[120vh]  w-[100vw] absolute -z-40  opacity-70'>
+            </div>
+
+            <div className='flex justify-center overflow-scroll   h-[100vh]  w-[100vw] z-50 '>
+                <div className='bg-white relative top-14 h-max   w-[45%] border border-black p-5 flex flex-col '>
+
+                    <div className=' flex justify-between items-center'>
+                        <h1 className='font-bold text-xl'>Why can't I submit for review?</h1>
+                        <button onClick={() => onCancel(false)} ><RxCross2 className='size-5' /></button>
+                    </div>
+
+                    <h1 className='py-5'>
+                        You're almost ready to submit your course. Here are a few more items you need.
+                    </h1>
+
+                    {
+                        list.map((value, indx) => {
+                            return (
+                                <ul key={indx} className='p-3'>
+                                    <li className='list-disc'>
+                                        On the {value.heading} page, you must
+
+                                        <ul className='px-6 list-[circle] pt-2'>
+                                            {
+                                                value.subheadings.map((value, indx) => {
+                                                    return <li key={indx} className=''>{value}</li>
+                                                })
+                                            }
+                                        </ul>
+                                    </li>
+                                </ul>
+                            )
+                        })
+                    }
+
+                    <p>
+                        Once you complete these steps, you will be able to successfully submit your course for review.
+                    </p>
+                    <p className='mt-2'>
+                        Still having problems? <Link className='link-primary underline'>Check out this Support page</Link>
+                    </p>
+
+
+                </div>
+            </div>
+
+        </div>
+    </>
+}
+
 function CourseManage() {
 
     const data = useSelector((state) => state?.instructor?.edit)
@@ -99,7 +200,7 @@ function CourseManage() {
         "Intended learners": false,
         "Curriculum": false,
         "Course landing page": false,
-        "Pricing":false,
+        "Pricing": false,
 
     });
 
@@ -122,13 +223,13 @@ function CourseManage() {
         curr = curr && totalLectures >= 5;
 
         lanPage = data?.trailerVideo && data?.thumbnail && data?.subtitle && data?.language && data?.description;
-        console.log("lannn",lanPage)
+        console.log("lannn", lanPage)
 
         setChecked({
             "Intended learners": intendLearners,
             "Curriculum": curr,
             "Course landing page": lanPage || false,
-            "Pricing" : data.price!=undefined && true
+            "Pricing": data.price != undefined && true
         })
 
     }, [data])
@@ -179,6 +280,8 @@ function CourseManage() {
 
     }
 
+    const [showSubmit, setShowSubmit] = useState(false);
+    console.log(showSubmit);
 
     const sections = [
         {
@@ -213,6 +316,11 @@ function CourseManage() {
     ]
 
     const onSubmitForApproval = () => {
+        if(Object.values(checked).some((value)=> value == false)){
+            setShowSubmit(true);
+            return;
+        }
+        
         dispatch(submitForApproval({
             course_id: id
         }))
@@ -245,7 +353,15 @@ function CourseManage() {
 
     return (
         <div className=''>
+
+            {
+                showSubmit && (
+                    <SubmitRequirement onCancel={setShowSubmit} />
+                )
+            }
+
             {showDialog && <DeletingAlert onCancel={() => handleDialogClose(false)} onConfirm={() => handleDialogClose(true)} />}
+
             {/* top bar */}
             <div className='flex fixed bg-[#2D2F31] px-6 py-2  text-white w-full  gap-4 items-center shadow-lg z-10'>
 
@@ -283,7 +399,7 @@ function CourseManage() {
                                             <li className={`flex items-center gap-2 cursor-pointer  py-2 hover:bg-[#F7F9FA] duration-75 ${(value.link === active) && "activeBlack"} pl-8`}>
 
                                                 <div className='border border-black rounded-full p-[1.5px]'>
-                                                    <IoMdCheckmark className={`w-[15px] h-[15px] ${checked[value.name] ==false && "opacity-0"}`} />
+                                                    <IoMdCheckmark className={`w-[15px] h-[15px] ${checked[value.name] == false && "opacity-0"}`} />
                                                 </div>
 
                                                 <h1 className=''>

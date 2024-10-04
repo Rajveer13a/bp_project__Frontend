@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
 import { IoIosArrowBack, IoMdCheckmark, IoMdSettings } from 'react-icons/io';
-import { useDispatch, } from 'react-redux';
+import { useDispatch,} from 'react-redux';
 import { Link, useLocation, useNavigate, } from 'react-router-dom'
 
 import Footer from '@/components/Footer';
 import { addReviewData, reviewCourse } from '@/Redux/Slices/Management/ManagementSlice';
 
-import LandingPageReview from '../LandingPageReview';
-import DisplayCurriculum from './Curriculum/DisplayCurriculum';
+import DisplayCurriculum from './DisplayCurriculum';
 
 
 
@@ -29,7 +28,6 @@ function ReviewCourse() {
     const [active, setActive] = useState("curriculum");
 
 
-
     let render;
     switch (active) {
         case "goals":
@@ -37,9 +35,6 @@ function ReviewCourse() {
             break;
 
         case "curriculum":
-            render = <DisplayCurriculum />
-            break;
-        case "basics":
             render = <DisplayCurriculum />
             break;
 
@@ -68,25 +63,25 @@ function ReviewCourse() {
 
     ]
 
-    const onCourseApprove = async () => {
+    const onCourseApprove = async()=>{
         const res = await dispatch(reviewCourse({
-            course_id: state._id,
-            flag: true
+            course_id:state._id,
+            flag:true
         }));
 
-        if (res.payload) {
+        if(res.payload){
             navigate("/management/mode/")
         }
     }
 
-    const onCourseDisapprove = async () => {
+    const onCourseDisapprove = async()=>{
         const res = await dispatch(reviewCourse({
-            course_id: state._id,
-            flag: false
+            course_id:state._id,
+            flag:false
         })
         );
 
-        if (res.payload) {
+        if(res.payload){
             navigate("/management/mode/")
         }
     }
@@ -167,6 +162,9 @@ function ReviewCourse() {
                 </div>
 
                 <div className='w-[80%] shadow-2xl border  pt-8 pb-16 mb-24 min-h-screen'>
+                    {/* <Goals /> */}
+                    {/* <CourseStructure/> */}
+                    {/* <Setup/> */}
                     {render}
                 </div>
             </div>
