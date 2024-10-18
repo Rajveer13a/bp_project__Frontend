@@ -2,7 +2,7 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 
 import ListCourses from './Management/modes/ListCourses'
-import ReviewCourse from './Management/modes/Review/Curriculum/ReviewCourse'
+import ReviewCourse from './Management/modes/ReviewCourse'
 
 function ManagementRoutes() {
   return (

@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import { IoIosArrowBack, IoMdCheckmark, IoMdSettings } from 'react-icons/io';
-import { useDispatch,} from 'react-redux';
+import { useDispatch, useSelector, } from 'react-redux';
 import { Link, useLocation, useNavigate, } from 'react-router-dom'
 
 import Footer from '@/components/Footer';
+import axiosInstance from '@/Helpers/axiosInstance';
 import { addReviewData, reviewCourse } from '@/Redux/Slices/Management/ManagementSlice';
 
-import DisplayCurriculum from './DisplayCurriculum';
+import GoalsReview from './GoalsReview';
+import LandingPageReview from './LandingPageReview';
+import DisplayCurriculum from './Review/Curriculum/DisplayCurriculum';
 
 
 
@@ -15,15 +18,24 @@ function ReviewCourse() {
 
     const location = useLocation();
     const state = location.state;
+
     const dispatch = useDispatch();
 
     const navigate = useNavigate();
 
+    const data = useSelector((state) => state.management.feedback);
 
 
-    const checkbox = <div className='border border-black rounded-full p-[1.5px]'>
-        <IoMdCheckmark className='w-[15px] h-[15px] opacity-0' />
-    </div>;
+    const [checked, setChecked] = useState({
+        "Intended learners": data.message.intended.flag != null,
+        "Course landing page": data.message.landing.flag != null,
+        "Curriculum": data.curr?.reduce((acc, curr) => {
+
+            acc = acc && curr.lectures.some((value) => value.approved != null)
+        }, true)
+    });
+
+    // console.log(checked["Intended learners"], checked["Course landing page"], checked["Curriculum"]);
 
     const [active, setActive] = useState("curriculum");
 
@@ -31,11 +43,15 @@ function ReviewCourse() {
     let render;
     switch (active) {
         case "goals":
-            render = ""
+            render = <GoalsReview />
             break;
 
         case "curriculum":
             render = <DisplayCurriculum />
+            break;
+
+        case "basics":
+            render = <LandingPageReview />
             break;
 
     }
@@ -63,31 +79,89 @@ function ReviewCourse() {
 
     ]
 
-    const onCourseApprove = async()=>{
+    const onCourseApprove = async () => {
+
+        // for (let keys in checked) {
+        //     if (checked[keys] == false) {
+        //         return;
+        //     }
+        // }
+
         const res = await dispatch(reviewCourse({
-            course_id:state._id,
-            flag:true
+            course_id: state._id,
+            flag: true
         }));
 
-        if(res.payload){
+        if (res.payload) {
             navigate("/management/mode/")
         }
     }
 
-    const onCourseDisapprove = async()=>{
+    const onCourseDisapprove = async () => {
+
+        // for (let keys in checked) {
+        //     if (checked[keys] == false) {
+        //         return;
+        //     }
+        // }
+
         const res = await dispatch(reviewCourse({
-            course_id:state._id,
-            flag:false
+            course_id: state._id,
+            flag: false
         })
         );
 
-        if(res.payload){
+        if (res.payload) {
             navigate("/management/mode/")
         }
     }
 
+    // useEffect(() => {
+    //     dispatch(addReviewData({ data: state }))
+    // }, [])
+
+    const [allowAction, setAllowAction] = useState(true);
+
+    // for(let key in checked){
+    //     if(checked[key]===false){
+    //         setAllowAction(false);
+    //         break;
+    //     }
+    // }
+
     useEffect(() => {
-        dispatch(addReviewData({ data: state }))
+
+        setChecked({
+            "Intended learners": data.message.intended.flag != null,
+            "Course landing page": data.message.landing.flag != null,
+            "Curriculum": data.curr?.reduce((acc, curr) => {
+
+                return acc && curr.lectures.every((value) => value?.feedback !== undefined);
+            }, true)
+        });
+
+    }, [data])
+
+    useEffect(() => {
+        const flag = Object.values(checked).every((value)=> value==true);
+        console.log(flag);
+        
+
+        setAllowAction(flag);
+        
+    },[checked])
+
+    useEffect(() => {
+        (async () => {
+            const res = await axiosInstance.get("/manage/courseDetail", {
+                params: {
+                    course_id: state._id
+                }
+            });
+
+            dispatch(addReviewData({ data: res.data.data[0] }))
+
+        })()
     }, [])
 
 
@@ -128,7 +202,9 @@ function ReviewCourse() {
                                     return (
                                         <li key={indx} onClick={() => setActive(value.active)} className={`flex items-center gap-2 cursor-pointer  py-2 hover:bg-[#F7F9FA] duration-75 ${(value.active === active) && "activeBlack"} pl-8`}>
 
-                                            {checkbox}
+                                            <div className='border border-black rounded-full p-[1.5px]'>
+                                                <IoMdCheckmark className={`w-[15px] h-[15px] ${checked[value.name] == false && "opacity-0"}`} />
+                                            </div>
 
                                             <h1 className=''>
                                                 {value.name}
@@ -152,10 +228,10 @@ function ReviewCourse() {
                             Course Action
                         </h1>
 
-                        <div className='flex  justify-between px-6'>
-                            <button onClick={onCourseApprove} className='bg-blue-600 hover:bg-blue-700 text-white  font-bold  px-3 py-1 hover:scale-105 transition-all duration-300 '>Approve</button>
+                        <div className={`flex  justify-between px-6 ${!allowAction && "opacity-70 cursor-not-allowed "}`}>
+                            <button onClick={onCourseApprove} className={`bg-blue-600 hover:bg-blue-700 text-white  font-bold  px-3 py-1 hover:scale-105 transition-all duration-300 ${!allowAction && "opacity-70 cursor-not-allowed "}`}>Approve</button>
 
-                            <button onClick={onCourseDisapprove} className='bg-red-600 hover:bg-red-700 text-white  font-bold  px-2 py-1 hover:scale-105 transition-all duration-300'>Diapprove</button>
+                            <button onClick={onCourseDisapprove} className={`bg-red-600 hover:bg-red-700 text-white  font-bold  px-2 py-1 hover:scale-105 transition-all duration-300 ${!allowAction && "opacity-70 cursor-not-allowed "}`}>Diapprove</button>
                         </div>
                     </div>
 

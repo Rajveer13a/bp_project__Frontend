@@ -17,11 +17,11 @@ function Lecture({ lecture, section_indx, lecture_indx }) {
 
 
 
-    const [approve, setApprove] = useState(lecture.approved);
+    const [approve, setApprove] = useState(lecture?.approved);
 
-    const [feedback, setFeedback] = useState(lecture.feedback)
+    const [feedback, setFeedback] = useState(lecture?.feedback)
 
-    const [data, setdata] = useState(lecture.feedback);
+    const [data, setdata] = useState(lecture?.feedback);
 
     const onApproveLecture = async() => {
 
@@ -69,7 +69,7 @@ function Lecture({ lecture, section_indx, lecture_indx }) {
     return (
         <div className='p-5 flex justify-between'>
 
-            <VideoPlayer baseUrl={lecture.resource.secure_url} />
+            <VideoPlayer baseUrl={lecture?.resource?.secure_url} />
 
 
 

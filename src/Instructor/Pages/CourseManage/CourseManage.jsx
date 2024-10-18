@@ -316,10 +316,10 @@ function CourseManage() {
     ]
 
     const onSubmitForApproval = () => {
-        if(Object.values(checked).some((value)=> value == false)){
-            setShowSubmit(true);
-            return;
-        }
+        // if(Object.values(checked).some((value)=> value == false)){
+        //     setShowSubmit(true);
+        //     return;
+        // }
         
         dispatch(submitForApproval({
             course_id: id

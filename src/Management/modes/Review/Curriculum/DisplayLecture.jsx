@@ -27,7 +27,7 @@ function DisplayLecture({ state ,section_indx }) {
                                 </h1>
                                 <IoDocumentOutline />
                                 <h1>
-                                    {lecture.title}
+                                    {lecture?.title}
                                 </h1>
                             </div>
 

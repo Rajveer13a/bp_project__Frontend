@@ -8,7 +8,16 @@ const initialState = {
     feedback: {
         curr: null,
         landingpage: {},
-        message: {},
+        message: {
+            landing:{
+                flag: null,
+                value: ""
+            },
+            intended:{
+                flag: null,
+                value: ""
+            },
+        },
         intended_learners: {},
         captions: {},
 
@@ -16,13 +25,17 @@ const initialState = {
 }
 
 
-export const reviewCourse = createAsyncThunk("/management/approveCourse", async(data)=>{
+export const reviewCourse = createAsyncThunk("/management/approveCourse", async(data, { getState })=>{
 
     try {
-        
+
+        const state = getState();
+
         const res =  axiosInstance.post("/manage/review", {
             course_id: data.course_id,
-            flag: data.flag
+            flag: data.flag,
+            message: state.management.feedback.message
+            
         })
 
         toast.promise(res, {
@@ -70,6 +83,8 @@ const manangeSlice = createSlice({
             const {data} = action.payload;
 
             state.feedback.curr = data.sections;
+            state.feedback.landingpage = {...data};
+            state.feedback.goals = {...data?.goals};
 
         },
 
@@ -93,6 +108,16 @@ const manangeSlice = createSlice({
             state.feedback.curr[section_indx].lectures[lecture_indx].feedback = feedback ;
 
 
+        },
+
+        setFeedbackMessage: (state,action) =>{
+
+            const { value, name, flag } = action.payload;
+
+            state.feedback.message[name].value = value;
+            state.feedback.message[name].flag = flag;
+
+
         }
 
 
@@ -101,7 +126,7 @@ const manangeSlice = createSlice({
 
 })
 
-export const { approveLecture ,addReviewData ,disapproveLecture} = manangeSlice.actions;
+export const { approveLecture ,addReviewData ,disapproveLecture, setFeedbackMessage} = manangeSlice.actions;
 
 export default manangeSlice.reducer;
 

@@ -3,7 +3,7 @@ import { FaPlus } from 'react-icons/fa';
 import { MdDelete } from 'react-icons/md';
 import { RxHamburgerMenu } from 'react-icons/rx';
 
-function DragInputList({ iscount = true, name, state, placeholders }) {
+function DragInputList({ iscount = true, name, state, placeholders, addActive=false }) {
 
   const [data, setData] = state;
 
@@ -136,7 +136,7 @@ function DragInputList({ iscount = true, name, state, placeholders }) {
         ))
       }
 
-      <button onClick={() => addMoreObj(name)} className=' items-center gap-2 pt-4 font-bold text-blue-700 hover:text-blue-800 duration-75 flex cursor-pointer'>
+      <button onClick={() => addMoreObj(name)} className={`${addActive &&  "hidden"} items-center gap-2 pt-4 font-bold text-blue-700 hover:text-blue-800 duration-75 flex cursor-pointer`}>
         <FaPlus />
         Add more to your response</button>
     </div>

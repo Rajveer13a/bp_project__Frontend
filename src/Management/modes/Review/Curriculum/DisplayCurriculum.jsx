@@ -29,7 +29,7 @@ function DisplayCurriculum() {
 
                 {/* diplay lectures */}
 
-                <DisplayLecture state={section.lectures} section_indx={indx} />
+                <DisplayLecture state={section?.lectures} section_indx={indx} />
 
               </div>
             </div>
