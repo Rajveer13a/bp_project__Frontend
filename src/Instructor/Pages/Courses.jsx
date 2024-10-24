@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { BsQuestionSquareFill } from 'react-icons/bs';
+import { CgMediaLive } from "react-icons/cg";
+import { FcApproval } from 'react-icons/fc';
 import { GiTalk } from "react-icons/gi";
+import { GoAlertFill } from 'react-icons/go';
 import { IoIosArrowDown, IoMdChatboxes, IoMdSearch } from "react-icons/io";
 import { LiaChalkboardTeacherSolid } from "react-icons/lia";
-import { MdAutoGraph, MdOutlineOndemandVideo } from 'react-icons/md'
+import { MdAddAlert, MdAutoGraph, MdOutlineAddAlert, MdOutlineOndemandVideo } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -57,7 +60,7 @@ function Courses() {
 
     const sortState = useState("Newest")
 
-    
+
 
 
     useEffect(() => {
@@ -142,26 +145,56 @@ function Courses() {
                     {
                         courselist?.map((value, indx) => {
                             return (
-                                <div key={indx} className='border-2  flex w-full group relative gap-2'>
-                                    <img className='size-32' src="https://s.udemycdn.com/course/200_H/placeholder.jpg" alt="" />
+                                <div key={indx} className={`border-2  flex w-full group relative gap-2 ${value?.reviews[0]?.approved && "bg-gradient-to-r from-blue-100 to-blue-400"} ${value?.reviews[0]?.reviewed == false && "bg-gradient-to-r from-yellow-100 via-orange-100 to-red-200"}`}>
+                                    <img className='size-32 p-1  object-cover rounded ' src={value?.thumbnail?.secure_url || "https://s.udemycdn.com/course/200_H/placeholder.jpg"} alt="" />
+
 
                                     <div className='py-4 flex flex-col group-hover:opacity-10 duration-100 w-[300px] pl-4' >
                                         <h1 className='font-bold'>{value?.title}</h1>
 
-                                        <h3 className='mt-auto text-sm font-semibold'>Draft  <span className='text-xs font-normal ml-1'>Public</span></h3>
+                                        <h3 className='mt-auto text-sm font-semibold'>{value?.reviews[0]?.approved ? "Live" : "Draft"}   <span className='text-xs font-normal ml-1'>Public</span></h3>
                                     </div>
 
-                                    <div className='flex flex-grow items-center justify-center space-x-5 group-hover:opacity-10 duration-100'>
-                                        <h1 className='font-bold h-7  '>Finish your course</h1>
-                                        <div className='h-2 w-[70%] bg-slate-300 relative'>
-                                        <div className={`h-2 w-[${value.percentageCompleted}%] bg-blue-600 absolute`}></div>
-                                        </div>
-                                        
-                                    </div>
+                                    {
+                                        value?.reviews[0]?.reviewed == false && <h1 className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-100 group-hover:scale-105 duration-100 px-[220px] cursor-pointer  right-[250px]'>Waiting For Approval</h1>
+                                    }
 
-                                    <Link to={`http://localhost:5173/instructor/course/${value?._id}/manage/goals`}>
-                                        <h1 className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-0 group-hover:opacity-100 duration-100 px-[220px] cursor-pointer  right-[250px]'>Edit/ manage course</h1>
-                                    </Link>
+                                    {
+                                        (value?.reviews[0] == undefined || value?.reviews[0]?.reviewed == true) && <>
+                                            <div className='flex flex-grow items-center justify-center space-x-5 group-hover:opacity-10 duration-100'>
+                                                {!value?.reviews[0]?.approved && <GoAlertFill className='size-6 fill-red-700 alert-svg absolute left-[40%]' />}
+
+                                                {
+                                                    value?.reviews[0]?.approved && <>
+                                                        
+                                                        <CgMediaLive className='size-6 animate-ping  absolute left-[40%]' />
+                                                        <div className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-100 group-hover:scale-105 duration-100 px-[220px] cursor-pointer  right-[210px] space-x-4 flex'><h1>Course is Live</h1> <FcApproval className='size-8 ' /></div>
+                                                        
+                                                        {/* <div className='h-2 w-[70%] relative'>
+                                                        <FcApproval className='size-8 ' />
+                                                        </div> */}
+                                                        
+                                                    </>
+                                                }
+
+                                                {
+                                                    !value?.reviews[0]?.approved && <>
+                                                        <h1 className='font-bold h-7  '>Finish your course</h1>
+                                                        <div className='h-2 w-[70%] bg-slate-300 relative'>
+                                                            <div className={`h-2 w-[${value.percentageCompleted}%] bg-blue-600 absolute`}></div>
+                                                        </div>
+                                                    </>
+                                                }
+
+                                            </div>
+
+                                            <Link to={`http://localhost:5173/instructor/course/${value?._id}/manage/goals`}>
+                                                <h1 className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-0 group-hover:opacity-100 duration-100 px-[220px] cursor-pointer  right-[250px]'>Edit/ manage course</h1>
+                                            </Link>
+                                        </>
+                                    }
+
+
 
                                 </div>
                             )

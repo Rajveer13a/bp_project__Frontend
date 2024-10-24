@@ -300,6 +300,24 @@ export const updateGoals = createAsyncThunk("/instructor/course/goals", async (d
     }
 })
 
+export const getCourseReview = createAsyncThunk("/instructor/course/approvalStatus", async ({course_id}) => {
+    try {
+        
+        const res =  axiosInstance.get(`/course/${course_id}/approvalStatus`);
+
+        toast.promise(res, {
+            loading: "fetching approval status",
+            success: (data)=>data.data.message
+        })
+
+        return (await res).data;
+        
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
 const ManageCourseSlice = createSlice({
     name: "instructor",
     initialState,

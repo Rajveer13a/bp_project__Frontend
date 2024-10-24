@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { IoIosArrowBack, IoMdCheckmark, IoMdSettings } from 'react-icons/io'
 import { RxCross2 } from 'react-icons/rx';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from "uuid";
 
 import Footer from '@/components/Footer';
-import { courseDetails, submitForApproval, } from '@/Redux/Slices/Instructor/InstructorSlice';
+import { courseDetails, getCourseReview, instructorDetails, submitForApproval, } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 import CourseStructure from './Pages/CourseStructure';
 import Curriculum from './Pages/Curriculum/Curriculum';
@@ -166,6 +166,9 @@ function CourseManage() {
     const data = useSelector((state) => state?.instructor?.edit)
     const [showDialog, setShowDialog] = useState(false);
     const [onConfirm, setOnConfirm] = useState(null);
+    const navigate = useNavigate();
+
+    const [approvalStatus , setApprovalStatus] = useState(null);
 
     const [contentDuration, setContentDuration] = useState(0);
     const [totalLectures, setTotalLectures] = useState(0);
@@ -238,7 +241,7 @@ function CourseManage() {
 
 
 
-    console.log(checked);
+    // console.log(checked);
 
 
 
@@ -251,7 +254,7 @@ function CourseManage() {
     let render;
     switch (active) {
         case "goals":
-            render = <Goals setSaveThunk={setSaveThunk} setSaveEnable={setSaveEnable} />
+            render = <Goals setSaveThunk={setSaveThunk} setSaveEnable={setSaveEnable} approvalStatus={approvalStatus} />
             break;
         case "course-structure":
             render = <CourseStructure />
@@ -272,7 +275,7 @@ function CourseManage() {
             break;
 
         case "basics":
-            render = <LandingPage setSaveThunk={setSaveThunk} setSaveEnable={setSaveEnable} />
+            render = <LandingPage setSaveThunk={setSaveThunk} setSaveEnable={setSaveEnable} approvalStatus={approvalStatus} />
             break;
         case "pricing":
             render = <Price />
@@ -281,7 +284,7 @@ function CourseManage() {
     }
 
     const [showSubmit, setShowSubmit] = useState(false);
-    console.log(showSubmit);
+    // console.log(showSubmit);
 
     const sections = [
         {
@@ -315,19 +318,30 @@ function CourseManage() {
 
     ]
 
-    const onSubmitForApproval = () => {
+    const onSubmitForApproval = async() => {
         // if(Object.values(checked).some((value)=> value == false)){
         //     setShowSubmit(true);
         //     return;
         // }
         
-        dispatch(submitForApproval({
+        await dispatch(submitForApproval({
             course_id: id
         }))
+        await dispatch(instructorDetails())
+        navigate("/instructor/courses");
+
     }
 
     useEffect(() => {
         dispatch(courseDetails(id));
+        (async()=>{
+            const res = await dispatch(getCourseReview({course_id: id}));
+
+            if(res.payload){
+                setApprovalStatus(res.payload.data);
+            }
+
+        })()
     }, [])
 
     useEffect(() => {
@@ -363,7 +377,7 @@ function CourseManage() {
             {showDialog && <DeletingAlert onCancel={() => handleDialogClose(false)} onConfirm={() => handleDialogClose(true)} />}
 
             {/* top bar */}
-            <div className='flex fixed bg-[#2D2F31] px-6 py-2  text-white w-full  gap-4 items-center shadow-lg z-10'>
+            <div className='flex fixed bg-[#2D2F31] px-6 py-2  text-white w-full  gap-4 items-center shadow-lg z-40'>
 
                 <Link to={"/instructor/courses"}>
                     <div className='font-medium flex items-center gap-1 cursor-pointer hover:text-[#E0E0E0]  '>

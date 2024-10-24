@@ -95,10 +95,22 @@ function Lecture({ lecture, section_indx, lecture_indx }) {
                             <button onClick={onDisapproveLecture} className=' bg-blue-500 text-white mb-auto font-semibold py-1 hover:bg-blue-600 transition-all duration-300'>Add</button>
                             </>
                         ): (
-                            <h1 className='text-center text-xl m-auto flex items-center gap-2 '>
-                                <TiPointOfInterestOutline className='' />
-                                {lecture.feedback}
-                            </h1>
+
+                            <div className='m-8 '>
+                                <TiPointOfInterestOutline className='size-6 ml-auto ' />
+                                <p className='h-40 overflow-scroll text-ellipsis'>
+                                    {lecture?.feedback}
+                                </p>
+                            </div>
+
+
+                            // <div className='flex items-center'>
+                            //     <TiPointOfInterestOutline className='size-6' />
+                            // <p className='text-center text-xl w-80 h-36  overflow-scroll flex items-center gap-2  p-5 text overflow-ellipsis'>
+                                
+                            //     {lecture.feedback}
+                            // </p>
+                            // </div>
                         )
                        }
 

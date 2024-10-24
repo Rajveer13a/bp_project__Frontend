@@ -2,17 +2,21 @@
 import { data } from 'autoprefixer';
 import React, { useEffect, useRef, useState } from 'react'
 import { FaPlus } from 'react-icons/fa';
+import { IoMdAlert } from 'react-icons/io';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom'
 
+import FeedbackPopup from '@/Instructor/components/FeedbackPopup';
 import { courseDetails, updateGoals } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 import DragInputList from '../../../components/DragInputList';
+import { ApprovePop } from './Curriculum/Lecture';
 
 
 
-function Goals({ setSaveThunk, setSaveEnable }) {
-
+function Goals({ setSaveThunk, setSaveEnable, approvalStatus }) {
+  console.log(approvalStatus);
+  
   const stateData = useSelector((state) => state.instructor.edit);
 
   const dispatch = useDispatch();
@@ -41,7 +45,7 @@ function Goals({ setSaveThunk, setSaveEnable }) {
 
     if (JSON.stringify(prevData.current) != JSON.stringify(data)) {
       setSaveEnable(true);
-    }else{
+    } else {
       setSaveEnable(false);
     }
 
@@ -60,29 +64,39 @@ function Goals({ setSaveThunk, setSaveEnable }) {
   }, [data, dispatch, stateData, setSaveThunk, setSaveEnable]);
 
 
-  useEffect(()=>{
-    if(stateData.goals){
+  useEffect(() => {
+    if (stateData.goals) {
       setData({
         ...data,
         objectives: stateData.goals.objectives,
         prerequisites: stateData.goals.prerequisites,
         intended_learners: stateData.goals.intended_learners,
       })
-    }else{
+    } else {
       setData({
         objectives: Array(4).fill(""),
         prerequisites: [""],
         "intended_learners": [""]
       })
     }
-    
-  },[stateData])
+
+  }, [stateData])
 
 
 
   return (
     <div>
-      <h1 className='font-semibold text-2xl pl-12 border-b h-16'>Intended learners</h1>
+      <div className='flex relative space-x-8'>
+        <h1 className='font-semibold text-2xl pl-12 border-b h-16'>Intended learners</h1>
+        {
+          approvalStatus?.intended?.flag == false && <FeedbackPopup data={approvalStatus?.intended?.value}/>
+        }
+
+        {
+          approvalStatus?.intended?.flag && <ApprovePop/>
+        }
+        
+      </div>
 
       <div className=' pl-12  w-[87%]'>
         <p className='py-10'>

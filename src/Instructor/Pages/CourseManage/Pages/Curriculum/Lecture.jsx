@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import toast from 'react-hot-toast';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaCheckCircle } from 'react-icons/fa';
+import { FcApproval } from 'react-icons/fc';
 import { FiPlus } from 'react-icons/fi';
 import { GiCrossMark, GiHamburgerMenu } from 'react-icons/gi';
 import { GoPlus } from 'react-icons/go';
@@ -13,10 +14,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import axiosInstance from '@/Helpers/axiosInstance';
+import FeedbackPopup from '@/Instructor/components/FeedbackPopup';
 import { courseDetails, deleteLecture, } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 import ContentTypeBox from './ContentTypeBox';
 // import formattedDate from './helperGetDate';
+
+export function ApprovePop() {
+
+   
+
+    const [enable , setEnable] = useState(false);
+    
+
+  return (
+    <div onMouseLeave={()=>setEnable(false)}  className='relative'>
+      <FcApproval onMouseEnter={()=>setEnable(true)}  className='size-7 fill-red-700 z-10  relative cursor-pointer' />
+      <div className={`border border-black border-dotted p-2 bg-sky-100 absolute  top-3 rounded-sm -right-[80px] ${!enable && "opacity-0 " } duration-700 transition-all animate-in -z-0 cursor-default`}>
+        Approved
+      </div>
+    </div>
+  )
+}
 
 function Lecture({ indx, onDeleteRequest, data }) {
     const dispatch = useDispatch();
@@ -163,10 +182,24 @@ function Lecture({ indx, onDeleteRequest, data }) {
                         {title}
                     </h1>
 
+                    
+
                     <div className='gap-2 flex opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto duration-100 cursor-pointer ml-2 py-4'>
                         <MdEdit onClick={""} />
                         <MdDelete onClick={handleDeleteLecture} />
                     </div>
+
+                    {
+                        data.feedback && (
+                            <FeedbackPopup data={data?.feedback}/>
+                        )
+                    }
+
+                    {
+                        data.approved && (
+                            <ApprovePop/>
+                        )
+                    }
 
 
 

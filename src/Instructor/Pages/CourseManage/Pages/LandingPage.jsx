@@ -6,7 +6,9 @@ import { MdFormatBold, MdFormatItalic, MdFormatListBulleted, MdFormatListNumbere
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import FeedbackPopup from '@/Instructor/components/FeedbackPopup';
 import { courseDetails, updateCourseDetails, updatethumbnail_promo } from '@/Redux/Slices/Instructor/InstructorSlice'
+import { ApprovePop } from './Curriculum/Lecture';
 
 const Input = ({ onChange, value, name, count }) => {
 
@@ -111,65 +113,66 @@ const FileUpload = ({ type, name, course_id }) => {
     return (
         <>
             <div>
-            <div className='h-12 w-[380px] border border-black flex items-center pl-3 bg-[#F7F9FA] cursor-pointer relative'>
-                <label htmlFor={name} className='overflow-hidden text-ellipsis whitespace-nowrap w-[70%]' > {uploadProgress.status && uploadProgress.progress == 100 ? `processing ${name}...` : fileName || "No file selected"} </label>
-                {
-                    uploadProgress.status == null && (
-                        <button onClick={onFileUpload} className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' >Upload File </button>
-                    )
-                }
+                <div className='h-12 w-[380px] border border-black flex items-center pl-3 bg-[#F7F9FA] cursor-pointer relative'>
+                    <label htmlFor={name} className='overflow-hidden text-ellipsis whitespace-nowrap w-[70%]' > {uploadProgress.status && uploadProgress.progress == 100 ? `processing ${name}...` : fileName || "No file selected"} </label>
+                    {
+                        uploadProgress.status == null && (
+                            <button onClick={onFileUpload} className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' >Upload File </button>
+                        )
+                    }
 
-                {
-                    uploadProgress.progress == 100 && !uploadProgress.error && (
-                        <button className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100 flex' ><AiOutlineReload className=' size-7  m-auto fill-blue-900  animate-spin' /> </button>
-                    )
-                }
-                {
-                    uploadProgress.status == "succeeded" && (
-                        <button className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100 flex' ><IoMdDoneAll className=' size-8  m-auto fill-blue-800' /> </button>
-                    )
-                }
-                {
-                    uploadProgress.error && (
-                        <button onClick={onFileUpload} className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' > Retry </button>
-                    )
-                }
+                    {
+                        uploadProgress.progress == 100 && !uploadProgress.error && (
+                            <button className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100 flex' ><AiOutlineReload className=' size-7  m-auto fill-blue-900  animate-spin' /> </button>
+                        )
+                    }
+                    {
+                        uploadProgress.status == "succeeded" && (
+                            <button className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100 flex' ><IoMdDoneAll className=' size-8  m-auto fill-blue-800' /> </button>
+                        )
+                    }
+                    {
+                        uploadProgress.error && (
+                            <button onClick={onFileUpload} className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' > Retry </button>
+                        )
+                    }
 
-                {
-                    uploadProgress.progress < 100 && uploadProgress.status == "uploading" && (
-                        <button onClick={onAbortUplaod} className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' >Cancel </button>
-                    )
-                }
+                    {
+                        uploadProgress.progress < 100 && uploadProgress.status == "uploading" && (
+                            <button onClick={onAbortUplaod} className='h-full w-[30%] border-l border-black ml-auto bg-white hover:bg-[#E3E7EA] font-bold transition-all duration-100' >Cancel </button>
+                        )
+                    }
 
-                {
-                    uploadProgress.progress < 100 && (
-                        <label
-                            htmlFor={name}
-                            style={{ width: `${uploadProgress.progress == 0 ? 0 : uploadProgress.progress - 29}%`, transition: 'width 0.3s ease-in-out' }}
-                            className='absolute bg-blue-600 h-[100%] left-0  flex items-center justify-center text-white'>
-                            {uploadProgress.status && uploadProgress.progress} %
-                        </label>
-                    )
-                }
+                    {
+                        uploadProgress.progress < 100 && (
+                            <label
+                                htmlFor={name}
+                                style={{ width: `${uploadProgress.progress == 0 ? 0 : uploadProgress.progress - 29}%`, transition: 'width 0.3s ease-in-out' }}
+                                className='absolute bg-blue-600 h-[100%] left-0  flex items-center justify-center text-white'>
+                                {uploadProgress.status && uploadProgress.progress} %
+                            </label>
+                        )
+                    }
 
 
+                </div>
+                <input name={name} onChange={handleFileChange} id={name} type="file" accept={`${type}/*`} hidden />
             </div>
-            <input name={name} onChange={handleFileChange} id={name} type="file" accept={`${type}/*`} hidden />
-        </div>
-        
-        {
-            uploadProgress.status && uploadProgress.progress == 100 && (
-                <h1 className='text-sm font-semibold text-blue-800'>you can proceed, changes will reflect shortly.</h1>
-            )
-        }
-        
+
+            {
+                uploadProgress.status && uploadProgress.progress == 100 && (
+                    <h1 className='text-sm font-semibold text-blue-800'>you can proceed, changes will reflect shortly.</h1>
+                )
+            }
+
 
         </>
     )
 }
 
-function LandingPage({ setSaveThunk, setSaveEnable }) {
-
+function LandingPage({ setSaveThunk, setSaveEnable, approvalStatus }) {
+    console.log(approvalStatus);
+    
     const dispatch = useDispatch();
 
     const stateData = useSelector((state) => state.instructor.edit);
@@ -242,10 +245,19 @@ function LandingPage({ setSaveThunk, setSaveEnable }) {
 
     return (
         <div className='w-[96%]'>
+            <div className='flex relative space-x-8'>
 
-            <h1 className='font-semibold text-2xl border-b  pb-6 px-12'>
-                Course landing page
-            </h1>
+                <h1 className='font-semibold text-2xl pl-12 border-b h-16'>Course landing page</h1>
+                {
+                    approvalStatus?.landing?.flag == false && <FeedbackPopup data={approvalStatus?.landing?.value} name={"landing"} />
+                }
+                {
+                    approvalStatus?.landing?.flag == true && <ApprovePop/>
+                }
+                
+
+            </div>
+
 
             <div className='px-12 space-y-6 py-8'>
 

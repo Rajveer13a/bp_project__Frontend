@@ -20,7 +20,7 @@ const Input = ({ onChange, value, name, count }) => {
         <div className='relative'>
             <input name={name} onChange={onChange} className='pointer-events-none opacity-85 border border-black w-[100%] h-[45px] outline-none pl-4 pr-20 placeholder:text-slate-600' placeholder={`Insert your course ${name}`} value={value}></input>
 
-            <h1 className='absolute top-3 right-5'>{count - value.length}</h1>
+            <h1 className='absolute top-3 right-5'>{count - value?.length}</h1>
 
         </div>
     )
@@ -116,7 +116,7 @@ export const Review = ({holder}) => {
             {
                 feedback && (
                     <div className='absolute top-11 space-x-8 flex items-center '>
-                        <div className='border border-dashed border-black outline-none h-14 px-3 py-1 w-80 resize-none bg-white ' name="" id="">{feedback}</div>
+                        <div className='border border-dashed border-black outline-none overflow-scroll h-52  px-3 py-1 w-80 resize-none bg-white  ' name="" id="">{feedback}</div>
 
                     </div>
                 )
