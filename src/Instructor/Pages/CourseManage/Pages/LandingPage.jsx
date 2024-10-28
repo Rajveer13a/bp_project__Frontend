@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom'
 
 import FeedbackPopup from '@/Instructor/components/FeedbackPopup';
 import { courseDetails, updateCourseDetails, updatethumbnail_promo } from '@/Redux/Slices/Instructor/InstructorSlice'
+
 import { ApprovePop } from './Curriculum/Lecture';
 
 const Input = ({ onChange, value, name, count }) => {

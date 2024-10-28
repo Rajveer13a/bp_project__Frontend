@@ -3,17 +3,6 @@ import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
-import { Button } from "@/components/ui/button"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { isValidPassword } from '@/Helpers/regexMatcher'
 import HomeLayout from '@/Layouts/HomeLayout'
 import { createAccount, login, sendVerifytoken } from '@/Redux/Slices/AuthSlice'

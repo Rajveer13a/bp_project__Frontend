@@ -1,133 +1,175 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { IoIosArrowForward } from 'react-icons/io'
 
-import Logo from '@/components/Logo'
-import Cart from '@/components/navbar/Cart'
-import DropMenu from '@/components/navbar/DropMenu'
-import HoverCart from '@/components/navbar/HoverCart'
-import HoverMenu from '@/components/navbar/HoverMenu'
-import Search from '@/components/navbar/Search'
-import { Button } from "@/components/ui/button"
+import Iprofile from '@/Instructor/components/Iprofile';
 
-import Favourite from './Favourite'
-import ProfileButton from './ProfileButton'
+import Logo from '../Logo'
+import  { BusinessButton, CartButton, InstructorButton, MyLearningButton,  NotifyButton } from './HoverElement';
+import SearchBar from './SearchBar';
 
 
-const category = ["computer science", "business", "finance"];
+function ListHover({ count = 1, categories }) {
 
-// const teachonUdmey = ["Turn what you know into an opportunity and reach millions around the world."]
+    const [enable, setEnable] = useState(false);
+
+    console.log(categories);
+
+
+    return (
+        <ul className='bg-white border w-64 absolute text-sm left-full top-0'>
+
+            {categories.map((value) => {
+                return (
+                    <>
+                        {
+                            count == 3 && (
+                                <h3 className='px-3 py-1 font-bold text-[#767A7E]'>
+                                    Popular Topics
+                                </h3>
+                            )
+                        }
+                        <li onMouseLeave={() => setEnable(false)} onMouseEnter={() => count < 3 && setEnable(true)} className='px-3 flex bg-orange-500 py-1 hover:text-[#5022C3]'>
+
+
+                            <h4>{value?.title}</h4>
+                            {
+                                count < 3 && (
+                                    <IoIosArrowForward className='my-auto ml-auto size-3' />
+                                )
+                            }
+                            {
+                                enable && <ListHover categories={value.sub} count={count + 1} />
+                            }
+                        </li>
+                    </>
+                )
+            })}
+
+        </ul>
+    )
+}
+
+function HoverTab() {
+
+    const categories = [
+        {
+            title: "Development",
+            sub: [
+                {
+                    title: "Web Development",
+                    sub: [
+                        {
+                            title: "Javascript"
+                        },
+                        {
+                            title: "React Js"
+                        },
+                        {
+                            title: "Angular"
+                        },
+                        {
+                            title: "CSS"
+                        },
+                        {
+                            title: "HTML"
+                        },
+                        {
+                            title: "Next.js"
+                        },
+                        {
+                            title: "Next.js"
+                        },
+                        {
+                            title: "Next.js"
+                        },
+                    ]
+                }
+            ]
+        },
+        {
+            title: "Development",
+            sub: [
+                {
+                    title: "Web Development",
+                    sub: [
+                        {
+                            title: "Javascript"
+                        },
+                        {
+                            title: "React Js"
+                        },
+                        {
+                            title: "Angular"
+                        },
+                        {
+                            title: "CSS"
+                        },
+                        {
+                            title: "HTML"
+                        },
+                        {
+                            title: "Next.js"
+                        },
+                        {
+                            title: "Next.js"
+                        },
+                        {
+                            title: "Next.js"
+                        },
+                    ]
+                }
+            ]
+        },
+
+    ]
+
+    return (
+        <div className='relative cursor-pointer'>
+            <h1 className='py-5  px-3'>
+                Categories
+            </h1>
+
+            <div className='relative '>
+                {/* <ListHover categories={categories} /> */}
+            </div>
+
+        </div>
+    )
+}
 
 function Navbar() {
 
-  const dispatch = useDispatch();
-
-  const count = useSelector( (state)=> state?.config?.cart.length)
-  
-  const [searchToggle, setSearchToggle] = useState(false);
-
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
-
-
-
-  return (
-    <div className='flex w-[100%] h-[80px] items-center border-b bg-white  border-black relative z-50'>
+    const lists = [
+        [{ text: "My learning", link: "" }],
+        [{ text: "My cart", link: "" },{ text: "Instructor dashboard", link: "" }],
+        [{ text: "Account Settings", link: "" }],
+        [{ text: "Public profile", link: "" }, { text: "Edit profile", link: "/profile" }],
+        [{ text: "Help", link: "" }, { text: "Logout", link: "" }]
+    
+    ]
 
 
-      <div className='flex sm:hidden items-center w-[100%] justify-between'>
+    return (
+        <div className='w-[100vw] flex items-center border border-black px-4 space-x-1'>
+            <Logo />
 
-        <div className='flex items-center justify-between w-[56%]'>
-          <DropMenu />
+            <HoverTab />
 
-          <Logo className />
+            <SearchBar/>
+
+            <BusinessButton/>
+
+            <InstructorButton/> 
+
+            <MyLearningButton/>
+
+            <CartButton/>
+
+            <NotifyButton/>
+
+            <Iprofile lists={lists}  />
         </div>
-
-        <div className='flex justify-around w-[120px] mr-[20px] '>
-          <button onClick={() => setSearchToggle(true)} className="">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-          </button>
-          <Cart count={0} />
-        </div>
-
-
-      </div>
-
-      {/* search */}
-      {searchToggle && <div className=' flex  absolute  w-[100%] h-[] bg-white p-2 sm:hidden  '>
-        <Search className={"w-[100%] "} />
-        <button onClick={() => setSearchToggle(false)} className=' text-black font-semibold absolute right-5 top-4' >X</button>
-
-        <div>
-
-        </div>
-
-      </div>
-      }
-
-      <div className='hidden pl-5 sm:flex w-[60%] gap-8 '>
-
-        <Logo />
-
-        <HoverMenu title={"Categories"} list={category} className={""} />
-
-        <Search className={"hidden sm:flex w-[400px]"} />
-
-      </div>
-
-
-      <div className='hidden sm:flex w-[40%] justify-around '>
-        <Link to={'/instructor/courses'}>
-        <HoverMenu  className={"mt-[7px]"} title={"Teach on BrainyPath "}>
-          <li className='font-bold text-base'> Turn what you know into an opportunity and reach millions around the world. </li>
-          <Button >Learn More</Button>
-        </HoverMenu>
-        </Link>
-
-        {
-          isLoggedIn && <Link to={"/mylearning"}>
-            <HoverMenu className={"mt-[7px]"} title={"My learning"}>
-              <li className='font-bold text-base '>
-                No courses purchased </li>
-              <Button >Go To My Learning</Button>
-            </HoverMenu>
-          </Link>
-        }
-
-
-        {
-          isLoggedIn && <Favourite count={0} className={"mt-[10px]"} />
-        }
-
-
-
-
-
-
-        <Link to={'/shoppingcart'}><HoverCart className={"mt-[8px]"} count={count} /></Link>
-
-        {isLoggedIn ? <ProfileButton className={"mb-[4px]"} /> : <>
-
-          <Link to={"/login"}>
-            <Button size="lg" variant="outline">Log in</Button>
-          </Link>
-
-          <Link to={"/signup"}>
-            <Button size="lg" >Sign up</Button>
-          </Link>
-        </>}
-
-      </div>
-
-
-
-
-
-
-
-
-
-    </div>
-  )
+    )
 }
 
 export default Navbar

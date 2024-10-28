@@ -9,7 +9,7 @@ function Notification() {
     const [active , setActive] = useState(0);
 
   return (
-    <Hover className={""} contentClass={"w-[340px]"} title={<FaRegBell className='size-5 mt-[12px]' />}>
+    <Hover className={""} contentClass={"w-[340px]"} title={<FaRegBell className='size-5 mt-[12px] ' />}>
         <div className='flex justify-between p-5 font-semibold'>
             <h1 className='font-bold text-xl'>Notification</h1>
             <Link to={"/settings"}><h4 className='text-blue-500 '>Settings</h4></Link>

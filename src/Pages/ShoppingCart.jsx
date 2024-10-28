@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
-import Rating from '@/components/Rating'
-import { Button } from '@/components/ui/button'
 import HomeLayout from '@/Layouts/HomeLayout'
+import { getUser } from '@/Redux/Slices/AuthSlice'
 import { createOrder, verifyPayment } from '@/Redux/Slices/PaymentSlice'
 import { getConfig, updateCart } from '@/Redux/Slices/UserConfigSlice'
-import { useNavigate } from 'react-router-dom'
-import { getUser } from '@/Redux/Slices/AuthSlice'
 
 const dot = <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-dot" viewBox="0 0 16 16">
     <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />

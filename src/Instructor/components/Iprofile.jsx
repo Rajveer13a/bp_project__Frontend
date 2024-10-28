@@ -5,20 +5,18 @@ import { Link } from 'react-router-dom';
 
 import Hover from './Hover';
 
-function Iprofile() {
+function Iprofile({ lists = [
+    [{ text: "Students", link: "" }],
+    [{ text: "Notifications", link: "" }],
+    [{ text: "Account Settings", link: "" }, { text: "Payouts & tax settings", link: "" }],
+    [{ text: "Public profile", link: "" }, { text: "Edit profile", link: "/profile" }],
+    [{ text: "Help", link: "" }, { text: "Logout", link: "" }]
+
+] }) {
 
     const image = useSelector((state) => state.auth.data?.profileImage?.secure_url)
 
     const data = useSelector((state) => state.auth?.data)
-
-    const lists = [
-        [{ text: "Students", link: "" }],
-        [{ text: "Notifications", link: "" }],
-        [{ text: "Account Settings", link: "" }, { text: "Payouts & tax settings", link: "" }],
-        [{ text: "Public profile", link: "" }, { text: "Edit profile", link: "/profile" }],
-        [{ text: "Help", link: "" }, { text: "Logout", link: "" }]
-
-    ]
 
     const [open, setOpen] = useState(false);
 

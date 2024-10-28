@@ -1,16 +1,17 @@
 import React from 'react'
 
 import Footer from '@/components/Footer'
-import Navbar from '@/components/navbar/Navbar'
+import Navbar from '@/components/Navbar/Navbar'
+
 
 function HomeLayout({children}) {
   return (
     <div>
       <Navbar/>
       
-      {children}
+      {/* {children} */}
 
-      <Footer/>
+      {/* <Footer/> */}
       
     </div>
   )
