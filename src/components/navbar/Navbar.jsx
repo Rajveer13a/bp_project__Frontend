@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { IoIosArrowForward } from 'react-icons/io'
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import Iprofile from '@/Instructor/components/Iprofile';
 
 import Logo from '../Logo'
-import  { BusinessButton, CartButton, InstructorButton, MyLearningButton,  NotifyButton } from './HoverElement';
+import { BusinessButton, CartButton, InstructorButton, MyLearningButton, NotifyButton } from './HoverElement';
 import SearchBar from './SearchBar';
 
 
@@ -141,12 +143,14 @@ function Navbar() {
 
     const lists = [
         [{ text: "My learning", link: "" }],
-        [{ text: "My cart", link: "" },{ text: "Instructor dashboard", link: "" }],
+        [{ text: "My cart", link: "" }, { text: "Instructor dashboard", link: "" }],
         [{ text: "Account Settings", link: "" }],
         [{ text: "Public profile", link: "" }, { text: "Edit profile", link: "/profile" }],
         [{ text: "Help", link: "" }, { text: "Logout", link: "" }]
-    
+
     ]
+
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
 
     return (
@@ -155,19 +159,36 @@ function Navbar() {
 
             <HoverTab />
 
-            <SearchBar/>
+            <SearchBar />
 
-            <BusinessButton/>
+            <BusinessButton />
 
-            <InstructorButton/> 
+            <InstructorButton />
 
-            <MyLearningButton/>
+            <MyLearningButton />
 
-            <CartButton/>
+            {isLoggedIn && <>
+                <CartButton />
 
-            <NotifyButton/>
+                <NotifyButton />
 
-            <Iprofile lists={lists}  />
+
+
+                <Iprofile lists={lists} />
+            </>}
+
+            {!isLoggedIn && (
+                <div className='space-x-2'>
+                    <Link to={"/login"}>
+                        <button className='border border-black font-bold px-4 py-2 hover:bg-[#E3E7EA] duration-100 text-sm'>Log in</button>
+                    </Link>
+
+                    <button className='bg-slate-800 font-bold px-4 py-2 text-sm hover:bg-slate-700 text-white duration-100 '>Sign up</button>
+                </div>
+            )
+            }
+
+
         </div>
     )
 }

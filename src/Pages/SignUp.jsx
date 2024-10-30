@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { isValidPassword } from '@/Helpers/regexMatcher'
 import HomeLayout from '@/Layouts/HomeLayout'
 import { createAccount, sendVerifytoken } from '@/Redux/Slices/AuthSlice'
 
+import { InputField } from './LogIn'
+
 function SignUp() {
-    
+
     const dispatch = useDispatch();
 
     const navigate = useNavigate();
@@ -16,49 +18,49 @@ function SignUp() {
     const [data, setData] = useState({
         email: "",
         password: "",
-        confirmpassword: "",
-        username:""
-        
+        // confirmpassword: "",
+        username: ""
+
     })
 
 
-    function handleUserInput(e){
-        const {name, value} = e.target ;
-        setData({...data, [name] : value });       
+    function handleUserInput(e) {
+        const { name, value } = e.target;
+        setData({ ...data, [name]: value });
     }
-    
-    async function signUp(){
-        const {email, password, confirmpassword, username } = data;
 
-        if( !email || !password || !confirmpassword || !username){
+    async function signUp() {
+        const { email, password, confirmpassword, username } = data;
+
+        if (!email || !password || !username) {
             toast.error("all fields are required");
             return;
-        } 
+        }
 
-        if( username.length < 4  ){
+        if (username.length < 4) {
             toast.error("Full Name should be of at least 4 characters");
             return;
         }
 
-        if(! isValidPassword(password) ){
+        if (!isValidPassword(password)) {
             toast.error(" Password does not met criteria");
             return;
         }
 
-        if( password != confirmpassword ){
-            toast.error("password and confirm password does not match");
-            return;
-        }
+        // if (password != confirmpassword) {
+        //     toast.error("password and confirm password does not match");
+        //     return;
+        // }
 
-        const res = await dispatch( createAccount(data) );
+        const res = await dispatch(createAccount(data));
 
-        if(res?.payload?.success){
-            
+        if (res?.payload?.success) {
+
             await dispatch(sendVerifytoken());
-            
-             navigate("/verifyEmail")
+
+            navigate("/verifyEmail")
         }
-        
+
 
 
 
@@ -68,39 +70,40 @@ function SignUp() {
     return (
         <HomeLayout>
 
-            <div className='flex items-center justify-center h-[84.6vh]'>
-                <Card className="w-[350px]">
-                    <CardHeader>
-                        <h1 className='font-semibold text-2xl'> Create an account </h1>
-                        
-                    </CardHeader>
-                    <CardContent>
-                        <form >
-                            <div className="grid w-full items-center gap-4">
-                                <div className="flex flex-col space-y-1.5">
-                                    <Label htmlFor="name">Username</Label>
-                                    <Input name="username"  className={"px-4 rounded-md"} id="name" placeholder="" onChange={handleUserInput} value={data.username} />
-                                </div>
-                                <div className="flex flex-col space-y-1.5">
-                                    <Label htmlFor="email">Email</Label>
-                                    <Input name="email" type={"email"} className={"px-4 rounded-md"} id="email" placeholder="example@gmail.com" onChange={handleUserInput} value={data.email} />
-                                </div>
-                                <div className="flex flex-col space-y-1.5">
-                                    <Label htmlFor="password">Password</Label>
-                                    <Input name="password" type={"password"} className={"px-4 rounded-md"} id="password" placeholder="" onChange={handleUserInput} value={data.password} />
-                                </div>
-                                <div className="flex flex-col space-y-1.5">
-                                    <Label htmlFor="confirmpassword">Confirm Password</Label>
-                                    <Input name="confirmpassword" type={"password"} className={"px-4 rounded-md"} id="confirmpassword" placeholder="" onChange={handleUserInput} value={data.confirmpassword} />
-                                </div>
-                                
-                            </div>
-                        </form>
-                    </CardContent>
-                    <CardFooter className="flex justify-center">
-                        <Button onClick={signUp} className={"w-[100%]"}>Create account</Button>
-                    </CardFooter>
-                </Card>
+            <div className='flex  p-10 max-w-[100vw] overflow-hidden'>
+
+
+                <img className='size-[50%] ' src="https://frontends.udemycdn.com/components/auth/desktop-illustration-step-1-x2.webp" alt="" />
+
+                <div className='w-[50vw] flex items-center justify-center h-[70vh] '>
+
+                    <div className='w-[65%] space-y-2 mt-16'>
+                        <h1 className='text-3xl font-bold text-center py-4'>Sign up and start learning</h1>
+
+                        <InputField name={"username"} onChange={handleUserInput} value={data.username} title={"Full name"} />
+
+                        <InputField name={"email"} onChange={handleUserInput} value={data.email} title={"Email"} />
+
+                        <InputField name={"password"} onChange={handleUserInput} value={data.password} title={"Password"} />
+
+                        <div className='space-y-4'>
+                            <button onClick={signUp} className='w-full text-white bg-blue-600 hover:bg-blue-700 duration-150 py-3 font-bold mt-2'>Sign up</button>
+
+                            <h3 className='text-xs text-center'>By signing up, you agree to our <Link className='link-primary underline'>Terms of Use</Link > and <Link className='link-primary underline'>Privacy Policy.</Link></h3>
+
+                            
+
+                            <h2 className='text-center'>Already have an account? <Link to={"/login"} className='link-primary font-bold underline'>Log in</Link> </h2>
+
+                        </div>
+
+
+
+                    </div>
+
+
+                </div>
+
             </div>
 
         </HomeLayout>

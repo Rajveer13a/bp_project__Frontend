@@ -1,24 +1,31 @@
 import React, { useState } from 'react'
 import { FaExternalLinkAlt } from "react-icons/fa";
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom';
 
 import Hover from './Hover';
+import { logout } from '@/Redux/Slices/AuthSlice';
 
 function Iprofile({ lists = [
     [{ text: "Students", link: "" }],
     [{ text: "Notifications", link: "" }],
     [{ text: "Account Settings", link: "" }, { text: "Payouts & tax settings", link: "" }],
     [{ text: "Public profile", link: "" }, { text: "Edit profile", link: "/profile" }],
-    [{ text: "Help", link: "" }, { text: "Logout", link: "" }]
+    [{ text: "Help", link: "" }, { text: "Logout", link: ""}]
 
 ] }) {
+
+    const dispatch = useDispatch();
 
     const image = useSelector((state) => state.auth.data?.profileImage?.secure_url)
 
     const data = useSelector((state) => state.auth?.data)
 
     const [open, setOpen] = useState(false);
+
+    const onLogout = ()=>{
+        dispatch(logout());
+    }
 
     return (
         //     <div className='relative '>
@@ -97,7 +104,7 @@ function Iprofile({ lists = [
                             value.map((innervalue, indx) => {
 
                                 return (
-                                    <Link key={indx} to={innervalue?.link}>
+                                    <Link onClick={innervalue?.text=="Logout" && onLogout } key={indx} to={innervalue?.link}>
                                         <li className='px-4 py-[11px] hover:text-blue-600 cursor-pointer '>
                                             {innervalue.text}
                                         </li>
