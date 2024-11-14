@@ -20,7 +20,7 @@ function HomePage() {
 
     <HomeLayout>
 
-      <Carousel />
+      <Carousel time={10000} autoSlide={true} />
 
 
 
