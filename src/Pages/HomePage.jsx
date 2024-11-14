@@ -1,21 +1,32 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 
 import { Carousel } from '@/components/Carousel'
+import Tab from '@/components/Tab'
 import HomeLayout from '@/Layouts/HomeLayout'
+import { getAllCourses } from '@/Redux/Slices/CourseSlice';
 
 function HomePage() {
+
+  const dispatch = useDispatch();
+
+  const data = useSelector((state) => state?.course?.data);
+  
+  useEffect(() => {
+    dispatch(getAllCourses());
+  }, [])
+
   return (
 
     <HomeLayout>
 
       <Carousel />
 
-      <div className='mb-6 lg:m-0 h-[140px] py-10 pl-8  bg-slate-500 '>
-        <h1 className='font-bold text-3xl font-serif'>All the skills you need in one place</h1>
-        From critical skills to technical topics, Udemy supports your professional development.
-      </div>
 
-      {/* <Tab/> */}
+
+      <div className='pb-80 pt-5  '>
+        <Tab data={data} />
+      </div>
 
 
 
