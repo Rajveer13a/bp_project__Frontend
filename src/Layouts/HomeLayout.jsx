@@ -11,7 +11,7 @@ function HomeLayout({children}) {
       
       {children}
 
-      {/* <Footer/> */}
+      <Footer/>
       
     </div>
   )

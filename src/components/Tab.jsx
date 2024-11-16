@@ -30,7 +30,7 @@ function Tab({ data }) {
   return (
 
     <div className='px-10  relative'>
-      <div className=' border overflow-x-clip  w-[94vw] '>
+      <div className='overflow-x-clip  w-[94vw] '>
 
         <div
           className={`flex gap-10 transition-transform duration-1000   animate-out  `}

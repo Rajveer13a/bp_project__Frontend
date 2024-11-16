@@ -5,6 +5,11 @@ export function Carousel({ time = 5000, autoSlide = true }) {
 
     const cardContent = [
         {
+            image: "https://img-b.udemycdn.com/notices/web_carousel_slide/image/0661bb90-3d05-4709-95a2-c61f927cf78c.jpg",
+            heading: "Jump into learning for less",
+            text: "If you’re new to Udemy, we’ve got good news: For a limited time, courses start at just ₹449 for new learners! Shop now."
+        },
+        {
             image: "https://img-c.udemycdn.com/notices/web_carousel_slide/image/a5f2c3b6-fbad-42a9-be8a-5f430ed2d4f9.jpg",
             heading: "Skills for your future",
             text: "Expand your potential with a course. Starting at just ₹549 through June 5."
