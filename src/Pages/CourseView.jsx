@@ -1,333 +1,298 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { AiOutlineTrophy } from 'react-icons/ai';
+import { BiMobile } from 'react-icons/bi';
+import { FaRegFile, FaRegHeart } from 'react-icons/fa';
+import { GrPlayFill } from 'react-icons/gr';
+import { IoIosAlert, IoIosPlayCircle, IoMdCode } from 'react-icons/io';
+import { IoCheckmark, IoPlaySharp } from 'react-icons/io5';
+import { LiaStarSolid } from 'react-icons/lia';
+import { MdKeyboardArrowDown, MdOutlineOndemandVideo, MdOutlineSmartDisplay, MdPeople } from 'react-icons/md';
+import { RiFolderDownloadLine, RiMedalLine } from 'react-icons/ri';
+import { TbPointFilled, TbWorld } from 'react-icons/tb';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import Rating from '@/components/Rating';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordionView"
-import { Button } from '@/components/ui/button';
 import HomeLayout from '@/Layouts/HomeLayout';
 import { courseDetail } from '@/Redux/Slices/CourseSlice';
-import { updateCart } from '@/Redux/Slices/UserConfigSlice';
 
+const SectionDropDown = ({ section, last, expandAll = false }) => {
+
+  const [expand, setExpand] = useState(false);
+
+  const total = section?.lectures?.reduce((acc, curr) => acc + curr?.duration, 0);
+
+  useEffect(() => {
+    setExpand(expandAll);
+  }, [expandAll])
+
+
+
+
+  return (
+    <>
+
+      <div onClick={() => setExpand(!expand)} className={`bg-[#F7F9FA] p-4 flex items-center px-5 justify-between cursor-pointer ${!last && "border-b"}`}>
+        {/* section name */}
+        <div className='flex gap-2 w-[75%]'>
+          <MdKeyboardArrowDown className={`size-5 ${expand && "-rotate-180"} duration-200`} />
+          <h1 className='font-bold'>{section?.title}</h1>
+        </div>
+
+        <h3 className='text-sm'> {section?.lectures.length} lectures • {total ? (total / 60).toFixed(1) : "0"}min </h3>
+
+      </div>
+
+      {expand && (
+        <div className={`bg-white  border-slate-300 ${last ? " border-t" : "border-b"}`}>
+
+          {section?.lectures?.map((lecture, indx) => (
+            <div key={indx} className='flex justify-between px-4 text-sm h-10 items-center'>
+
+              <div className='flex gap-3 items-center'>
+                <MdOutlineOndemandVideo className='size-4' />
+                <h3>{lecture?.title}</h3>
+              </div>
+
+              <h3>{lecture?.duration && (lecture?.duration / 60).toFixed(1) + "min"}</h3>
+
+            </div>
+          ))}
+
+        </div>
+      )}
+
+    </>
+  )
+}
+
+const ShowMorePara = ({ value }) => {
+  const [show, setShow] = useState(false);
+
+  return (
+    <div className='space-y-4'>
+      <p className='text-sm relative '>
+        {
+          show ? value : value?.slice(0, 750)
+        }
+
+        {!show && <div className='h-[70%] absolute w-[100%] bottom-0  bg-gradient-to-t from-white to-transparent'></div>}
+
+      </p>
+
+      <div onClick={() => setShow(!show)} className='flex gap-1 text-blue-700 cursor-pointer hover:text-blue-900 duration-150 '>
+        <button className='font-bold text-sm'>Show {show ? "less" : "more"}</button>
+        <MdKeyboardArrowDown className={`size-4 mt-auto ${show && "rotate-180"} duration-150`} />
+      </div>
+
+    </div>
+  )
+
+}
 
 function CourseView() {
   const { course_id } = useParams();
 
-  const learnings = [
-    "Ethical hacking is a good career because it is one of the best ways to test a network.",
-    "Ethical hacking involves a hacker agreeing with an organization or individual who authorizes the hacker to levy cyber attacks on a system or network.",
-    "In addition to proficiency in basic computer skills and use of the command line, ethical hackers must also develop technical skills.",
-    "Many hackers use the Linux operating system (OS) because Linux is a free and open-source OS, meaning that anyone can modify it.",
-    "Ethical hacking is legal because the hacker has full, expressed permission to test the vulnerabilities of a system.",
-    "The different types of hackers include white hat hackers who are ethical hackers and are authorized to hack systems, black hat hackers.",
-    "Whether you want to get your first job in IT security, become a white hat hacker, or prepare to check the security of your own home network.",
-    "Penetration testing skills make you a more marketable IT tech. Understanding how to exploit servers, networks, and applications.",
-    "Penetration tests have five different stages. The first stage defines the goals and scope of the test and the testing methods that will be used.",
-    "There are many types of penetration testing. Internal penetration testing tests an enterprise's internal network."
-  ];
-
-  const data = useSelector((state) => state.course.content);
-
-  const cart = useSelector((state)=> state.config.cart);
-
-  const userCourses = useSelector( (state)=> state.auth.data.purchasedCourses) ;
-
-  const isPurchased = userCourses?.includes(course_id);
-
-  const inCart = cart.some( (value)=> value._id=== course_id);
-
-  
-
-  const sections = data?.sections?.length;
-
-  const lectures = data?.sections?.reduce((total, sections) => total + sections?.lectures?.length, 0);
-
-  // const lectures = data?.sections.reduce( (total, sections)=>{
-  //   return total +
-  // } )
-
-
-
-
-
   const dispatch = useDispatch();
-  const [showMore, setShowMore] = useState(false);
 
+  const data = useSelector((state) => state?.course?.content);
 
+  const [expandAll, setExpandAll] = useState(false);
+  console.log(expandAll);
 
-  const [showMoreDes, setShowMoreDes] = useState(false);
+  // console.log(data);
 
-  const [showMoreBio, setShowMoreBio] = useState(false);
-
-  function addToCart(id,courseDetail){
-    dispatch( updateCart([
-      {
-        add: id
-      },
-      courseDetail
-    ]) )
-  }
 
 
   useEffect(() => {
     dispatch(courseDetail({ course_id }));
-    window.scrollTo(0, 0);
-  }, [dispatch, course_id]);
+  }, [])
 
-  const toggleShowMore = () => {
-    setShowMore(!showMore);
-  };
+
+
 
   return (
     <HomeLayout>
 
-      <div className=' absolute top-0'>
-        <div className='bg-neutral h-[84px] pt-3 pl-6 w-[100%] sticky top-0 text-white shadow-xl z-20'>
+      {/* Card */}
+      <div className='absolute right-20 top-28 z-20 h-[75%] '>
 
-          <h1 className='text-lg font-bold'>
-            {data?.title}
-          </h1>
-          <div className='flex items-center gap-1 text-sm'>
-            <div className='text-yellow-300'>4.4</div>
-            <Rating className={'w-[5%]'} />
-            <div className='text-blue-400'>(1,981 ratings)</div>
-            <div>14676 students</div>
+        <div className=' bg-white  sticky top-7 border  text-[#2D2F31] w-[340px] shadow-2xl'>
 
-          </div>
-        </div>
+          {/* video */}
+          <div className='relative p-[0.2px] h-44 w-full cursor-pointer group'>
 
+            <video className='h-full w-full object-cover  ' poster={data?.thumbnail?.secure_url} src={data?.trailerVideo?.secure_url} />
 
-        <div className='bg-neutral text-white flex'>
-          <div className='p-16 w-[70%] flex-col space-y-5'>
-            <h1 className='text-4xl font-bold'>{data.title}</h1>
-            <p className='text-xl'>{data?.subtitle}</p>
-            <div className='flex items-center gap-1 text-sm'>
-              <div className='text-yellow-300'>4.4</div>
-              <Rating className={'w-[10%]'} />
-              <div className='text-blue-400'>(1,981 ratings)</div>
-              <div>14676 students</div>
-              <div className='text-blue-400 underline'>Created by {data?.instructor?.username}</div>
+            <div className='absolute left-[40%] top-[30%] bg-white p-4 rounded-full z-10 group-hover:scale-105 duration-300'>
+              <GrPlayFill className='size-7' />
             </div>
+
+            <div className='h-full w-full  absolute top-0 bg-gradient-to-t from-black to-transparent  ' ></div>
+
+            <h3 className='text-white font-bold absolute left-[30%] bottom-4'>Preview this Course</h3>
+
           </div>
 
-        </div>
+          <div className='p-5 space-y-4'>
 
-        <div className='absolute top-24 h-[85%] right-8'>
-          <div className="card w-96 bg-base-100 shadow-xl sticky top-2  h-[415px] z-40  ">
-            <figure><img className=' w-full' src={data?.thumbnail?.secure_url} alt="" /></figure>
-            <div className="card-body">
-
-
-              {
-                // !isPurchased && (<p className='font-bold text-2xl'>  ₹ {data?.price} </p>)
-                isPurchased ? (
-                  <p className='font-bold text-xl flex gap-3'>  <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="blue" className="bi bi-exclamation-circle-fill " viewBox="0 0 16 16">
-                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4m.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/>
-                </svg>You have already purchased this course</p>
-                ): (<p className='font-bold text-2xl'>  ₹ {data?.price} </p>)
-              }
-              <div className="card-actions justify-center mt-4 ">
-                {
-                 (inCart && !isPurchased) && (
-                  <Link className='w-full' to={"/shoppingCart"}>
-                      <Button variant="bghost" className="w-full h-12 font-bold text-lg rounded-sm text-white bg-blue-600 r hover:bg-blue-700  hover:text-white border-none" size="new" >
-                      Go to Cart
-                    </Button> 
-                    </Link>
-                 )
-                }
-
-                {
-                  (!inCart && !isPurchased) && (
-                    <Button onClick={()=> addToCart(data?._id , data)} variant="bghost" className="w-full h-12 font-bold text-lg rounded-sm" size="new" >Add to Cart</Button>
-                  )
-
-                }
-
-                {
-                  isPurchased && (
-                    <Link className='w-full' to={`/learn/lectures/${course_id}`}>
-                      <Button  className="w-full h-12 font-bold text-lg rounded-sm bg-slate-800 hover:bg-slate-700 " size="new" >
-                      Go to Course 😎
-                    </Button> 
-                    </Link>
-                  )
-                }
-              </div>
-              
-                  <p className='font-normal text-xs text-center'>  30-Day Money-Back Guarantee <br />
-                Full Lifetime Access </p>
-               
+            <div className='flex items-center gap-2'>
+              <h2 className='text-2xl font-bold'>₹{data?.price}  </h2>
+              <h3 className='font-normal text-base line-through text-[#6A6F73]'>₹{Math.floor(((data?.price*100)/20)) }</h3>
+              <h3 className='font-normal text-base'>80% off</h3>
             </div>
-          </div>
-        </div>
 
 
-
-        <div className='border border-opacity-25 border-black ml-20 mt-10 w-[60%] p-5'>
-          <h1 className='font-bold text-2xl'>What you'll learn</h1>
-          <div className={`show-more-container ${showMore ? 'show-more-expanded' : ''}`}>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-7'>
-              {(showMore ? learnings : learnings.slice(0, 6)).map((item, index) => (
-                <div key={index} className="flex items-start">
-                  <svg className="w-6 h-6 text-green-500 flex-shrink-0 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span className="text-base  flex-1">{item}</span>
-                </div>
-              ))}
+            <div className='flex items-center h-12 justify-between'>
+              <button className='font-bold w-[75%] h-full bg-blue-600 text-white hover:bg-blue-700 duration-150'>Add to cart</button>
+              <button className='border border-black h-full w-[20%] hover:bg-[#E3E7EA] duration-150 '><FaRegHeart className='size-5 m-auto' /></button>
             </div>
-          </div>
-          <button
-            onClick={toggleShowMore}
-            className='mt-4 text-blue-400 underline'
-          >
-            {showMore ? 'Show less' : 'Show more'}
-          </button>
-        </div>
 
-        <div className='ml-20 mt-10 w-[60%]'>
-
-          <h1 className='font-bold text-2xl'>Course content </h1>
-
-          <p className='mt-4 flex items-center'>
-            {sections} sections <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-dot" viewBox="0 0 16 16">
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg> {lectures} lectures
-          </p>
-
-          <div className='border border-black border-opacity-15 mt-4  bg-gray-100'>
-            <Accordion type="single" collapsible>
-
-              {
-                data?.sections ? (
-                  data?.sections.map((section, indx) => {
-                    return (
-                      <AccordionItem key={indx} value={`item-${indx + 1}`}>
-                        <AccordionTrigger> {section?.title} here </AccordionTrigger>
-                        {
-                          section?.lectures ? (
-                            section?.lectures.map((lecture, indx) => {
-                              return (
-                                <AccordionContent key={indx}>
-                                  {lecture?.title}
-                                </AccordionContent>
-                              )
-                            })
-                          ) : ""
-                        }
-                      </AccordionItem>
-                    )
-                  })
-                ) : ""
-              }
-
-            </Accordion>
-
-          </div>
-
-
-
-        </div>
-
-        <div className='ml-20 mt-10 w-[60%] min-h-40 mb-9'>
-          <h1 className='text-2xl font-semibold'>
-            Description
-          </h1>
-
-
-          <p className={` pt-4 font-medium show-more-container ${showMoreDes ? 'show-more-expanded' : ''}`}>
-            {
-              data && (
-                showMoreDes ? data?.description : data?.description?.slice(0, 355)
-              )
-            }
-          </p>
-          <button onClick={() => { setShowMoreDes(!showMoreDes) }}
-            className='mt-4 text-blue-400 underline'>
-            {showMoreDes ? 'Show less' : 'Show more'}
-          </button>
-        </div>
-
-
-        {
-          data && (
-            <div className='ml-20 mt-10 w-[60%] space-y-2 mb-14' >
-              <h1 className='font-semibold text-2xl' >
-                Instuctor
-              </h1>
-
-              <div className=''>
-                <h2 className='underline text-xl text-blue-500 font-semibold'>
-                  {data?.instructor?.username}
-                </h2>
-
-                <div className='flex items-center gap-7 text-sm font-semibold'>
-
-                  <div className="avatar my-3">
-                    <div className="w-28 rounded-full">
-                      <img src={data?.instructor?.image} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <ul className='space-y-1'>
-
-                      <li className='flex items-center gap-3'>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-star-fill" viewBox="0 0 16 16">
-                          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                        </svg>
-                        4.4 Instructor Rating
-                      </li>
-
-                      <li className='flex items-center gap-3'>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-award-fill" viewBox="0 0 16 16">
-                          <path d="m8 0 1.669.864 1.858.282.842 1.68 1.337 1.32L13.4 6l.306 1.854-1.337 1.32-.842 1.68-1.858.282L8 12l-1.669-.864-1.858-.282-.842-1.68-1.337-1.32L2.6 6l-.306-1.854 1.337-1.32.842-1.68L6.331.864z" />
-                          <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1z" />
-                        </svg>
-                        62,315 Reviews
-                      </li>
-
-                      <li className='flex items-center gap-3'>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-people-fill" viewBox="0 0 16 16">
-                          <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
-                        </svg>
-                        436,769 Students
-                      </li>
-
-                      <li className='flex items-center gap-3'>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-play-fill" viewBox="0 0 16 16">
-                          <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393" />
-                        </svg>
-                        330 Courses
-                      </li>
-
-                    </ul>
-                  </div>
-
-                </div>
-
-                <p className={` pt-4 font-medium show-more-container ${showMoreBio ? 'show-more-expanded' : ''}`}>
-                  {
-                    showMoreBio ? data?.instructor?.bio : data?.instructor?.bio?.slice(0, 325)
-                  }
-                </p>
-
-                <button onClick={() => { setShowMoreBio(!showMoreBio) }}
-                  className='mt-4 text-blue-400 underline'>
-                  {showMoreBio ? 'Show less' : 'Show more'}
-                </button>
-
-              </div>
+            <div className='space-y-1'>
+              <h3 className='text-center text-xs'>30-Day Money-Back Guarantee</h3>
+              <h3 className='text-center text-xs'>Full Lifetime Access</h3>
             </div>
-          )
-        }
+
+          </div>
+
+        </div>
+
       </div>
+
+      <div className='bg-[#1C1D1F] w-full h-16 fixed top-0 text-white p-3 shadow-2xl z-10'>
+        <h1 className='font-bold'>{data?.title}</h1>
+        <div className='text-[#F69C08] flex text-sm gap-2'>
+          <h4 >{4.7}</h4>
+          <Rating total={4.7} color='#F69C08' flag={false} />
+          <h4 className='text-[#C0C4FC] underline'>(3,479 ratings)</h4>
+          <h4 className='text-white'>15,266 students</h4>
+        </div>
+      </div>
+
+      <div className='bg-[#1C1D1F]  px-20 py-10 text-white '>
+
+        <div className='w-[65%] space-y-5'>
+          <h5 className='text-[#C0C4FC] font-bold'> {data?.category?.charAt(0).toUpperCase() + data?.category?.slice(1)} </h5>
+
+          <h1 className='text-3xl font-bold'>{data?.title}</h1>
+
+          <h3 className='font-semibold text-lg'> {data?.subtitle} </h3>
+
+          <div className='text-[#F69C08] flex text-sm gap-2'>
+            <h4 >{4.7}</h4>
+            <Rating total={4.7} color='#F69C08' flag={false} />
+            <h4 className='text-[#C0C4FC] underline'>(3,479 ratings)</h4>
+            <h4 className='text-white'>15,266 students</h4>
+          </div>
+
+          <h3 className='text-sm'>Created by <span className='text-[#C0C4FC] underline'>{data?.instructor?.username}</span></h3>
+
+          <div className='flex gap-2 items-center text-sm'>
+            <IoIosAlert />
+            <h3>Last updated 11/2024</h3>
+            <TbWorld />
+            <h3>English</h3>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div className='w-[70%] px-24 py-10 space-y-10 '>
+
+        {/* what you'll learn */}
+        <div className='py-6 px-6 border border-slate-300 space-y-3'>
+
+          <h1 className='text-2xl font-bold '>What  you'll learn</h1>
+
+          <div className='columns-2  text-sm space-y-1'>
+            {
+              data?.goals?.objectives?.map((value, indx) => <div key={indx} className='flex gap-2'><IoCheckmark className='size-4 flex-shrink-0 mt-1' /> {value}</div>)
+            }
+          </div>
+
+        </div>
+
+        {/* includes */}
+        <div className='space-y-3'>
+          <h1 className='text-2xl font-bold'>This course includes:</h1>
+
+          <div className='columns-2 space-y-1'>
+            <div className='flex items-center gap-3 flex-shrink-0'> <MdOutlineSmartDisplay /> 70.5 hours on-demand video</div>
+            <div className='flex items-center gap-3 flex-shrink-0'><IoMdCode /> 45 coding exercises</div>
+            <div className='flex items-center gap-3 flex-shrink-0'><FaRegFile />3 articles</div>
+            <div className='flex items-center gap-3 flex-shrink-0'><RiFolderDownloadLine />20 downloadable resources</div>
+            <div className='flex items-center gap-3 flex-shrink-0'><BiMobile />Access on mobile and TV</div>
+            <div className='flex items-center gap-3 flex-shrink-0'><AiOutlineTrophy />Certificate of completion</div>
+          </div>
+        </div>
+
+        {/* content */}
+
+        <div>
+
+          <h1 className='text-2xl font-bold'>Course content</h1>
+
+          <div className='flex justify-between mt-5 text-sm'>
+            <h1>31 sections • 202 lecutres • 70h 42m total length</h1>
+            <button onClick={() => setExpandAll(!expandAll)} className='text-blue-700 font-bold hover:text-blue-900 duration-150'>{expandAll ? "Collapse" : "Expand"} all sections</button>
+          </div>
+
+          {/* sections */}
+
+          <div className='my-6 border border-slate-300 '>
+            {data?.sections?.map((section, indx) => <SectionDropDown key={indx} section={section} last={data?.sections?.length - 1 === indx} expandAll={expandAll} />
+            )}
+          </div>
+
+        </div>
+
+        {/* requirement */}
+        <div className='space-y-4'>
+          <h1 className='text-2xl font-bold'>Requirements</h1>
+
+          <div className='space-y-1 text-sm'>
+            {data?.goals?.prerequisites?.map((value, indx) => <div className='flex items-center gap-4' key={indx}><TbPointFilled />{value}</div>)}
+          </div>
+
+        </div>
+
+        {/* description */}
+
+        <div className='space-y-4'>
+
+          <h1 className='text-2xl font-bold'>Description</h1>
+
+          <ShowMorePara value={data?.description} />
+
+        </div>
+
+        {/* instructor */}
+
+        <div className='space-y-2 pb-11'>
+          <h1 className='text-xl text-blue-800 font-semibold underline underline-offset-4 '>{data?.instructor?.username}</h1>
+
+          <h3 className='text-[#6A6F73]'>A teacher who loves to teach about Technology</h3>
+
+          <div className='flex gap-5'>
+            <img className='rounded-full size-24 ' src={data?.instructor?.image} alt="" />
+            <ul className='text-sm space-y-1'>
+              <li className='flex items-center gap-4'><LiaStarSolid className='flex-shrink-0 size-4' /> 4.7 Instructor Rating</li>
+              <li className='flex items-center gap-4'><RiMedalLine className='flex-shrink-0 size-4' /> 3,522 Reviews</li>
+              <li className='flex items-center gap-4'><MdPeople className='flex-shrink-0 size-4' /> 15,815 Students</li>
+              <li className='flex items-center gap-4'><IoIosPlayCircle className='flex-shrink-0 size-4' /> 1 course</li>
+            </ul>
+          </div>
+
+          <ShowMorePara value={data?.instructor?.bio} />
+
+        </div>
+
+
+
+
+      </div>
+
 
 
 

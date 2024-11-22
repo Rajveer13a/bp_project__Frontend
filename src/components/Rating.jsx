@@ -2,33 +2,33 @@ import React from 'react'
 import { IoIosStarHalf, IoIosStarOutline } from 'react-icons/io';
 import { IoStar} from 'react-icons/io5';
 
-function Rating({total , count}) {
+function Rating({total , count=0 , color="#B4690E",flag=true}) {
 
         const fullStars = Math.floor(total);
         const halfStars = total % 1;
         const emptyStars = 5 - fullStars - (halfStars ? 1 : 0);
 
-        console.log("here",halfStars);
+        // console.log("here",halfStars);
         
 
     return (
         <div className='flex items-center text-sm '>
-            <h1 className='font-bold mr-1'>{total}</h1>
+            {flag && <h1 className='font-bold mr-1'>{total}</h1>}
             
             {
-                Array(fullStars).fill().map((_,i)=> <IoStar key={i} className='fill-[#B4690E]' />)
+                Array(fullStars).fill().map((_,i)=> <IoStar key={i} className={`fill-[${color}]`} />)
             }
 
             {
-                halfStars !=0 && (halfStars >= 0.5 ? <IoStar  className='fill-[#B4690E]' /> : <IoIosStarHalf className='fill-[#B4690E]'/> )
+                halfStars !=0 && ((halfStars >= 0.5 && fullStars < 4 ) ? <IoStar  className={`fill-[${color}]`} /> : <IoIosStarHalf className={`fill-[${color}]`}/> )
             }
 
             {
-                Array(emptyStars).fill().map((_,i)=> <IoIosStarOutline key={i} className='fill-[#B4690E]' />)
+                Array(emptyStars).fill().map((_,i)=> <IoIosStarOutline key={i} className={`fill-[${color}]`} />)
             }
             
 
-            <h3 className='ml-1'>({count})</h3>
+            {flag && <h3 className='ml-1'>({count})</h3>}
 
         </div>
     )

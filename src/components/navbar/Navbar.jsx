@@ -154,7 +154,7 @@ function Navbar() {
 
 
     return (
-        <div className='w-[100vw] flex items-center border border-black px-4 space-x-1'>
+        <div className='w-[100vw] flex items-center border bg-white border-black px-4 space-x-1 relative z-30'>
             <Logo />
 
             <HoverTab />

@@ -3,8 +3,8 @@ import { Route, Routes, useNavigate } from "react-router-dom"
 import eventEmitter from "./Helpers/eventEmitter"
 import InstructorRoutes from "./InstructorRoutes"
 import ManagementRoutes from "./ManagementRoutes"
+import CourseView from "./Pages/CourseView"
 import HomePage from "./Pages/HomePage"
-// import CourseView from "./Pages/CourseView"
 // import HomePage from "./Pages/HomePage"
 // import Learning from "./Pages/Learning"
 // import LearnLectures from "./Pages/LearnLectures"
@@ -25,6 +25,8 @@ import { store } from "./Redux/store"
 function App() {
 
   const navigate = useNavigate();
+
+  window.scrollTo(0, 0);
 
   eventEmitter.on('resetAuthState', () => {
     
@@ -48,7 +50,7 @@ function App() {
 
       {/* <Route path="/profile" element={<Profile />} /> */}
 
-      {/* <Route path="/course/:course_id" element={<CourseView />} /> */}
+      <Route path="/course/:course_id" element={<CourseView />} />
 
       {/* <Route path="/mylearning" element={<Learning />} /> */}
 
