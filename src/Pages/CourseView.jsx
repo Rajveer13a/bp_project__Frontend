@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AiOutlineTrophy } from 'react-icons/ai';
 import { BiMobile } from 'react-icons/bi';
 import { FaRegFile, FaRegHeart } from 'react-icons/fa';
@@ -98,33 +98,76 @@ function CourseView() {
   const data = useSelector((state) => state?.course?.content);
 
   const [expandAll, setExpandAll] = useState(false);
-  console.log(expandAll);
 
-  // console.log(data);
+  const [isNearBottom, setIsNearBottom] = useState(false);
 
+  const videoRef = useRef(null);
 
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handleScroll = () => {
+
+    const position = window.scrollY;
+
+    const isCloseToBottom = window.innerHeight + position >= document.documentElement.scrollHeight - 270;
+
+    setIsNearBottom(isCloseToBottom);
+  }
+
+  const onPlayVideo = async () => {
+
+    setIsPlaying(true);
+    await videoRef?.current?.play();
+    videoRef?.current?.requestFullscreen();
+
+  }
+
+  const handleFullScreenChange = () => {
+    const isFullScreen = document.fullscreenElement === videoRef.current;
+
+    if (!isFullScreen) {
+      setIsPlaying(false);
+      videoRef?.current?.pause();
+      videoRef.current.currentTime = 0;
+    }
+
+  }
 
   useEffect(() => {
+
     dispatch(courseDetail({ course_id }));
+
+    window.addEventListener("scroll", handleScroll);
+
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    document.addEventListener('visibilitychange', handleFullScreenChange);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener('fullscreenchange', handleFullScreenChange);
+      document.addEventListener('visibilitychange', handleFullScreenChange);
+    };
+
+
   }, [])
-
-
 
 
   return (
     <HomeLayout>
 
       {/* Card */}
-      <div className='absolute right-20 top-28 z-20 h-[75%] '>
+      <div className={`absolute right-20 top-28  h-[75%] ${isNearBottom ? "z-10" : "z-20"}`}>
 
         <div className=' bg-white  sticky top-7 border  text-[#2D2F31] w-[340px] shadow-2xl'>
 
           {/* video */}
           <div className='relative p-[0.2px] h-44 w-full cursor-pointer group'>
 
-            <video className='h-full w-full object-cover  ' poster={data?.thumbnail?.secure_url} src={data?.trailerVideo?.secure_url} />
+            <img className='h-full w-full object-cover ' src={data?.thumbnail?.secure_url} />
 
-            <div className='absolute left-[40%] top-[30%] bg-white p-4 rounded-full z-10 group-hover:scale-105 duration-300'>
+            <video ref={videoRef} className={`h-full w-full object-cover ${!isPlaying && "hidden" }`} src={data?.trailerVideo?.secure_url} />
+
+            <div onClick={onPlayVideo} className={`absolute left-[40%] top-[30%] bg-white p-4 rounded-full z-10 group-hover:scale-105 duration-300 ${isPlaying && "opacity-0 pointer-events-none"}`}>
               <GrPlayFill className='size-7' />
             </div>
 
@@ -138,7 +181,7 @@ function CourseView() {
 
             <div className='flex items-center gap-2'>
               <h2 className='text-2xl font-bold'>₹{data?.price}  </h2>
-              <h3 className='font-normal text-base line-through text-[#6A6F73]'>₹{Math.floor(((data?.price*100)/20)) }</h3>
+              <h3 className='font-normal text-base line-through text-[#6A6F73]'>₹{Math.floor(((data?.price * 100) / 20))}</h3>
               <h3 className='font-normal text-base'>80% off</h3>
             </div>
 
