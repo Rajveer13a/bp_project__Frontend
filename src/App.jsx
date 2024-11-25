@@ -10,7 +10,7 @@ import HomePage from "./Pages/HomePage"
 // import LearnLectures from "./Pages/LearnLectures"
 import LogIn from "./Pages/LogIn"
 // import Profile from "./Pages/Profile"
-// import ShoppingCart from "./Pages/ShoppingCart"
+import ShoppingCart from "./Pages/ShoppingCart"
 import SignUp from "./Pages/SignUp"
 // import VerifyEmail from "./Pages/VerifyEmail"
 import { resetData } from "./Redux/Slices/AuthSlice"
@@ -56,7 +56,7 @@ function App() {
 
       {/* <Route path="/learn/lectures/:course_id" element={<LearnLectures />} /> */}
       
-      {/* <Route path="/shoppingcart" element={<ShoppingCart/>} /> */}
+      <Route path="/shoppingcart" element={<ShoppingCart/>} />
 
       <Route path="/instructor/*" element={<InstructorRoutes/>}/>
 

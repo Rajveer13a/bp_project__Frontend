@@ -1,20 +1,47 @@
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
+import { GoDotFill } from 'react-icons/go'
+import { HiMiniTag } from "react-icons/hi2";
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
+import Rating from '@/components/Rating'
 import HomeLayout from '@/Layouts/HomeLayout'
 import { getUser } from '@/Redux/Slices/AuthSlice'
 import { createOrder, verifyPayment } from '@/Redux/Slices/PaymentSlice'
 import { getConfig, updateCart } from '@/Redux/Slices/UserConfigSlice'
+import { RxCross1 } from 'react-icons/rx';
 
-const dot = <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-dot" viewBox="0 0 16 16">
-    <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-</svg>
+const Card = ({ data, removeFromCart }) => {
+    return (
+        <div className='flex gap-4 border-t py-4 border-slate-300'>
 
-const tag = <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" className="bi bi-tag-fill mt-1" viewBox="0 0 16 16">
-    <path d="M2 1a1 1 0 0 0-1 1v4.586a1 1 0 0 0 .293.707l7 7a1 1 0 0 0 1.414 0l4.586-4.586a1 1 0 0 0 0-1.414l-7-7A1 1 0 0 0 6.586 1zm4 3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-</svg>
+            <div className='h-[72px] w-32 '>
+                <img className='object-cover h-full w-full' src={data?.thumbnail?.secure_url} alt="" />
+            </div>
+
+            <div className='w-[50%] space-y-1'>
+                <h2 className='font-bold'>{data?.title}</h2>
+                <h5 className='text-xs'>By {data?.instructor?.username}</h5>
+                <div className='flex text-sm gap-1 items-center font-bold'> 4.7 <Rating total={4.7} flag={false} /> <span className='text-xs text-slate-600 font-normal'>(2,051 ratings)</span></div>
+                <div className='text-xs text-slate-600 flex items-center gap-[2px]'>19.5 total hours <GoDotFill /> 263 lectures <GoDotFill /> {data?.level} levels</div>
+            </div>
+
+            <div className='duration-150 text-sm space-y-3 py-2 text-[#A435F0] font-medium '>
+                <button onClick={() => removeFromCart(data?._id)} className='block hover:text-blue-900 ml-auto'>Remove</button>
+                <button className='block hover:text-[blue-900] ml-auto'>Save for Later</button>
+                <button className='block hover:text-blue-900 ml-auto'>Move to Whislist</button>
+            </div>
+
+            <div className='ml-auto mr-2'>
+                <h3 className='font-bold text-[#A435F0] text-lg flex gap-1 items-center'>₹{data?.price} <HiMiniTag /> </h3>
+                <h3 className='line-through text-[#6A6F73]'>₹{(data?.price * 100) / 20}</h3>
+            </div>
+
+
+        </div>
+    )
+}
 
 function ShoppingCart() {
 
@@ -22,60 +49,60 @@ function ShoppingCart() {
 
     const navigate = useNavigate();
 
-    const {cart , total} = useSelector( (state)=> state.config );
-    
-     const userdata = useSelector( (state) => state.auth.data)
+    const { cart, total } = useSelector((state) => state.config);
+
+    const userdata = useSelector((state) => state.auth.data)
 
     const cartLength = cart?.length;
 
-    async function onVerifySuccess (response){
+    async function onVerifySuccess(response) {
         // alert(response.razorpay_payment_id);
         // alert(response.razorpay_order_id);
         // alert(response.razorpay_signature)
 
-        const {razorpay_payment_id, razorpay_order_id, razorpay_signature} = response ;
+        const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
 
         const res = await dispatch(verifyPayment({
             payment_id: razorpay_payment_id,
-            order_id : razorpay_order_id,
-            signature : razorpay_signature
+            order_id: razorpay_order_id,
+            signature: razorpay_signature
         }));
 
-        if(res.payload.success){
+        if (res.payload.success) {
             await dispatch(getConfig())
             await dispatch(getUser());
             navigate('/mylearning')
         }
     }
 
-    async function onFailure (response){
+    async function onFailure(response) {
         toast.error(response.error.description)
     }
 
-    async function onCheckout(){
-        const courses = cart?.map((value)=> value?._id);
+    async function onCheckout() {
+        const courses = cart?.map((value) => value?._id);
 
         const res = await dispatch(createOrder(courses));
-        
-        if(res?.payload?.success){
 
-            const { order_id, razorpay_key_id } = res.payload.data ;
+        if (res?.payload?.success) {
+
+            const { order_id, razorpay_key_id } = res.payload.data;
 
             console.log(order_id, razorpay_key_id);
 
             var options = {
                 "key": razorpay_key_id, // Enter the Key ID generated from the Dashboard
-                "amount": total*100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                "amount": total * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
                 "currency": "INR",
                 "name": "BrainyPath", //your business name
                 "description": "Course Purchase",
-                "image": "https://img.freepik.com/free-vector/colorful-company-logo-template-with-tagline_23-2148802643.jpg",
-                "order_id": order_id, 
-                "handler": onVerifySuccess ,
-                "prefill": { 
+                "image": "https://cdn.dribbble.com/users/6681099/screenshots/15273252/media/fbde0121e08b8a60b88302f0590e015b.jpg?resize=1200x900&vertical=center",
+                "order_id": order_id,
+                "handler": onVerifySuccess,
+                "prefill": {
                     "name": userdata.username,
-                    "email": userdata.email, 
-                    "contact": ""  
+                    "email": userdata.email,
+                    "contact": ""
                 },
                 "notes": {
                     "address": "Razorpay Corporate Office"
@@ -92,7 +119,7 @@ function ShoppingCart() {
 
     }
 
-    async function removeFromCart(id){
+    async function removeFromCart(id) {
         await dispatch(updateCart([
             {
                 remove: id
@@ -100,98 +127,83 @@ function ShoppingCart() {
         ]));
         dispatch(getConfig())
     }
-    
 
-    
-    useEffect(()=>{
+
+
+    useEffect(() => {
         dispatch(getConfig())
     }, [])
 
-    
+
 
 
     return (
         <HomeLayout>
 
-            <div className='pt-8 pl-12 min-h-[85vh]'>
+            <div className={`px-14 py-10 space-y-8 mb-10`}>
 
-                <div>
-                <h1 className='text-4xl font-bold mb-6'>
-                    Shopping Cart
-                </h1>
-                <h5 className='text-lg font-bold border-b-2 pb-3 w-[70%]'> {cartLength} Course in Cart </h5>
-                </div>
-
-                <div className=''>
-
-                    {
-                        cart ? cart.map( (item,indx)=>{
-                            
-                            return(
-                                <div key={indx} className='pt-8 flex w-[70%] border-b-2 h-[190px]'>
-                        <img className='h-20' src={item.thumbnail.secure_url} alt="" />
-
-                        <div className='px-10 font-bold text-lg w-[55vw]'>
-                            {item.title}
-                            <br />
-                            <h5 className='text-sm font-medium'>
-                                {item.instructor.username}
-                            </h5>
-                            <h5 className='flex items-center text-sm font-medium'>
-                                4.5 <Rating className={'w-20'} />
-                                (1,122 ratings)
-                            </h5>
-                            <h5 className='flex items-center text-sm font-medium'>
-                                9 total hours
-                                {dot}
-                                93 lectures
-                                {dot}
-                                All Levels
-                            </h5>
+                <h1 className='text-4xl font-bold'>Shopping Cart</h1>
 
 
+                {
+                    !cartLength == 0 ? (<div className='flex gap-12'>
+                        <div className='w-[70%] space-y-2'>
+                            <h3 className='font-bold'>{cartLength} courses in Cart</h3>
+
+                            {
+                                cart?.map((value, indx) => <Card key={indx} data={value} removeFromCart={removeFromCart} />)
+                            }
 
                         </div>
 
-                        <div className='text-blue-600  '>
-                            <ul className='space-y-2 text-nowrap cursor-pointer '>
-                                <li onClick={()=>removeFromCart(item._id)} className='hover:text-blue-950'>Remove</li>
-                                <li className='hover:text-blue-950'>Save for Later</li>
-                                <li className='hover:text-blue-950'>Move to Whislist</li>
-                            </ul>
+                        <div className='flex-grow border-b '>
+
+                            <h3 className='text-lg font-bold text-[#6A6F73]'>Total:</h3>
+                            <h2 className='text-3xl font-bold mt-2'>₹{total}</h2>
+                            <h3 className='line-through text-[#6A6F73]'>₹{(total * 100) / 20}</h3>
+                            <h3 className=''>80% off</h3>
+                            <button onClick={onCheckout} className='bg-blue-600 text-white w-full py-3 font-bold hover:bg-blue-700 duration-100 mt-3'>Checkout</button>
+
+                            <div className='h-[0.5px] bg-slate-400 my-4'></div>
+
+                            <h3 className='font-bold'>Promotions</h3>
+
+                            <div className='border border-slate-300 text-[#6A6F73] p-2 text-xs flex justify-between items-center'>
+                                <h4>
+                                    <span className='font-bold text-sm'>BFCPSALE24</span> is applied <br />
+                                    Udemy coupon
+                                </h4>
+                                <RxCross1 className='size-4 text-black cursor-not-allowed' />
+                            </div>
+
+                            <div className=' mt-4 h-8 flex itam-center'>
+                                <input placeholder='Enter Coupon' type="text" className='w-[70%] h-full border-y border-l border-black px-3 py-1 placeholder:text-slate-500 text-sm' />
+                                <button className='bg-blue-600 hover:bg-blue-700 duration-100 text-white w-[30%] h-full font-bold text-sm'>
+                                    Apply
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>) : (
+                        <div>
+                            <h3 className='font-bold'>{cartLength} courses in Cart</h3>
+
+                            <div className='flex flex-col items-center justify-center w-full border-[1.5px] space-y-5 py-6 mt-2'>
+
+                                <img className='h-48' src="https://s.udemycdn.com/browse_components/flyout/empty-shopping-cart-v2-2x.jpg" alt="" />
+
+                                <h2 >Your cart is empty. Keep shopping to find a course!</h2>
+
+                                <Link to={"/"}>
+                                    <button className='bg-blue-600 text-white font-bold px-3 py-3 hover:bg-blue-800 duration-100 mt-3'>Keep shopping</button>
+                                </Link>
+
+                            </div>
                         </div>
 
-                        <div className='text-blue-600 text-xl font-bold flex item space-x-2'>
-                            <p>₹{item.price} </p> {tag}
-                        </div>
+                    )
+                }
 
-                    </div>
-                            )
-                        } ) : ""
-                    }
-
-                    <div className='w-[26%] pl-10 absolute top-48 right-7'>
-                        
-                        <div className='flex flex-col space-y-2  border-b-2 pb-4'>
-                            <h1 className='text-xl font-bold text-[#6A6F73]'> Total: </h1>
-
-                        <h1 className='text-3xl font-bold'> ₹{total || total} </h1>
-
-                        <Button onClick={onCheckout} className=' bg-blue-600 rounded-none hover:bg-blue-700  text-lg h-10' >Checkout</Button>
-                        </div>
-                        
-                        <h5 className='font-bold mt-4 mb-4'>Promotions</h5>
-
-                        <div className='flex'>
-                        <input className='border-[1px] placeholder-slate-500 border-black h-8 pl-3 focus:outline-none ' type="text" placeholder='Enter Coupon' />
-                        
-                        <Button className='bg-blue-600 rounded-none hover:bg-blue-700  text-lg h-8'>Apply</Button>
-                        </div>
-                        
-
-                    </div>
-
-                </div>
 
             </div>
 

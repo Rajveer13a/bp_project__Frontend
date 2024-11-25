@@ -10,11 +10,12 @@ import { MdKeyboardArrowDown, MdOutlineOndemandVideo, MdOutlineSmartDisplay, MdP
 import { RiFolderDownloadLine, RiMedalLine } from 'react-icons/ri';
 import { TbPointFilled, TbWorld } from 'react-icons/tb';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import Rating from '@/components/Rating';
 import HomeLayout from '@/Layouts/HomeLayout';
 import { courseDetail } from '@/Redux/Slices/CourseSlice';
+import { updateCart } from '@/Redux/Slices/UserConfigSlice';
 
 const SectionDropDown = ({ section, last, expandAll = false }) => {
 
@@ -97,6 +98,14 @@ function CourseView() {
 
   const data = useSelector((state) => state?.course?.content);
 
+  const userCourses = useSelector((state) => state.auth.data.purchasedCourses);
+
+  const cart = useSelector((state) => state.config.cart);
+
+  const isPurchased = userCourses?.includes(course_id);
+
+  const inCart = cart.some((value) => value._id === course_id);
+
   const [expandAll, setExpandAll] = useState(false);
 
   const [isNearBottom, setIsNearBottom] = useState(false);
@@ -133,6 +142,15 @@ function CourseView() {
 
   }
 
+  const addToCart = () => {
+    dispatch(updateCart([
+      {
+        add: course_id
+      },
+      data
+    ]))
+  }
+
   useEffect(() => {
 
     dispatch(courseDetail({ course_id }));
@@ -165,7 +183,7 @@ function CourseView() {
 
             <img className='h-full w-full object-cover ' src={data?.thumbnail?.secure_url} />
 
-            <video ref={videoRef} className={`h-full w-full object-cover ${!isPlaying && "hidden" }`} src={data?.trailerVideo?.secure_url} />
+            <video ref={videoRef} className={`h-full w-full object-cover ${!isPlaying && "hidden"}`} src={data?.trailerVideo?.secure_url} />
 
             <div onClick={onPlayVideo} className={`absolute left-[40%] top-[30%] bg-white p-4 rounded-full z-10 group-hover:scale-105 duration-300 ${isPlaying && "opacity-0 pointer-events-none"}`}>
               <GrPlayFill className='size-7' />
@@ -187,7 +205,19 @@ function CourseView() {
 
 
             <div className='flex items-center h-12 justify-between'>
-              <button className='font-bold w-[75%] h-full bg-blue-600 text-white hover:bg-blue-700 duration-150'>Add to cart</button>
+              {
+                inCart ? (
+                  <Link to={"/shoppingcart"} className='w-[75%] h-full'>
+                    <button className='font-bold w-full h-full bg-blue-600 text-white hover:bg-blue-700 duration-150'>Go to cart</button>
+                  </Link>
+                ) : (
+                  isPurchased ? (
+                    <button className='font-bold w-[75%] h-full text-white duration-150  bg-slate-800 hover:bg-slate-700 group'>Go to Course 😎</button>
+                  ) : (
+                    <button onClick={addToCart} className='font-bold w-[75%] h-full bg-blue-600 text-white hover:bg-blue-700 duration-150'>Add to cart</button>
+                  )
+                )
+              }
               <button className='border border-black h-full w-[20%] hover:bg-[#E3E7EA] duration-150 '><FaRegHeart className='size-5 m-auto' /></button>
             </div>
 
