@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import Iprofile from '@/Instructor/components/Iprofile';
 
 import Logo from '../Logo'
-import { BusinessButton, CartButton, InstructorButton, MyLearningButton, NotifyButton } from './HoverElement';
+import { BusinessButton, CartButton, FavouriteButton, InstructorButton, MyLearningButton, NotifyButton } from './HoverElement';
 import SearchBar from './SearchBar';
 
 
@@ -143,7 +143,7 @@ function Navbar() {
 
     const lists = [
         [{ text: "My learning", link: "" }],
-        [{ text: "My cart", link: "" }, { text: "Instructor dashboard", link: "" }],
+        [{ text: "My cart", link: "/shoppingCart" }, { text: "Instructor dashboard", link: "/instructor/courses" }],
         [{ text: "Account Settings", link: "" }],
         [{ text: "Public profile", link: "" }, { text: "Edit profile", link: "/profile" }],
         [{ text: "Help", link: "" }, { text: "Logout", link: "" }]
@@ -161,21 +161,25 @@ function Navbar() {
 
             <SearchBar />
 
-            <BusinessButton />
+            {/* <BusinessButton /> */}
 
-            <InstructorButton />
+            <div className='flex items-center justify-evenly flex-grow'>
+                <InstructorButton />
 
-            <MyLearningButton />
+                <MyLearningButton />
 
-            {isLoggedIn && <>
-                <CartButton />
+                {isLoggedIn && <>
+                    <FavouriteButton />
 
-                <NotifyButton />
+                    <Link to={"/shoppingcart"}> <CartButton /> </Link>
+
+                    <NotifyButton />
 
 
 
-                <Iprofile lists={lists} />
-            </>}
+                    <Iprofile lists={lists} />
+                </>}
+            </div>
 
             {!isLoggedIn && (
                 <div className='space-x-2'>

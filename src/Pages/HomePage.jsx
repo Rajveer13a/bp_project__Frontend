@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Carousel } from '@/components/Carousel'
@@ -10,7 +10,13 @@ function HomePage() {
 
   const dispatch = useDispatch();
 
-  const data = useSelector((state) => state?.course?.data);
+  let data = useSelector((state) => state?.course?.data);
+
+  const userCourses = useSelector((state) => state.auth.data.purchasedCourses);
+
+  const filteredData = useMemo(() => {
+    return data?.filter((value) => !userCourses.includes(value?._id));
+}, [data, userCourses]);
   
   const categories  = ["Web Development","Data Science", "IT Certifications", "Leadership","Communication","Business Analytics & Intelligence"]
 
@@ -46,7 +52,7 @@ function HomePage() {
           }   )}
         </ul>
 
-        <Tab data={data} />
+        <Tab data={filteredData} />
 
          <button className='border border-black p-2 font-bold mx-10 mt-14 hover:bg-slate-100 transition-colors duration-100'>Show all {active} Courses</button> 
 

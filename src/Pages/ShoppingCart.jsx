@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { GoDotFill } from 'react-icons/go'
 import { HiMiniTag } from "react-icons/hi2";
+import { RxCross1 } from 'react-icons/rx';
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 
@@ -9,12 +10,11 @@ import Rating from '@/components/Rating'
 import HomeLayout from '@/Layouts/HomeLayout'
 import { getUser } from '@/Redux/Slices/AuthSlice'
 import { createOrder, verifyPayment } from '@/Redux/Slices/PaymentSlice'
-import { getConfig, updateCart } from '@/Redux/Slices/UserConfigSlice'
-import { RxCross1 } from 'react-icons/rx';
+import { getConfig, updateCart, updateFavourite } from '@/Redux/Slices/UserConfigSlice'
 
-const Card = ({ data, removeFromCart }) => {
+const Card = ({ data, removeFromCart, moveToWhislist }) => {
     return (
-        <div className='flex gap-4 border-t py-4 border-slate-300'>
+        <Link to={`/course/${data?._id}`} className='flex gap-4 border-t py-4 border-slate-300'>
 
             <div className='h-[72px] w-32 '>
                 <img className='object-cover h-full w-full' src={data?.thumbnail?.secure_url} alt="" />
@@ -28,9 +28,9 @@ const Card = ({ data, removeFromCart }) => {
             </div>
 
             <div className='duration-150 text-sm space-y-3 py-2 text-[#A435F0] font-medium '>
-                <button onClick={() => removeFromCart(data?._id)} className='block hover:text-blue-900 ml-auto'>Remove</button>
+                <button onClick={(e) =>{ e.preventDefault(); e.stopPropagation(); removeFromCart(data?._id)}} className='block hover:text-blue-900 ml-auto'>Remove</button>
                 <button className='block hover:text-[blue-900] ml-auto'>Save for Later</button>
-                <button className='block hover:text-blue-900 ml-auto'>Move to Whislist</button>
+                <button onClick={(e)=> { e.preventDefault(); e.stopPropagation(); moveToWhislist(data) }} className='block hover:text-blue-900 ml-auto'>Move to Whislist</button>
             </div>
 
             <div className='ml-auto mr-2'>
@@ -39,7 +39,7 @@ const Card = ({ data, removeFromCart }) => {
             </div>
 
 
-        </div>
+        </Link>
     )
 }
 
@@ -55,7 +55,7 @@ function ShoppingCart() {
 
     const cartLength = cart?.length;
 
-    async function onVerifySuccess(response) {
+    const onVerifySuccess = async(response) => {
         // alert(response.razorpay_payment_id);
         // alert(response.razorpay_order_id);
         // alert(response.razorpay_signature)
@@ -75,11 +75,11 @@ function ShoppingCart() {
         }
     }
 
-    async function onFailure(response) {
+    const onFailure = async(response) =>{
         toast.error(response.error.description)
     }
 
-    async function onCheckout() {
+    const onCheckout = async() => {
         const courses = cart?.map((value) => value?._id);
 
         const res = await dispatch(createOrder(courses));
@@ -119,7 +119,7 @@ function ShoppingCart() {
 
     }
 
-    async function removeFromCart(id) {
+    const removeFromCart = async(id) => {
         await dispatch(updateCart([
             {
                 remove: id
@@ -127,6 +127,21 @@ function ShoppingCart() {
         ]));
         dispatch(getConfig())
     }
+
+    const moveToWhislist = async(data) => {
+
+        await dispatch(updateFavourite([
+            {
+              add: data?._id
+            },
+            data
+          ]))
+
+        await removeFromCart(data?._id)
+        
+        
+    }
+
 
 
 
@@ -151,7 +166,7 @@ function ShoppingCart() {
                             <h3 className='font-bold'>{cartLength} courses in Cart</h3>
 
                             {
-                                cart?.map((value, indx) => <Card key={indx} data={value} removeFromCart={removeFromCart} />)
+                                cart?.map((value, indx) => <Card key={indx} data={value} removeFromCart={removeFromCart} moveToWhislist={moveToWhislist} />)
                             }
 
                         </div>

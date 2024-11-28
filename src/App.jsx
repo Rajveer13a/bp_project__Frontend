@@ -1,3 +1,5 @@
+import { useEffect } from "react"
+import { useDispatch } from "react-redux"
 import { Route, Routes, useNavigate } from "react-router-dom"
 
 import eventEmitter from "./Helpers/eventEmitter"
@@ -15,6 +17,7 @@ import SignUp from "./Pages/SignUp"
 // import VerifyEmail from "./Pages/VerifyEmail"
 import { resetData } from "./Redux/Slices/AuthSlice"
 import { store } from "./Redux/store"
+import { getConfig } from "./Redux/Slices/UserConfigSlice"
 
 
 
@@ -24,16 +27,22 @@ import { store } from "./Redux/store"
 
 function App() {
 
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
 
   window.scrollTo(0, 0);
 
   eventEmitter.on('resetAuthState', () => {
-    
+
     store.dispatch(resetData());
     navigate('/login')
 
   });
+
+  useEffect(() => {
+    dispatch(getConfig())
+  }, [])
 
   return (
 
@@ -55,12 +64,12 @@ function App() {
       {/* <Route path="/mylearning" element={<Learning />} /> */}
 
       {/* <Route path="/learn/lectures/:course_id" element={<LearnLectures />} /> */}
-      
-      <Route path="/shoppingcart" element={<ShoppingCart/>} />
 
-      <Route path="/instructor/*" element={<InstructorRoutes/>}/>
+      <Route path="/shoppingcart" element={<ShoppingCart />} />
 
-      <Route path="/management/*" element={<ManagementRoutes/>}/>
+      <Route path="/instructor/*" element={<InstructorRoutes />} />
+
+      <Route path="/management/*" element={<ManagementRoutes />} />
 
     </Routes>
 

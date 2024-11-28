@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AiOutlineTrophy } from 'react-icons/ai';
 import { BiMobile } from 'react-icons/bi';
-import { FaRegFile, FaRegHeart } from 'react-icons/fa';
+import { FaHeart, FaRegFile, FaRegHeart } from 'react-icons/fa';
 import { GrPlayFill } from 'react-icons/gr';
-import { IoIosAlert, IoIosPlayCircle, IoMdCode } from 'react-icons/io';
+import { IoIosAlert, IoIosHeart, IoIosPlayCircle, IoMdCode } from 'react-icons/io';
 import { IoCheckmark, IoPlaySharp } from 'react-icons/io5';
 import { LiaStarSolid } from 'react-icons/lia';
 import { MdKeyboardArrowDown, MdOutlineOndemandVideo, MdOutlineSmartDisplay, MdPeople } from 'react-icons/md';
@@ -15,13 +15,19 @@ import { Link, useParams } from 'react-router-dom';
 import Rating from '@/components/Rating';
 import HomeLayout from '@/Layouts/HomeLayout';
 import { courseDetail } from '@/Redux/Slices/CourseSlice';
-import { updateCart } from '@/Redux/Slices/UserConfigSlice';
+import { getConfig, updateCart, updateFavourite } from '@/Redux/Slices/UserConfigSlice';
 
 const SectionDropDown = ({ section, last, expandAll = false }) => {
 
   const [expand, setExpand] = useState(false);
 
-  const total = section?.lectures?.reduce((acc, curr) => acc + curr?.duration, 0);
+  const total = section?.lectures?.reduce((acc, curr) => acc += curr?.duration || 0, 0);
+
+  const formatDuration = (seconds) => {
+    const minutes = Math.floor(seconds / 60); 
+    const remainingSeconds = Math.floor(seconds % 60);    
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`; 
+  }
 
   useEffect(() => {
     setExpand(expandAll);
@@ -40,7 +46,7 @@ const SectionDropDown = ({ section, last, expandAll = false }) => {
           <h1 className='font-bold'>{section?.title}</h1>
         </div>
 
-        <h3 className='text-sm'> {section?.lectures.length} lectures • {total ? (total / 60).toFixed(1) : "0"}min </h3>
+        <h3 className='text-sm'> {section?.lectures.length} lectures • {total ? Math.floor(total / 60) : "0"}min </h3>
 
       </div>
 
@@ -55,7 +61,7 @@ const SectionDropDown = ({ section, last, expandAll = false }) => {
                 <h3>{lecture?.title}</h3>
               </div>
 
-              <h3>{lecture?.duration && (lecture?.duration / 60).toFixed(1) + "min"}</h3>
+              <h3>{lecture?.duration && formatDuration(lecture?.duration) }</h3>
 
             </div>
           ))}
@@ -72,14 +78,14 @@ const ShowMorePara = ({ value }) => {
 
   return (
     <div className='space-y-4'>
-      <p className='text-sm relative '>
+      <div className='text-sm relative '>
         {
           show ? value : value?.slice(0, 750)
         }
 
         {!show && <div className='h-[70%] absolute w-[100%] bottom-0  bg-gradient-to-t from-white to-transparent'></div>}
 
-      </p>
+      </div>
 
       <div onClick={() => setShow(!show)} className='flex gap-1 text-blue-700 cursor-pointer hover:text-blue-900 duration-150 '>
         <button className='font-bold text-sm'>Show {show ? "less" : "more"}</button>
@@ -104,6 +110,10 @@ function CourseView() {
 
   const isPurchased = userCourses?.includes(course_id);
 
+  const favourite = useSelector((state) => state.config.favourite);
+
+  const infavourite = favourite?.some((value) => value._id === data?._id);
+
   const inCart = cart.some((value) => value._id === course_id);
 
   const [expandAll, setExpandAll] = useState(false);
@@ -113,6 +123,18 @@ function CourseView() {
   const videoRef = useRef(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const totalLectures = useMemo(() => {
+    return data?.sections?.reduce((acc, section) => acc + (section?.lectures?.length || 0), 0);
+  }, [data?.sections]);
+  
+  const totalDuration = useMemo(() => {
+    return data?.sections?.reduce((acc, section) => {
+      acc += section?.lectures?.reduce((total, lecture) => total += lecture?.duration || 0, 0) || 0;
+      return acc;
+    }, 0);
+  }, [data?.sections]);
+  
 
   const handleScroll = () => {
 
@@ -145,7 +167,37 @@ function CourseView() {
   const addToCart = () => {
     dispatch(updateCart([
       {
-        add: course_id
+        add: data?._id
+      },
+      data
+    ]));
+
+    removeFromFavourite();
+  }
+
+  const addToFavourite = async () => {
+
+    await dispatch(updateCart([
+      {
+        remove: data?._id
+      }
+    ]));
+
+    await dispatch(updateFavourite([
+      {
+        add: data?._id
+      },
+      data
+    ]))
+
+    dispatch(getConfig())
+
+  }
+
+  const removeFromFavourite = () => {
+    dispatch(updateFavourite([
+      {
+        remove: data?._id
       },
       data
     ]))
@@ -218,7 +270,13 @@ function CourseView() {
                   )
                 )
               }
-              <button className='border border-black h-full w-[20%] hover:bg-[#E3E7EA] duration-150 '><FaRegHeart className='size-5 m-auto' /></button>
+              {
+                infavourite ? (
+                  <button onClick={removeFromFavourite} className='border border-black h-full w-[20%] hover:bg-[#E3E7EA] duration-150 '><FaHeart className='size-5 m-auto' /></button>
+                ) : (
+                  <button onClick={addToFavourite} className='border border-black h-full w-[20%] hover:bg-[#E3E7EA] duration-150 '><FaRegHeart className='size-5 m-auto' /></button>
+                )
+              }
             </div>
 
             <div className='space-y-1'>
@@ -264,7 +322,7 @@ function CourseView() {
             <IoIosAlert />
             <h3>Last updated 11/2024</h3>
             <TbWorld />
-            <h3>English</h3>
+            <h3>{data?.language?.slice(0, 1).toUpperCase() + data?.language?.slice(1)}</h3>
           </div>
 
         </div>
@@ -291,10 +349,10 @@ function CourseView() {
           <h1 className='text-2xl font-bold'>This course includes:</h1>
 
           <div className='columns-2 space-y-1'>
-            <div className='flex items-center gap-3 flex-shrink-0'> <MdOutlineSmartDisplay /> 70.5 hours on-demand video</div>
-            <div className='flex items-center gap-3 flex-shrink-0'><IoMdCode /> 45 coding exercises</div>
-            <div className='flex items-center gap-3 flex-shrink-0'><FaRegFile />3 articles</div>
-            <div className='flex items-center gap-3 flex-shrink-0'><RiFolderDownloadLine />20 downloadable resources</div>
+            <div className='flex items-center gap-3 flex-shrink-0'> <MdOutlineSmartDisplay /> {(totalDuration/3600).toFixed(1)} hours on-demand video</div>
+            {/* <div className='flex items-center gap-3 flex-shrink-0'><IoMdCode /> 45 coding exercises</div> */}
+            {/* <div className='flex items-center gap-3 flex-shrink-0'><FaRegFile />3 articles</div> */}
+            {/* <div className='flex items-center gap-3 flex-shrink-0'><RiFolderDownloadLine />20 downloadable resources</div> */}
             <div className='flex items-center gap-3 flex-shrink-0'><BiMobile />Access on mobile and TV</div>
             <div className='flex items-center gap-3 flex-shrink-0'><AiOutlineTrophy />Certificate of completion</div>
           </div>
@@ -307,7 +365,7 @@ function CourseView() {
           <h1 className='text-2xl font-bold'>Course content</h1>
 
           <div className='flex justify-between mt-5 text-sm'>
-            <h1>31 sections • 202 lecutres • 70h 42m total length</h1>
+            <h1>{data?.sections?.length} sections • {totalLectures} lecutres • { (totalDuration/3600).toFixed(0) }hr { (totalDuration/60).toFixed(0) } min total length</h1>
             <button onClick={() => setExpandAll(!expandAll)} className='text-blue-700 font-bold hover:text-blue-900 duration-150'>{expandAll ? "Collapse" : "Expand"} all sections</button>
           </div>
 

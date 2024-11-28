@@ -3,8 +3,9 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom';
 
-import Hover from './Hover';
 import { logout } from '@/Redux/Slices/AuthSlice';
+
+import Hover from './Hover';
 
 function Iprofile({ lists = [
     [{ text: "Students", link: "" }],
@@ -97,9 +98,9 @@ function Iprofile({ lists = [
             </Link>
 
             {
-                lists.map((value) => {
+                lists.map((value,key) => {
 
-                    const container = <div className='border-b-[1px]'>
+                    const container = <div key={key} className='border-b-[1px]'>
                         {
                             value.map((innervalue, indx) => {
 

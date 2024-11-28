@@ -4,7 +4,6 @@ import { MdOutlineSearch } from 'react-icons/md'
 function SearchBar() {
 
     const [input, setInput] = useState("");
-    console.log(input);
     
   return (
     <div className='relative w-[40%] px-3 text-sm '>

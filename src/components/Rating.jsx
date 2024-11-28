@@ -16,15 +16,15 @@ function Rating({total , count=0 , color="#B4690E",flag=true}) {
             {flag && <h1 className='font-bold mr-1'>{total}</h1>}
             
             {
-                Array(fullStars).fill().map((_,i)=> <IoStar key={i} className={`fill-[${color}]`} />)
+                Array(fullStars).fill().map((_,i)=> <IoStar key={i} style={{ fill: color }} />)
             }
 
             {
-                halfStars !=0 && ((halfStars >= 0.5 && fullStars < 4 ) ? <IoStar  className={`fill-[${color}]`} /> : <IoIosStarHalf className={`fill-[${color}]`}/> )
+                halfStars !=0 && ((halfStars >= 0.5 && fullStars < 4 ) ? <IoStar  style={{ fill: color }} /> : <IoIosStarHalf style={{ fill: color }}/> )
             }
 
             {
-                Array(emptyStars).fill().map((_,i)=> <IoIosStarOutline key={i} className={`fill-[${color}]`} />)
+                Array(emptyStars).fill().map((_,i)=> <IoIosStarOutline key={i} style={{ fill: color }} />)
             }
             
 
