@@ -166,10 +166,10 @@ function Navbar() {
             <div className='flex items-center justify-evenly flex-grow'>
                 <InstructorButton />
 
-                <MyLearningButton />
+                <Link to={"/my-courses/learning"}> <MyLearningButton /> </Link>
 
                 {isLoggedIn && <>
-                    <FavouriteButton />
+                    <Link to={"/my-courses/wishlist"}><FavouriteButton /></Link>
 
                     <Link to={"/shoppingcart"}> <CartButton /> </Link>
 

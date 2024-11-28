@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { IoIosHeart, IoIosHeartEmpty } from 'react-icons/io';
 import { LuHeart } from 'react-icons/lu';
 import { MdOutlineNotificationsNone, MdOutlineShoppingCart } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import { mylearning } from '@/Redux/Slices/CourseSlice';
 import { updateCart, updateFavourite } from '@/Redux/Slices/UserConfigSlice';
 
 function HoverElement({ text, children }) {
@@ -44,34 +45,62 @@ export const BusinessButton = () => {
 }
 
 export const MyLearningButton = () => {
+
+    const dispatch = useDispatch()
+
+    const data = useSelector((state) => state?.course?.mylearning);
+
+    useEffect(() => {
+
+        dispatch(mylearning());
+
+    }, [])
+
     return (
         <HoverElement text={"My learning"}>
             <div className='bg-white w-72  border-2 space-y-3 shadow-md flex flex-col  pb-3'>
 
-                <Link>
-                    <div className='flex gap-2 border-b mb-1 px-5 py-3 '>
+                {
+                    data && <>
+                        <div className='max-h-80 overflow-y-scroll scroll'>
+                            {
+                                data?.map((value, indx) => {
+                                    return (
+                                        <Link key={indx}>
+                                            <div className='flex gap-2 border-b mb-1 px-5 py-3 '>
 
-                        <img className='size-14 object-cover' src="https://img-c.udemycdn.com/course/240x135/4077322_a979_4.jpg" alt="" />
+                                                <img className='size-14 object-cover' src={value?.thumbnail?.secure_url} alt="" />
 
-                        <div className='font-bold text-sm'>
-                            <h1 className=' line-clamp-2 h-10'>
-                                How to Create an Online Course: The Official Udemy Course
+                                                <div className='font-bold text-sm'>
+                                                    <h1 className=' line-clamp-2 h-10'>
+                                                        {value?.title}
 
-                            </h1>
+                                                    </h1>
 
-                            <h2 className='link-primary'>Start learning</h2>
+                                                    <h2 className='link-primary'>Start learning</h2>
+                                                </div>
+
+                                            </div>
+                                        </Link>
+                                    )
+                                })
+                            }
                         </div>
 
-                    </div>
-                </Link>
 
-                {
-                    
+                        <Link to={"/my-courses/learning"} className='bg-slate-800 text-white  py-3 w-[80%] font-bold hover:bg-slate-700 duration-100 transition-all mx-auto text-center '>
+                            Go to My Learning
+                        </Link>
+                    </>
                 }
 
-                <button className='bg-slate-800 text-white  py-3 w-[80%] font-bold hover:bg-slate-700 duration-100 transition-all mx-auto '>
-                    Go to My Learning
-                </button>
+                {
+                    !data && <div className='pt-4 space-y-2'>
+                    <h3 className='text-center text-slate-500'>Your list is empty.</h3>
+                    <Link to={"/"} className='text-blue-700 hover:text-blue-900 duration-100 font-bold w-full  text-center block'>Explore courses</Link>
+                </div>
+                }
+
             </div>
         </HoverElement>
     )
@@ -248,7 +277,7 @@ export const FavouriteButton = () => {
                                                     </div>
                                                 </div>
 
-                                                <button onClick={ (e) => {e.preventDefault();addToCart(value); } } className='border border-black w-full py-1 mt-2 hover:bg-[#E3E7EA] duration-100 font-bold'>Add to cart</button>
+                                                <button onClick={(e) => { e.preventDefault(); addToCart(value); }} className='border border-black w-full py-1 mt-2 hover:bg-[#E3E7EA] duration-100 font-bold'>Add to cart</button>
 
                                             </div>
                                         </Link>
@@ -256,7 +285,7 @@ export const FavouriteButton = () => {
                                 }
                             </div>
 
-                            <Link className='w-[80%] mx-5 block' to={"/"}>
+                            <Link className='w-[80%] mx-5 block' to={"/my-courses/wishlist"}>
                                 <button className='bg-slate-800 text-white  py-3 w-[100%] font-bold hover:bg-slate-700 duration-100 transition-all'>
                                     Go to wishlist
                                 </button>
