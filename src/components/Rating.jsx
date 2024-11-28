@@ -28,7 +28,7 @@ function Rating({total , count=0 , color="#B4690E",flag=true}) {
             }
             
 
-            {flag && <h3 className='ml-1'>({count})</h3>}
+            {flag && <h3 className='ml-1 text-slate-600 text-xs'>({count})</h3>}
 
         </div>
     )

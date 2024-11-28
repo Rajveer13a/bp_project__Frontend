@@ -78,12 +78,12 @@ function Card({ data, orignalPrice, currentIndex, cnum }) {
 
   return (
 
-    <div ref={cardRef} onMouseEnter={() => setVisible(true)} onMouseLeave={() => setVisible(false)} className='w-52 relative cursor-pointer group flex-shrink-0'>
+    <div ref={cardRef} onMouseEnter={() => setVisible(true)} onMouseLeave={() => setVisible(false)} className='w-56 relative cursor-pointer group flex-shrink-0'>
       <Link to={`/course/${data?._id}`}>
-        <img className='h-36 object-cover w-full group-hover:contrast-75 transition-all duration-150' src={data?.thumbnail?.secure_url} alt="" />
-        <h1 className='font-bold text-lg  line-clamp-2'>{data?.title}</h1>
+        <img className='h-32 object-cover w-full group-hover:contrast-75 transition-all duration-150' src={data?.thumbnail?.secure_url} alt="" />
+        <h1 className='font-bold line-clamp-2'>{data?.title}</h1>
         <h3 className='text-sm text-[#6A6F85]'>{data?.instructor?.username}</h3>
-        <Rating total={"5.0"} count={1} />
+        <Rating total={"4.7"} count={231} />
         <div className='flex space-x-3 items-center'>
           <h2 className='font-bold'>₹{data?.price}</h2>
           <h3 className='line-through text-sm text-[#6A6F73]'>₹{orignalPrice}</h3>
@@ -92,7 +92,7 @@ function Card({ data, orignalPrice, currentIndex, cnum }) {
 
       {/* hover  card */}
 
-      <div className={`opacity-0 absolute ${isNearRight ? "-left-[365px] pr-[30px]" : "-right-[365px] pl-[30px]"} z-20  cursor-default ${visible ? "opacity-100 pointer-events-auto duration-300 transition-opacity " : "pointer-events-none"}  -top-11  `}>
+      <div className={`opacity-0 absolute ${isNearRight ? "-left-[360px] pr-[30px]" : "-right-[360px] pl-[30px]"} z-20  cursor-default ${visible ? "opacity-100 pointer-events-auto duration-300 transition-opacity " : "pointer-events-none"}  -top-11  `}>
         <div className={` w-[340px] bg-white border-2 box-border shadow-xl p-6 space-y-2 cursor-default
           }`}
 

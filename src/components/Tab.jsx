@@ -33,7 +33,7 @@ function Tab({ data }) {
       <div className='overflow-x-clip  w-[94vw] '>
 
         <div
-          className={`flex gap-10 transition-transform duration-1000   animate-out  `}
+          className={`flex gap-5 transition-transform duration-1000   animate-out  `}
           style={{
             transform: `translateX(-${currentIndex * (208 + 40)}px)`,
             width: data.length * (208 + 40)
