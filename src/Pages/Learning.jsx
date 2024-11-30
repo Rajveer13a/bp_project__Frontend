@@ -16,7 +16,7 @@ const Courses = ({ data }) => {
     <>
       {data?.map((value, indx) => {
         return (
-          <Link key={indx} className=' w-56 space-y-1 cursor-pointer group block'>
+          <Link to={`/learn/lecture/${value?._id}`} key={indx} className=' w-56 space-y-1 cursor-pointer group block'>
 
             <div className='relative h-32'>
 

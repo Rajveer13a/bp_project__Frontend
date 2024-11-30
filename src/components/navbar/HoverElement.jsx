@@ -66,7 +66,7 @@ export const MyLearningButton = () => {
                             {
                                 data?.map((value, indx) => {
                                     return (
-                                        <Link key={indx}>
+                                        <Link to={`/learn/lecture/${value?._id}`} key={indx}>
                                             <div className='flex gap-2 border-b mb-1 px-5 py-3 '>
 
                                                 <img className='size-14 object-cover' src={value?.thumbnail?.secure_url} alt="" />
