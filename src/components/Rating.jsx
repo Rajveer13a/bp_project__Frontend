@@ -2,7 +2,7 @@ import React from 'react'
 import { IoIosStarHalf, IoIosStarOutline } from 'react-icons/io';
 import { IoStar} from 'react-icons/io5';
 
-function Rating({total , count=0 , color="#B4690E",flag=true}) {
+function Rating({total , count=0 , color="#B4690E",flag=true, size="text-sm "}) {
 
         const fullStars = Math.floor(total);
         const halfStars = total % 1;
@@ -12,7 +12,7 @@ function Rating({total , count=0 , color="#B4690E",flag=true}) {
         
 
     return (
-        <div className='flex items-center text-sm '>
+        <div className={`flex items-center  ${size}`}>
             {flag && <h1 className='font-bold mr-1'>{total}</h1>}
             
             {

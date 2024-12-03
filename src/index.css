@@ -301,4 +301,15 @@ input{
 }
 
 
+.select-tab::after{
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: black;
+  animation: slide-in 0.3s ease
+}
+
 
