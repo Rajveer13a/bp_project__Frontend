@@ -51,7 +51,7 @@ export const mylearning = createAsyncThunk('/course/mylearning', async () => {
     }
 })
 
-export const getlectures = createAsyncThunk('/course/gelectures', async (data)=>{
+export const getlectures = createAsyncThunk('/course/getlectures', async (data)=>{
     try {
         const res = axiosInstance.get('/student/learnLecture', { params: data});
 
@@ -60,6 +60,54 @@ export const getlectures = createAsyncThunk('/course/gelectures', async (data)=>
         });
 
         return ( await res).data
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
+export const rateCourse = createAsyncThunk("/course/rateCourse", async (data) =>{
+    try {
+        
+        const res = axiosInstance.post('/student/rateCourse', data);
+
+        toast.promise(res,{
+            error: "failed to rate course"
+        });
+
+        return ( await res).data
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
+export const createProgressConfig = createAsyncThunk("/course/createProgressConfig", async (data) =>{
+    try {
+        
+        const res = axiosInstance.post('/student/createProgressConfig', data);
+
+        toast.promise(res,{
+            error: "failed to create createProgressConfig"
+        });
+
+        return ( await res).data
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
+export const markLecture = createAsyncThunk("/course/markLecture", async (data) =>{
+    try {
+        
+        const res = axiosInstance.post('/student/markLecture', data);
+
+        toast.promise(res,{
+            error: "failed to markLecture"
+        });
+
+        return data
 
     } catch (error) {
         toast.error(error.response.data.message)
@@ -91,6 +139,13 @@ const courseSlice = createSlice({
 
             state.learn = action?.payload?.data
 
+           })
+
+           .addCase(markLecture.fulfilled, (state, action) => {
+
+                const { location , flag } = action.payload;
+                
+                state.learn.progress.completed[location[0]][location[1]] = flag;
            })
 
     }

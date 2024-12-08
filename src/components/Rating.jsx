@@ -7,10 +7,7 @@ function Rating({total , count=0 , color="#B4690E",flag=true, size="text-sm "}) 
         const fullStars = Math.floor(total);
         const halfStars = total % 1;
         const emptyStars = 5 - fullStars - (halfStars ? 1 : 0);
-
-        // console.log("here",halfStars);
         
-
     return (
         <div className={`flex items-center  ${size}`}>
             {flag && <h1 className='font-bold mr-1'>{total}</h1>}
@@ -20,7 +17,7 @@ function Rating({total , count=0 , color="#B4690E",flag=true, size="text-sm "}) 
             }
 
             {
-                halfStars !=0 && ((halfStars >= 0.5 && fullStars < 4 ) ? <IoStar  style={{ fill: color }} /> : <IoIosStarHalf style={{ fill: color }}/> )
+                halfStars !=0 && <IoIosStarHalf style={{ fill: color }}/> 
             }
 
             {

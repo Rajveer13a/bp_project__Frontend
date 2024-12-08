@@ -6,14 +6,14 @@ import { FaSquareXTwitter } from 'react-icons/fa6';
 import { FiCheck } from 'react-icons/fi';
 import { IoIosAlert, IoIosShareAlt, IoMdStar, IoMdStarOutline } from 'react-icons/io';
 import { MdClose, MdKeyboardArrowDown, MdOndemandVideo, MdOutlineArrowBack } from 'react-icons/md';
+import { RxCross2 } from 'react-icons/rx';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 
 import Footer from '@/components/Footer';
 import Logo from '@/components/Logo'
 import Rating from '@/components/Rating';
-import { getlectures } from '@/Redux/Slices/CourseSlice';
-import { RxCross2 } from 'react-icons/rx';
+import { createProgressConfig, getlectures, markLecture, rateCourse } from '@/Redux/Slices/CourseSlice';
 
 const CircularProgress = ({ size = 100, progress = 75, strokeWidth = 8 }) => {
   const radius = (size - strokeWidth) / 2;
@@ -63,7 +63,11 @@ const CircularProgress = ({ size = 100, progress = 75, strokeWidth = 8 }) => {
 };
 
 
-const ContentTab = ({ data, setCurrentLecture, currentLecture, setPanel, full = true }) => {
+const ContentTab = ({ data, setCurrentLecture, currentLecture, setPanel, full = true}) => {
+
+  const { progress } = data; 
+
+  const dispatch = useDispatch();
 
   const [expandedSections, setExpandedSections] = useState({ [currentLecture.sec]: true });
 
@@ -73,7 +77,17 @@ const ContentTab = ({ data, setCurrentLecture, currentLecture, setPanel, full = 
       [sectionIndex]: !prev[sectionIndex],
     }));
   };
+  
+  const onMarkLecture = async(Sindx, indx, flag) =>{
 
+    await dispatch(markLecture({
+      location: [Sindx,indx],
+      flag,
+      course_id: data?._id
+    }))
+
+  }
+  
   const Section = ({ section, Sindx }) => {
 
     const isExpanded = expandedSections[Sindx] || false;
@@ -91,7 +105,7 @@ const ContentTab = ({ data, setCurrentLecture, currentLecture, setPanel, full = 
     return (
       <div className='cursor-pointer  border-y border-slate-300'>
         <div onClick={() => toggleSection(Sindx)} className='p-4 bg-[#F7F9FA] space-y-1  relative'>
-          <h1 className='flex justify-between'>Section {Sindx + 1}: {section?.title}</h1>
+          <h1 className='flex justify-between pr-8'>Section {Sindx + 1}: {section?.title}</h1>
           <h3 className='text-xs font-normal'>2/4 | 9min</h3>
           <MdKeyboardArrowDown className={`absolute right-4 top-[20%] size-5  ${isExpanded && "-rotate-180"} duration-150`} />
         </div>
@@ -102,8 +116,8 @@ const ContentTab = ({ data, setCurrentLecture, currentLecture, setPanel, full = 
 
                 <div className='flex gap-4'>
                   {/* Checkbox */}
-                  <div onClick={(e) => e.stopPropagation()} className='flex items-center justify-center'>
-                    <input type="checkbox" className='appearance-none h-4 w-4 border-2 border-black checked:bg-black cursor-pointer  peer' />
+                  <div onClick={(e) => {e.stopPropagation(); onMarkLecture(Sindx, indx, !progress.completed[Sindx][indx])}} className='flex items-center justify-center relative'>
+                    <input checked={progress.completed[Sindx][indx]} type="checkbox" className='appearance-none h-4 w-4 border-2 border-black checked:bg-black cursor-pointer  peer' />
                     <FiCheck className='absolute size-3  text-white opacity-0 peer-checked:opacity-100 pointer-events-none' />
                   </div>
 
@@ -129,9 +143,9 @@ const ContentTab = ({ data, setCurrentLecture, currentLecture, setPanel, full = 
         )
       }
 
-      <div className=' max-h-[80vh] overflow-y-scroll'>
+      <div className={`${full && "max-h-[80vh] overflow-y-scroll"}`}>
         {
-          data?.map((section, indx) => <Section key={indx} section={section} Sindx={indx} />)
+          data?.sections?.map((section, indx) => <Section key={indx} section={section} Sindx={indx} />)
         }
       </div>
 
@@ -278,17 +292,49 @@ const Feedback = ({ panel }) => {
   )
 }
 
-export const RateCourse = () => {
+export const RateCourse = ({ course_id, setter }) => {
+
+  const userdata = useSelector((state) => state?.auth?.data);
+
+  const dispatch = useDispatch();
 
   const [starindx, setStarIndx] = useState(-2);
 
   const [rating, setRating] = useState(-2);
 
   const [interact, setInteract] = useState(false);
-  console.log(starindx, rating);
 
-  const ratingText = ["Awful, not what I expected at all", "Awful / Poor", "Poor, pretty disappointed", "Poor / Average", "Average, could be better", "Average / Good", "Good, what I expected", "Good / Amazing", "Amazing, above expectations!"]
+  const [text, setText] = useState("");
 
+  const [overflowNeeded, setOverflowNeeded] = useState(null);
+
+  const textRef = useRef(null);
+
+  const [showMore, setShowMore] = useState(false);
+  // console.log(1 + (rating + 1) / 2);
+
+  const [step, setStep] = useState(0);
+
+  const ratingText = ["Awful, not what I expected at all", "Awful / Poor", "Poor, pretty disappointed", "Poor / Average", "Average, could be better", "Average / Good", "Good, what I expected", "Good / Amazing", "Amazing, above expectations!"];
+
+  const onSave = async () => {
+    await dispatch(rateCourse({
+      rating: 1 + (rating + 1) / 2,
+      course_id,
+      comment: text
+    }));
+
+    setter(false);
+
+  }
+
+  useEffect(() => {
+
+    if (textRef?.current) {
+      setOverflowNeeded(textRef?.current.scrollHeight > 208);
+    }
+
+  }, [step]);
 
   useEffect(() => {
 
@@ -303,56 +349,123 @@ export const RateCourse = () => {
 
       <div className=' bg-black opacity-70 absolute  h-full w-full'></div>
 
-      <div className='absolute bg-white  w-[45vw] z-10 p-8  flex flex-col items-center shadow-2xl'>
 
-        <button className='absolute  text-xl top-5 right-4 p-2'><RxCross2 /></button>
+      {/* Main */}
+      <div className='absolute bg-white  w-[48vw] z-10 px-8 py-6  flex flex-col items-center shadow-inner  space-y-6 '>
 
-        <h2 className='text-2xl font-bold text-center my-5'>How would you rate this course?</h2>
-
-        <h3 className='font-bold  text-center w-full'> {(ratingText[starindx + 1 < 0 ? rating + 1 : starindx + 1]) || "Select Rating"}  </h3>
-
-        {/* stars */}
-        <div className='flex cursor-pointer text-[#f69c08] mt-1'>
-
-          <IoMdStarOutline onMouseEnter={() => { setStarIndx(-1); setInteract(true) }} onMouseLeave={() => { setStarIndx(-2); setInteract(false) }} onClick={() => setRating(-1)} className={` ${(starindx >= -1 || rating >= -1) && "hidden"} text-6xl`} />
-
-          <IoMdStar onMouseEnter={() => { setStarIndx(-1); setInteract(true) }} onMouseLeave={() => { setStarIndx(-2); setInteract(false) }} onClick={() => setRating(-1)} className={` ${!(starindx >= -1 || rating >= -1) && "hidden"} text-6xl`} />
-
-
+        <div className='absolute flex justify-between w-full px-4 items-center'>
           {
-
-            Array(4).fill().map((value, indx) => {
-
-              const firstHalfIndex = indx * 2;
-
-              const secondHalfIndex = indx * 2 + 1;
-
-              return (
-                <div key={indx} className='text-6xl flex relative w-14'>
-
-                  <div onMouseEnter={() => { setStarIndx(firstHalfIndex); setInteract(true) }} onMouseLeave={() => { setStarIndx(-2); setInteract(false) }} onClick={() => setRating(firstHalfIndex)} style={{ clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)' }} className=' overflow-hidden group absolute '>
-                    <IoMdStar className={` ${(starindx >= firstHalfIndex || (rating >= firstHalfIndex && !interact)) ? "" : "hidden"}`} />
-                  </div>
-
-                  {/* outline left */}
-                  <div onMouseEnter={() => { setStarIndx(firstHalfIndex); setInteract(true) }} onMouseLeave={() => { setStarIndx(-2); setInteract(false) }} onClick={() => setRating(firstHalfIndex)} style={{ clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)' }} className=' overflow-hidden group absolute '>
-                    <IoMdStarOutline className={` ${(starindx >= firstHalfIndex || (rating >= firstHalfIndex && !interact)) && "hidden"}`} />
-                  </div>
-
-                  {/* outline right */}
-                  <div onMouseEnter={() => { setStarIndx(secondHalfIndex); setInteract(true) }} onMouseLeave={() => { setStarIndx(-2); setInteract(false) }} onClick={() => setRating(secondHalfIndex)} style={{ clipPath: 'polygon(50% 0, 100% 0, 100% 100%, 50% 100%)' }} className='overflow-hidden group absolute'>
-                    <IoMdStarOutline className={`  ${(starindx >= secondHalfIndex || (rating >= secondHalfIndex && !interact)) && "hidden"}`} />
-                  </div>
-
-                  <div onMouseEnter={() => { setStarIndx(secondHalfIndex); setInteract(true) }} onMouseLeave={() => { setStarIndx(-2); setInteract(false) }} onClick={() => setRating(secondHalfIndex)} style={{ clipPath: 'polygon(50% 0, 100% 0, 100% 100%, 50% 100%)' }} className='overflow-hidden group absolute'>
-                    <IoMdStar className={` fil ${(starindx >= secondHalfIndex || (rating >= secondHalfIndex && !interact)) ? "" : "hidden"}`} />
-                  </div>
-
-                </div>
-              )
-            })
+            rating != -2 && <button onClick={() => { step ? setStep(0) : setRating(-2) }} className='text  p-2 text-blue-800 text-sm font-bold'>Back</button>
           }
+
+          <button onClick={() => setter(false)} className='text-xl p-2 ml-auto'><RxCross2 /></button>
         </div>
+
+        {
+          step == 0 && (
+            <>
+              <h2 className='text-2xl font-bold text-center '>{rating == -2 ? "How would you rate this course?" : "Why did you leave this rating?"}</h2>
+
+              {/* stars */}
+              <div>
+                <h3 className='font-bold  text-center w-full'> {(ratingText[starindx + 1 < 0 ? rating + 1 : starindx + 1]) || "Select Rating"}  </h3>
+
+
+                <div className='flex cursor-pointer text-[#f69c08] mt-[2px] '>
+
+                  <IoMdStarOutline onMouseEnter={() => { setStarIndx(-1); setInteract(true) }} onMouseLeave={() => { setStarIndx(-2); setInteract(false) }} onClick={() => setRating(-1)} className={` ${(starindx >= -1 || rating >= -1) && "hidden"} text-6xl`} />
+
+                  <IoMdStar onMouseEnter={() => { setStarIndx(-1); setInteract(true) }} onMouseLeave={() => { setStarIndx(-2); setInteract(false) }} onClick={() => setRating(-1)} className={` ${!(starindx >= -1 || rating >= -1) && "hidden"} text-6xl`} />
+
+
+                  {
+
+                    Array(4).fill().map((value, indx) => {
+
+                      const firstHalfIndex = indx * 2;
+
+                      const secondHalfIndex = indx * 2 + 1;
+
+                      return (
+                        <div key={indx} className='text-6xl flex relative w-14'>
+
+                          <div onMouseEnter={() => { setStarIndx(firstHalfIndex); setInteract(true) }} onMouseLeave={() => { setStarIndx(-2); setInteract(false) }} onClick={() => setRating(firstHalfIndex)} style={{ clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)' }} className=' overflow-hidden group absolute '>
+                            <IoMdStar className={` ${(starindx >= firstHalfIndex || (rating >= firstHalfIndex && !interact)) ? "" : "hidden"}`} />
+                          </div>
+
+                          {/* outline left */}
+                          <div onMouseEnter={() => { setStarIndx(firstHalfIndex); setInteract(true) }} onMouseLeave={() => { setStarIndx(-2); setInteract(false) }} onClick={() => setRating(firstHalfIndex)} style={{ clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)' }} className=' overflow-hidden group absolute '>
+                            <IoMdStarOutline className={` ${(starindx >= firstHalfIndex || (rating >= firstHalfIndex && !interact)) && "hidden"}`} />
+                          </div>
+
+                          {/* outline right */}
+                          <div onMouseEnter={() => { setStarIndx(secondHalfIndex); setInteract(true) }} onMouseLeave={() => { setStarIndx(-2); setInteract(false) }} onClick={() => setRating(secondHalfIndex)} style={{ clipPath: 'polygon(50% 0, 100% 0, 100% 100%, 50% 100%)' }} className='overflow-hidden group absolute'>
+                            <IoMdStarOutline className={`  ${(starindx >= secondHalfIndex || (rating >= secondHalfIndex && !interact)) && "hidden"}`} />
+                          </div>
+
+                          <div onMouseEnter={() => { setStarIndx(secondHalfIndex); setInteract(true) }} onMouseLeave={() => { setStarIndx(-2); setInteract(false) }} onClick={() => setRating(secondHalfIndex)} style={{ clipPath: 'polygon(50% 0, 100% 0, 100% 100%, 50% 100%)' }} className='overflow-hidden group absolute'>
+                            <IoMdStar className={` fil ${(starindx >= secondHalfIndex || (rating >= secondHalfIndex && !interact)) ? "" : "hidden"}`} />
+                          </div>
+
+                        </div>
+                      )
+                    })
+                  }
+                </div>
+              </div>
+
+              {
+                rating != -2 && <>
+                  <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder='Tell us about your own personal experience taking this course. Was it a good match for you?' className='w-full min-h-40 border border-black p-4 resize-none placeholder:text-slate-500' />
+
+                  <button onClick={() => setStep(1)} className='h-12 bg-slate-800 text-white font-bold px-3 ml-auto  hover:bg-slate-700 duration-100'>Save and Continue</button>
+                </>
+              }
+            </>
+          )
+        }
+
+
+        {
+          step == 1 && (<>
+            <h2 className='font-bold text-2xl pt-8'>Thanks for helping our community!</h2>
+
+            <div className='flex justify-between w-full border-y border-slate-400 py-8'>
+
+              <div className='flex gap-4'>
+                <div className='h-16 w-16 '><img className='h-full w-full object-cover rounded-full' src={userdata?.profileImage?.secure_url} alt="" /></div>
+                <h2 className='text-lg'>{userdata?.username}</h2>
+              </div>
+
+              <div className='w-[50%] space-y-3 relative'>
+
+                <Rating total={1 + (rating + 1) / 2} flag={false} size='text-xl' />
+
+                <h3 ref={textRef} className={` relative overflow-hidden ${(!showMore && overflowNeeded) && "max-h-52"}`}>
+                  {text || "There are no written comments for your review."}
+
+                  {
+                    (!showMore && overflowNeeded) && <div className='bg-gradient-to-t from-white to-transparent h-full w-full absolute bottom-0 left-0'></div>
+                  }
+                </h3>
+
+                {
+                  overflowNeeded && (
+                    <div onClick={() => setShowMore(!showMore)} className='flex gap-1 text-blue-700 cursor-pointer hover:text-blue-900 duration-150 absolute -bottom-6 -left-0'>
+                      <button className='font-bold text-sm'>Show {showMore ? "less" : "more"}</button>
+                      <MdKeyboardArrowDown className={`size-2 mt-auto ${showMore && "rotate-180"} duration-150`} />
+                    </div>
+                  )
+                }
+
+              </div>
+
+            </div>
+
+            <button onClick={onSave} className='h-12 bg-slate-900 text-white font-bold px-3 ml-auto  hover:bg-slate-800 duration-100 shrink-0'>Save and Exit</button>
+
+          </>)
+        }
 
 
       </div>
@@ -391,9 +504,33 @@ function LearnLecture() {
     }, 0);
   }, [data?.sections]);
 
+  const markedLectures = data?.progress?.completed?.reduce((acc, curr) => {
+    return acc + curr?.reduce((total, flag) => {
+      if (flag) return total + 1;
+      return total;
+    }, 0);
+  }, 0);
+  
   const heightRef = useRef(null);
 
   const [height, setHeight] = useState(0);
+
+  const [showRatingDialog, setShowRatingDialog] = useState(false);
+
+  useEffect(() => {
+
+    if (data && !data?.progress) {
+      
+      const schema = data?.sections.map((section) => section?.lectures?.length);
+
+      dispatch(createProgressConfig({
+        schema,
+        course_id
+      }));
+
+    }
+
+  }, [data])
 
   useEffect(() => {
     if (heightRef.current) {
@@ -409,7 +546,9 @@ function LearnLecture() {
 
     <>
 
-      <RateCourse />
+      {
+        showRatingDialog && <RateCourse course_id={course_id} setter={(setShowRatingDialog)} />
+      }
 
 
 
@@ -425,14 +564,14 @@ function LearnLecture() {
             <h3 className='text-sm font-semibold'>{data?.title}</h3>
           </div>
 
-          <div className='flex items-center ml-auto text-sm gap-2 cursor-pointer group'>
+          <button onClick={() => setShowRatingDialog(true)} className='flex items-center ml-auto text-sm gap-2 cursor-pointer group'>
             <FaStar className='fill-[#6A6F73] size-5' />
             <h3 className='group-hover:text-slate-200 duration-100 font-semibold'>Leave a rating</h3>
-          </div>
+          </button>
 
 
 
-          <CircularProgress progress={25} size={40} strokeWidth={4} />
+          <CircularProgress progress={(markedLectures/totalLectures)*100} size={40} strokeWidth={4} />
 
           <button className='border border-white h-10 p-3 flex items-center text-sm font-bold gap-1'>Share <IoIosShareAlt className='size-5' /></button>
 
@@ -488,7 +627,7 @@ function LearnLecture() {
               {
                 (!panel && active === 0) && (
                   <div className='px-24 pt-10'>
-                    <ContentTab data={data?.sections} setCurrentLecture={setCurrentLecture} currentLecture={currentLecture} setPanel={setPanel} full={false} />
+                    <ContentTab data={data} setCurrentLecture={setCurrentLecture} currentLecture={currentLecture} setPanel={setPanel} full={false} />
                   </div>
                 )
               }
@@ -642,7 +781,7 @@ function LearnLecture() {
               <div className='w-[50vw]'>
                 <div style={{ height: `${height - 100}px` }} className={`absolute`}>
                   <div className='sticky top-0 '>
-                    <ContentTab data={data?.sections} setCurrentLecture={setCurrentLecture} currentLecture={currentLecture} setPanel={setPanel} />
+                    <ContentTab data={data} setCurrentLecture={setCurrentLecture} currentLecture={currentLecture} setPanel={setPanel} progress={data?.progress} />
                   </div>
                 </div>
               </div>

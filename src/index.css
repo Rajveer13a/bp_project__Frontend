@@ -312,4 +312,6 @@ input{
   animation: slide-in 0.3s ease
 }
 
-
+* {
+ outline:none; 
+}
