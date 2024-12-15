@@ -315,3 +315,13 @@ input{
 * {
  outline:none; 
 }
+
+.underBorder::after{
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  width: 140%;
+  background-color:#D1D7DC ;
+}

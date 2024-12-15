@@ -66,6 +66,22 @@ export const getlectures = createAsyncThunk('/course/getlectures', async (data)=
     }
 })
 
+export const deleteRating = createAsyncThunk("/course/deleteRating", async (data) =>{
+    try {
+        
+        const res = axiosInstance.delete(`/student/deleteRating/${data?.course_id}`, data);
+
+        toast.promise(res,{
+            error: "failed to delete Rating"
+        });
+
+        return ( await res).data
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
 export const rateCourse = createAsyncThunk("/course/rateCourse", async (data) =>{
     try {
         
@@ -114,6 +130,38 @@ export const markLecture = createAsyncThunk("/course/markLecture", async (data) 
     }
 })
 
+export const lastViewed = createAsyncThunk("/course/lastViewed", async (data) =>{
+    try {
+        
+        const res = axiosInstance.post('/student/setLastViewed', data);
+
+        toast.promise(res,{
+            error: "failed to set last viewed"
+        });
+
+        return data
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
+export const courseRatings = createAsyncThunk("/course/courseRatings", async(course_id)=>{
+    try {
+        
+        const res = axiosInstance.get(`/student/courseRatings/${course_id}`);
+
+        toast.promise(res,{
+            error: "failed to get ratings"
+        });
+
+        return (await res).data
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
 const courseSlice = createSlice({
     name: "course",
     initialState,
@@ -147,6 +195,22 @@ const courseSlice = createSlice({
                 
                 state.learn.progress.completed[location[0]][location[1]] = flag;
            })
+
+           .addCase(courseRatings.fulfilled, (state, action) => {
+
+                const ratings = action.payload.data;
+                                console.log(ratings);
+                
+                state.learn.ratings = ratings;
+
+           })
+
+        //    .addCase(lastViewed.fulfilled, (state, action) => {
+
+        //         const { section_no, lecture_no } = action.payload;
+                
+        //         state.learn.progress.lastViewed = { section_no, lecture_no }
+        //    })
 
     }
 });

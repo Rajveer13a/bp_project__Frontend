@@ -13,7 +13,7 @@ import { Link, useParams } from 'react-router-dom';
 import Footer from '@/components/Footer';
 import Logo from '@/components/Logo'
 import Rating from '@/components/Rating';
-import { createProgressConfig, getlectures, markLecture, rateCourse } from '@/Redux/Slices/CourseSlice';
+import { courseRatings, createProgressConfig, deleteRating, getlectures, lastViewed, markLecture, rateCourse } from '@/Redux/Slices/CourseSlice';
 
 const CircularProgress = ({ size = 100, progress = 75, strokeWidth = 8 }) => {
   const radius = (size - strokeWidth) / 2;
@@ -63,9 +63,9 @@ const CircularProgress = ({ size = 100, progress = 75, strokeWidth = 8 }) => {
 };
 
 
-const ContentTab = ({ data, setCurrentLecture, currentLecture, setPanel, full = true}) => {
+const ContentTab = ({ data, setCurrentLecture, currentLecture, setPanel, full = true }) => {
 
-  const { progress } = data; 
+  const { progress } = data;
 
   const dispatch = useDispatch();
 
@@ -77,23 +77,28 @@ const ContentTab = ({ data, setCurrentLecture, currentLecture, setPanel, full = 
       [sectionIndex]: !prev[sectionIndex],
     }));
   };
-  
-  const onMarkLecture = async(Sindx, indx, flag) =>{
+
+  const onMarkLecture = async (Sindx, indx, flag) => {
 
     await dispatch(markLecture({
-      location: [Sindx,indx],
+      location: [Sindx, indx],
       flag,
       course_id: data?._id
     }))
 
   }
-  
+
   const Section = ({ section, Sindx }) => {
 
     const isExpanded = expandedSections[Sindx] || false;
 
     const onLectureChange = (indx) => {
 
+      dispatch(lastViewed({
+        section_no: Sindx,
+        lecture_no: indx,
+        course_id: data?._id
+      }))
 
       setCurrentLecture({
         ...currentLecture,
@@ -102,11 +107,22 @@ const ContentTab = ({ data, setCurrentLecture, currentLecture, setPanel, full = 
       })
     }
 
+    const completed = section?.lectures.reduce((acc, _, indx) => {
+      return progress.completed[Sindx]?.[indx] ? acc + 1 : acc;
+    }, 0);
+
+    const duration = section?.lectures.reduce((acc, curr, indx) => {
+      return curr?.resource?.duration ? acc + curr?.resource?.duration : acc
+    }, 0);
+
+
+
+
     return (
       <div className='cursor-pointer  border-y border-slate-300'>
         <div onClick={() => toggleSection(Sindx)} className='p-4 bg-[#F7F9FA] space-y-1  relative'>
           <h1 className='flex justify-between pr-8'>Section {Sindx + 1}: {section?.title}</h1>
-          <h3 className='text-xs font-normal'>2/4 | 9min</h3>
+          <h3 className='text-xs font-normal'>{completed}/{section?.lectures?.length} | {(duration / 60).toFixed(1)}min</h3>
           <MdKeyboardArrowDown className={`absolute right-4 top-[20%] size-5  ${isExpanded && "-rotate-180"} duration-150`} />
         </div>
         {
@@ -116,7 +132,7 @@ const ContentTab = ({ data, setCurrentLecture, currentLecture, setPanel, full = 
 
                 <div className='flex gap-4'>
                   {/* Checkbox */}
-                  <div onClick={(e) => {e.stopPropagation(); onMarkLecture(Sindx, indx, !progress.completed[Sindx][indx])}} className='flex items-center justify-center relative'>
+                  <div onClick={(e) => { e.stopPropagation(); onMarkLecture(Sindx, indx, !progress.completed[Sindx][indx]) }} className='flex items-center justify-center relative'>
                     <input checked={progress.completed[Sindx][indx]} type="checkbox" className='appearance-none h-4 w-4 border-2 border-black checked:bg-black cursor-pointer  peer' />
                     <FiCheck className='absolute size-3  text-white opacity-0 peer-checked:opacity-100 pointer-events-none' />
                   </div>
@@ -153,7 +169,7 @@ const ContentTab = ({ data, setCurrentLecture, currentLecture, setPanel, full = 
   )
 }
 
-const Feedback = ({ panel }) => {
+const Feedback = ({ panel,data }) => {
 
   const Bars = ({ percentage = 20, star = 5 }) => {
 
@@ -172,7 +188,7 @@ const Feedback = ({ panel }) => {
     )
   }
 
-  const Card = () => {
+  const Card = ({value}) => {
 
     const [more, setMore] = useState(false);
 
@@ -180,6 +196,30 @@ const Feedback = ({ panel }) => {
     const textRef = useRef(null);
 
     const [feedback, setFeedback] = useState(null);
+
+    const getRelativeTime = (timestamp) => {
+      const now = new Date();
+      const past = new Date(timestamp);
+      const diffInSeconds = Math.floor((now - past) / 1000);
+  
+      const units = [
+          { unit: "year", seconds: 31536000 },
+          { unit: "month", seconds: 2592000 },
+          { unit: "day", seconds: 86400 },
+          { unit: "hour", seconds: 3600 },
+          { unit: "minute", seconds: 60 },
+          { unit: "second", seconds: 1 },
+      ];
+  
+      for (const { unit, seconds } of units) {
+          const interval = Math.floor(diffInSeconds / seconds);
+          if (interval >= 1) {
+              return new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(-interval, unit);
+          }
+      }
+  
+      return "just now";
+  }
 
     useEffect(() => {
       if (textRef.current) {
@@ -189,27 +229,19 @@ const Feedback = ({ panel }) => {
     }, []);
 
     return (
-      <div className='flex gap-8 w-[40vw]'>
+      <div className='flex gap-8 w-[40vw] relative underBorder pb-6'>
 
-        <div className='h-14 w-14 flex-shrink-0'> <img className='h-full w-full object-cover rounded-full' src="https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg" alt="" /></div>
+        <div className='h-14 w-14 flex-shrink-0'> <img className='h-full w-full object-cover rounded-full' src={value?.profileImage?.secure_url || "https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg"} alt="" /></div>
 
         <div className='space-y-1 text-[#2D2F31]'>
-          <h3 className='font-bold'>Issac Newton</h3>
+          <h3 className='font-bold'>{value?.username}</h3>
 
-          <div className='flex gap-2'><Rating total={5} flag={false} size='text-lg' /> <h3 className='text-sm text-slate-500'>a month ago</h3></div>
+          <div className='flex gap-2'><Rating total={value?.rating||5} flag={false} size='text-lg' /> <h3 className='text-sm text-slate-500'> {getRelativeTime(value?.updatedAt)} </h3></div>
 
           <div className='relative'>
 
             <p ref={textRef} className={`text-sm tracking-wide leading-loose ${!more && "max-h-[120px]"} overflow-clip pb-3`}>
-              My Experience with this course is kind of ok because of sir.
-
-              Sir is not clear about his voice while explaining things to me.
-
-              So, to understand his session I need to listen to his videos 2 to 3 times.
-
-              This is where I feel like Sir can improve himself for next time,
-
-              While explaining to other students if those students enrol for this same course .
+              {value?.comment}
             </p>
 
             {
@@ -227,8 +259,8 @@ const Feedback = ({ panel }) => {
 
           </div>
 
-          <h3 className='pt-6  text-xs pb-2'>
-            {
+          <h3 className={`text-xs pb-2 ${isOverflowing && "pt-6 "} `}>
+            { 
               feedback == null ? "Was this review helpful?" : "Thank you for your feedback"
             }
           </h3>
@@ -278,11 +310,15 @@ const Feedback = ({ panel }) => {
 
       </div>
 
-      <div className='mt-8 space-y-4'>
+      <div className='mt-8 space-y-6'>
         <h1 className='text-2xl font-bold'>Reviews</h1>
 
-        <div>
-          <Card />
+        <div className='space-y-8'>
+
+          {
+            data?.ratings?.map((value,indx)=> value?.comment && <Card key={indx} value={value} />)
+          }
+
         </div>
 
 
@@ -292,7 +328,7 @@ const Feedback = ({ panel }) => {
   )
 }
 
-export const RateCourse = ({ course_id, setter }) => {
+export const RateCourse = ({ course_id, setter, userRating }) => {
 
   const userdata = useSelector((state) => state?.auth?.data);
 
@@ -300,11 +336,11 @@ export const RateCourse = ({ course_id, setter }) => {
 
   const [starindx, setStarIndx] = useState(-2);
 
-  const [rating, setRating] = useState(-2);
+  const [rating, setRating] = useState(userRating ? ( (userRating?.rating - 1)*2 - 1 ) : -2);
 
   const [interact, setInteract] = useState(false);
 
-  const [text, setText] = useState("");
+  const [text, setText] = useState(userRating ? userRating.comment : "");
 
   const [overflowNeeded, setOverflowNeeded] = useState(null);
 
@@ -313,7 +349,7 @@ export const RateCourse = ({ course_id, setter }) => {
   const [showMore, setShowMore] = useState(false);
   // console.log(1 + (rating + 1) / 2);
 
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(userRating ? -1 : 0);
 
   const ratingText = ["Awful, not what I expected at all", "Awful / Poor", "Poor, pretty disappointed", "Poor / Average", "Average, could be better", "Average / Good", "Good, what I expected", "Good / Amazing", "Amazing, above expectations!"];
 
@@ -326,6 +362,18 @@ export const RateCourse = ({ course_id, setter }) => {
 
     setter(false);
 
+    dispatch(getlectures({ course_id }))
+
+  }
+
+  const onDeleteRating = async() => {
+
+    const res = await dispatch(deleteRating({course_id}));
+
+    if(res?.payload){
+      setter(false);
+      dispatch(getlectures({ course_id }))
+    }
   }
 
   useEffect(() => {
@@ -355,11 +403,73 @@ export const RateCourse = ({ course_id, setter }) => {
 
         <div className='absolute flex justify-between w-full px-4 items-center'>
           {
-            rating != -2 && <button onClick={() => { step ? setStep(0) : setRating(-2) }} className='text  p-2 text-blue-800 text-sm font-bold'>Back</button>
+            (rating != -2 && !userRating) && <button onClick={() => { step ? setStep(0) : setRating(-2) }} className='text  p-2 text-blue-800 text-sm font-bold'>Back</button>
           }
 
           <button onClick={() => setter(false)} className='text-xl p-2 ml-auto'><RxCross2 /></button>
         </div>
+
+        {
+          step == -2 && (
+            <div className='w-full space-y-2'>
+
+              <h2 className='text-xl font-bold  relative bottom-5'>Delete Your Review?</h2>
+
+              <h3 className=''>Are you sure you want to delete your review?</h3>
+
+              <div className='w-full flex gap-4 pt-4'>
+
+              <button onClick={()=>setStep(-1)} className='h-12font-bold px-3 ml-auto duration-100 shrink-0 font-bold'>Cancel</button>
+
+              <button onClick={onDeleteRating} className='h-12 bg-slate-900 text-white font-bold px-3 hover:bg-slate-800 duration-100 shrink-0'>Yes, Delete My Review</button>
+
+              </div>
+
+            </div>
+          )
+        }
+
+        {
+          step == -1 && (
+            <div className='w-full space-y-2'>
+              <h2 className='text-xl font-bold  relative bottom-5 w-[20vw]'>Your Review</h2>
+
+              <Rating total={userRating?.rating} flag={false} size='text-xl'/>
+
+              {/* <h3 className='pt-4'>{userRating?.comment || "There are no written comments for your review." }</h3> */}
+              
+              <div className=' relative'>
+
+                <h3 ref={textRef} className={`leading-relaxed relative overflow-hidden ${(!showMore && overflowNeeded) && "max-h-52"}`}>
+                  {text || "There are no written comments for your review."}
+
+                  {
+                    (!showMore && overflowNeeded) && <div className='bg-gradient-to-t from-white to-transparent h-full w-full absolute bottom-0 left-0'></div>
+                  }
+                </h3>
+
+                {
+                  overflowNeeded && (
+                    <div onClick={() => setShowMore(!showMore)} className='flex gap-1 text-blue-700 cursor-pointer hover:text-blue-900 duration-150 absolute -bottom-6 -left-0'>
+                      <button className='font-bold text-sm'>Show {showMore ? "less" : "more"}</button>
+                      <MdKeyboardArrowDown className={`size-2 mt-auto ${showMore && "rotate-180"} duration-150`} />
+                    </div>
+                  )
+                }
+
+              </div>
+
+              <div className='w-full flex gap-4 pt-4'>
+
+              <button onClick={()=>setStep(-2)} className='h-12font-bold px-3 ml-auto duration-100 shrink-0 font-bold'>Delete</button>
+
+              <button onClick={()=>setStep(0)} className='h-12 bg-slate-900 text-white font-bold px-3 hover:bg-slate-800 duration-100 shrink-0'>Edit Review</button>
+
+              </div>
+
+            </div>
+          )
+        }
 
         {
           step == 0 && (
@@ -510,17 +620,19 @@ function LearnLecture() {
       return total;
     }, 0);
   }, 0);
-  
+
   const heightRef = useRef(null);
 
   const [height, setHeight] = useState(0);
 
   const [showRatingDialog, setShowRatingDialog] = useState(false);
 
+  const [ratings, setRatings] = useState(null);
+
   useEffect(() => {
 
     if (data && !data?.progress) {
-      
+
       const schema = data?.sections.map((section) => section?.lectures?.length);
 
       dispatch(createProgressConfig({
@@ -528,6 +640,15 @@ function LearnLecture() {
         course_id
       }));
 
+    }
+
+    if (data?.progress) {
+
+      const { section_no, lecture_no } = data.progress.lastView
+
+      setCurrentLecture({
+        sec: section_no, lec: lecture_no
+      })
     }
 
   }, [data])
@@ -539,7 +660,14 @@ function LearnLecture() {
   }, [])
 
   useEffect(() => {
-    dispatch(getlectures({ course_id }))
+
+    const execute = async() => {
+      await dispatch(getlectures({ course_id }));
+      dispatch(courseRatings(course_id));
+    }
+
+    execute();
+    
   }, [])
 
   return (
@@ -547,7 +675,7 @@ function LearnLecture() {
     <>
 
       {
-        showRatingDialog && <RateCourse course_id={course_id} setter={(setShowRatingDialog)} />
+        showRatingDialog && <RateCourse course_id={course_id} setter={(setShowRatingDialog)} userRating={data?.userRating} />
       }
 
 
@@ -564,14 +692,22 @@ function LearnLecture() {
             <h3 className='text-sm font-semibold'>{data?.title}</h3>
           </div>
 
-          <button onClick={() => setShowRatingDialog(true)} className='flex items-center ml-auto text-sm gap-2 cursor-pointer group'>
-            <FaStar className='fill-[#6A6F73] size-5' />
-            <h3 className='group-hover:text-slate-200 duration-100 font-semibold'>Leave a rating</h3>
-          </button>
+          {
+            !data?.userRating ? <button onClick={() => setShowRatingDialog(true)} className='flex items-center ml-auto text-sm gap-2 cursor-pointer group'>
+              <FaStar className='fill-[#6A6F73] size-5' />
+              <h3 className='group-hover:text-slate-200 duration-100 font-semibold'>Leave a rating</h3>
+            </button> :
+
+              <button onClick={() => setShowRatingDialog(true)} className='flex items-center ml-auto text-sm gap-2' >
+                <Rating total={data?.userRating?.rating} flag={false} size='text-xl' color='#0000FF' />
+              </button>
+          }
 
 
 
-          <CircularProgress progress={(markedLectures/totalLectures)*100} size={40} strokeWidth={4} />
+          <CircularProgress progress={markedLectures ? (markedLectures / totalLectures) * 100 : 0} size={40} strokeWidth={4} />
+
+
 
           <button className='border border-white h-10 p-3 flex items-center text-sm font-bold gap-1'>Share <IoIosShareAlt className='size-5' /></button>
 
@@ -588,13 +724,13 @@ function LearnLecture() {
             {/* video */}
             <div className='h-[80vh] shadow-inner relative'>
 
-              <video className='h-full w-full bg-black outline-none' controls src={data?.sections[currentLecture?.sec].lectures[currentLecture?.lec]?.resource?.secure_url} onContextMenu={(e) => e.preventDefault()} controlsList="nodownload" />
+              <video className='h-full w-full bg-black outline-none' controls src={data?.sections[currentLecture?.sec]?.lectures[currentLecture?.lec]?.resource?.secure_url} onContextMenu={(e) => e.preventDefault()} controlsList="nodownload" />
 
               {/* video title */}
               {
                 !panel && <>
                   <div className='bg-black absolute top-0 left-0 right-0 bottom-0 pointer-events-none opacity-50'></div>
-                  <h3 className='absolute top-6 left-6 text-white text-border  bg-blend-lighten z-10'>{currentLecture.lec + 1}. {data?.sections[currentLecture.sec].lectures[currentLecture.lec].title}</h3>
+                  <h3 className='absolute top-6 left-6 text-white text-border  bg-blend-lighten z-10'>{currentLecture.lec + 1}. {data?.sections[currentLecture.sec]?.lectures[currentLecture.lec].title}</h3>
                 </>
               }
 
@@ -679,7 +815,7 @@ function LearnLecture() {
 
                         <h2>
                           Skill level: {data?.level} <br />
-                          Students: 192298 <br />
+                          Students: {data?.totalStudents} <br />
                           Languages: {data?.language.slice(0, 1).toUpperCase() + data?.language.slice(1)} <br />
                           Captions: Yes <br />
                         </h2>
@@ -766,7 +902,7 @@ function LearnLecture() {
 
 
               {
-                active === 2 && <Feedback panel={panel} />
+                active === 2 && <Feedback panel={panel} data={data} />
               }
 
             </div>
