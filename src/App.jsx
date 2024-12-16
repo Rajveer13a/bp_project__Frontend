@@ -9,16 +9,15 @@ import CourseView from "./Pages/CourseView"
 import HomePage from "./Pages/HomePage"
 // import HomePage from "./Pages/HomePage"
 import Learning from "./Pages/Learning"
-
+import LearnLecture from "./Pages/LearnLecture"
 import LogIn from "./Pages/LogIn"
-// import Profile from "./Pages/Profile"
+import Profile from "./Pages/Profile"
 import ShoppingCart from "./Pages/ShoppingCart"
 import SignUp from "./Pages/SignUp"
 // import VerifyEmail from "./Pages/VerifyEmail"
 import { resetData } from "./Redux/Slices/AuthSlice"
 import { getConfig } from "./Redux/Slices/UserConfigSlice"
 import { store } from "./Redux/store"
-import LearnLecture from "./Pages/LearnLecture"
 
 
 
@@ -58,7 +57,7 @@ function App() {
 
       <Route path="/login" element={<LogIn />} />
 
-      {/* <Route path="/profile" element={<Profile />} /> */}
+      <Route path="/profile" element={<Profile />} />
 
       <Route path="/course/:course_id" element={<CourseView />} />
 
