@@ -3,10 +3,10 @@ import { AiOutlineReload } from 'react-icons/ai';
 import { IoMdDoneAll } from 'react-icons/io';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { updateAvatar } from '@/Redux/Slices/AuthSlice';
+import { getUser, updateAvatar } from '@/Redux/Slices/AuthSlice';
 import { instructorDetails } from '@/Redux/Slices/Instructor/InstructorSlice';
 
-const FileUpload = ({ type, name}) => {
+export const FileUpload = ({ type, name}) => {
 
     const dispatch = useDispatch();
 
@@ -63,6 +63,9 @@ const FileUpload = ({ type, name}) => {
         );
 
         if (res.payload) {
+
+            dispatch(getUser());
+            
             setUploadProgress({
                 progress: 0,
                 error: null,

@@ -152,16 +152,16 @@ export const getUser = createAsyncThunk('/auth/getUser', async () => {
     }
 });
 
-export const updateUsername = createAsyncThunk('/auth/updateUsername', async (username) => {
+export const updateUserDetails = createAsyncThunk('/auth/updateUserDetails', async (data) => {
 
     try {
 
-        const res = axiosInstance.post('/user/updateUserDetails', { username });
+        const res = axiosInstance.post('/user/updateUserDetails', data);
 
         toast.promise(res, {
-            loading: "updating username",
+            loading: "updating details",
             success: (data) => data.data.message,
-            error: "failed to update username"
+            error: "failed to update user details"
         });
 
         return (await res).data;
@@ -304,20 +304,20 @@ const authSlice = createSlice({
                 }
             })
 
-            .addCase(updateUsername.fulfilled, (state, action) => {
-                if (action.payload) {
-                    localStorage.setItem('data', JSON.stringify(action.payload.data));
+            // .addCase(updateUserDetails.fulfilled, (state, action) => {
+            //     if (action.payload) {
+            //         localStorage.setItem('data', JSON.stringify(action.payload.data));
 
-                    state.data = action.payload.data;
-                }
-            })
+            //         state.data = action.payload.data;
+            //     }
+            // })
 
             .addCase(updateAvatar.fulfilled, (state, action) => {
                 if (action.payload) {
                     // console.log(action.payload.data);
-                    localStorage.setItem('data', JSON.stringify(action.payload.data));
+                    // localStorage.setItem('data', JSON.stringify(action.payload.data));
 
-                    state.data = action.payload.data;
+                    // state.data = action.payload.data;
                 }
             })
 
