@@ -3,6 +3,7 @@ import { AiOutlineReload } from "react-icons/ai";
 import { FaItalic } from 'react-icons/fa'
 import { IoIosArrowDown, IoIosCloudDone, IoMdDoneAll } from 'react-icons/io'
 import { MdFormatBold, MdFormatItalic, MdFormatListBulleted, MdFormatListNumbered, MdInfo, MdList } from 'react-icons/md'
+import { RxCross2 } from 'react-icons/rx';
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
@@ -171,9 +172,52 @@ const FileUpload = ({ type, name, course_id }) => {
     )
 }
 
+const Tags = ({data,setData, setSaveEnable}) => {
+
+    const [showInput ,setShowInput ] = useState(data?.tags?.length ? false : true);
+
+    const onEnter = (e) => {
+        if (e.key === "Enter") {
+
+            setData({...data, tags: [...data.tags, e.target.value] })
+
+            setShowInput(false);
+            setSaveEnable(true);
+
+        }
+    }
+
+    const onRemove = (indx) => {
+
+        const filteredTags = data?.tags.filter((_, index) => index !== indx);
+        !filteredTags.length && setShowInput(true);
+        setData({...data, tags: filteredTags });
+        setSaveEnable(true);
+    }
+
+    return <div className='space-y-3'>
+        <div className='flex gap-3 '>
+            {data?.tags?.map((value, indx) => {
+                return <button onClick={()=>onRemove(indx)} className='bg-slate-800 text-white font-bold hover:bg-slate-700 px-4 py-2 text flex rounded-full gap-1' key={indx}>
+                    <h1 className='align-middle'>{value}</h1>
+                    <RxCross2 className='flex-shrink-0 m-auto ' />
+                    
+                </button>
+            })}
+        </div>
+        {
+            showInput && <input onKeyDown={onEnter} className='border border-black h-11 w-[50%] outline-none px-4 placeholder:text-slate-500 ' placeholder='e.g. Landscape Photography' type="text" />
+        }
+
+        {
+            !showInput && <button onClick={()=>setShowInput(true)} className='text-xs underline text-slate-600 underline-offset-4 '>Propose another topic...</button>
+        }
+    </div>
+}
+
 function LandingPage({ setSaveThunk, setSaveEnable, approvalStatus }) {
     console.log(approvalStatus);
-    
+
     const dispatch = useDispatch();
 
     const stateData = useSelector((state) => state.instructor.edit);
@@ -185,7 +229,8 @@ function LandingPage({ setSaveThunk, setSaveEnable, approvalStatus }) {
         language: "",
         level: "",
         category: "",
-        subcategory: ""
+        subcategory: "",
+        tags:[]
     });
 
 
@@ -240,7 +285,8 @@ function LandingPage({ setSaveThunk, setSaveEnable, approvalStatus }) {
             language: stateData?.language || "",
             level: stateData?.level || "",
             category: stateData?.category || "",
-            subcategory: stateData?.subcategory || ""
+            subcategory: stateData?.subcategory || "",
+            tags:stateData?.tags || []
         })
     }, [stateData])
 
@@ -253,9 +299,9 @@ function LandingPage({ setSaveThunk, setSaveEnable, approvalStatus }) {
                     approvalStatus?.landing?.flag == false && <FeedbackPopup data={approvalStatus?.landing?.value} name={"landing"} />
                 }
                 {
-                    approvalStatus?.landing?.flag == true && <ApprovePop/>
+                    approvalStatus?.landing?.flag == true && <ApprovePop />
                 }
-                
+
 
             </div>
 
@@ -421,7 +467,7 @@ function LandingPage({ setSaveThunk, setSaveEnable, approvalStatus }) {
                 <div className='space-y-2'>
                     <h1 className='font-semibold text-lg flex items-center gap-2'>What is primarily taught in your course? <MdInfo className='size-5 cursor-pointer' /></h1>
 
-                    <input className='border border-black h-11 w-[50%] outline-none px-4 placeholder:text-slate-500' placeholder='e.g. Landscape Photography' type="text" />
+                    <Tags data={data} setData={setData} setSaveEnable={setSaveEnable} />
 
                 </div>
 
