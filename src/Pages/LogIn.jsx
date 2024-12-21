@@ -4,8 +4,6 @@ import { IoEye, IoEyeOff } from 'react-icons/io5'
 import { useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { isValidPassword } from '@/Helpers/regexMatcher'
-import HomeLayout from '@/Layouts/HomeLayout'
 import { createAccount, login, sendVerifytoken } from '@/Redux/Slices/AuthSlice'
 
 
@@ -79,7 +77,7 @@ function LogIn() {
     }
 
     return (
-        <HomeLayout>
+        <>
 
             <div className='flex  p-10 max-w-[100vw] overflow-hidden'>
 
@@ -115,7 +113,7 @@ function LogIn() {
 
             </div>
 
-        </HomeLayout>
+        </>
     )
 }
 

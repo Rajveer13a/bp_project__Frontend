@@ -5,6 +5,7 @@ import CourseSliceReducer from "./Slices/CourseSlice"
 import InstructorSliceReducer from "./Slices/Instructor/InstructorSlice";
 import ManagementSliceReducer from "./Slices/Management/ManagementSlice"
 import PaymentSliceReducer from "./Slices/PaymentSlice"
+import searchSliceReducer from "./Slices/searchSlice"
 import UserConfigSliceReducer from "./Slices/UserConfigSlice"
 
 export const store = configureStore({
@@ -14,7 +15,8 @@ export const store = configureStore({
         config: UserConfigSliceReducer,
         payment: PaymentSliceReducer,
         instructor: InstructorSliceReducer,
-        management: ManagementSliceReducer
+        management: ManagementSliceReducer,
+        search: searchSliceReducer
 
     },
     devTools: true

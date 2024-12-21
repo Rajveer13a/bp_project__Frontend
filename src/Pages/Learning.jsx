@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 
 import Rating from '@/components/Rating';
-import HomeLayout from '@/Layouts/HomeLayout'
 import { mylearning } from '@/Redux/Slices/CourseSlice';
 
 const Courses = ({ data }) => {
@@ -141,7 +140,7 @@ function Learning() {
 
 
   return (
-    <HomeLayout>
+    <>
 
       <div className='bg-[#1C1D1F]  px-36 text-white '>
 
@@ -179,7 +178,7 @@ function Learning() {
 
 
 
-    </HomeLayout>
+    </>
   )
 }
 

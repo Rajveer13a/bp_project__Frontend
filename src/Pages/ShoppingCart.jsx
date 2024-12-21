@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 
 import Rating from '@/components/Rating'
-import HomeLayout from '@/Layouts/HomeLayout'
 import { getUser } from '@/Redux/Slices/AuthSlice'
 import { createOrder, verifyPayment } from '@/Redux/Slices/PaymentSlice'
 import { getConfig, updateCart, updateFavourite } from '@/Redux/Slices/UserConfigSlice'
@@ -153,7 +152,7 @@ function ShoppingCart() {
 
 
     return (
-        <HomeLayout>
+        <>
 
             <div className={`px-14 py-10 space-y-8 mb-10`}>
 
@@ -222,7 +221,7 @@ function ShoppingCart() {
 
             </div>
 
-        </HomeLayout>
+        </>
     )
 }
 

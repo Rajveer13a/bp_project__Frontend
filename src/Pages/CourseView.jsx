@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 
 import Rating from '@/components/Rating';
-import HomeLayout from '@/Layouts/HomeLayout';
 import { courseDetail } from '@/Redux/Slices/CourseSlice';
 import { getConfig, updateCart, updateFavourite } from '@/Redux/Slices/UserConfigSlice';
 
@@ -223,7 +222,7 @@ function CourseView() {
 
 
   return (
-    <HomeLayout>
+    <>
 
       {/* Card */}
       <div className={`absolute right-20 top-28  h-[75%] ${isNearBottom ? "z-10" : "z-20"}`}>
@@ -427,7 +426,7 @@ function CourseView() {
 
 
 
-    </HomeLayout>
+    </>
   );
 }
 

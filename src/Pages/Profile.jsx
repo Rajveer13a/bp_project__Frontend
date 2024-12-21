@@ -4,7 +4,6 @@ import { MdFormatBold, MdFormatItalic, MdKeyboardArrowDown } from 'react-icons/m
 import { useDispatch, useSelector } from 'react-redux'
 
 import { FileUpload } from '@/Instructor/Pages/InstructorProfile/ProfilePicture'
-import HomeLayout from '@/Layouts/HomeLayout'
 import { getUser, updateUserDetails } from '@/Redux/Slices/AuthSlice'
 
 
@@ -219,7 +218,7 @@ function Profile() {
 
     return (
 
-        <HomeLayout>
+        <>
 
             <div className='py-12 px-16 text-[#2D2F31]'>
 
@@ -328,7 +327,7 @@ function Profile() {
 
             </div>
 
-        </HomeLayout>
+        </>
 
     )
 }

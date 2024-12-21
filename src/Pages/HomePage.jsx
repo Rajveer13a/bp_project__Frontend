@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { Carousel } from '@/components/Carousel'
 import Tab from '@/components/Tab'
-import HomeLayout from '@/Layouts/HomeLayout'
 import { getAllCourses } from '@/Redux/Slices/CourseSlice';
 
 function HomePage() {
@@ -15,7 +14,7 @@ function HomePage() {
   const userCourses = useSelector((state) => state.auth.data.purchasedCourses);
 
   const filteredData = useMemo(() => {
-    return data?.filter((value) => !userCourses.includes(value?._id));
+    return data?.filter((value) => !userCourses?.includes(value?._id));
 }, [data, userCourses]);
   
   const categories  = ["Web Development","Data Science", "IT Certifications", "Leadership","Communication","Business Analytics & Intelligence"]
@@ -28,7 +27,7 @@ function HomePage() {
 
   return (
 
-    <HomeLayout>
+    <>
 
       <Carousel time={10000} autoSlide={true} />
 
@@ -77,7 +76,7 @@ function HomePage() {
         </div>   
 
 
-    </HomeLayout>
+    </>
 
   )
 }

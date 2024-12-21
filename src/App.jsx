@@ -1,25 +1,17 @@
+import Cookies from 'js-cookie';
 import { useEffect } from "react"
 import { useDispatch } from "react-redux"
 import { Route, Routes, useNavigate } from "react-router-dom"
+import { v4 as uuidv4 } from 'uuid';
 
 import eventEmitter from "./Helpers/eventEmitter"
 import InstructorRoutes from "./InstructorRoutes"
 import ManagementRoutes from "./ManagementRoutes"
-import CourseView from "./Pages/CourseView"
-import HomePage from "./Pages/HomePage"
-// import HomePage from "./Pages/HomePage"
-import Learning from "./Pages/Learning"
-import LearnLecture from "./Pages/LearnLecture"
-import LogIn from "./Pages/LogIn"
-import Profile from "./Pages/Profile"
-import ShoppingCart from "./Pages/ShoppingCart"
-import SignUp from "./Pages/SignUp"
-// import VerifyEmail from "./Pages/VerifyEmail"
 import { resetData } from "./Redux/Slices/AuthSlice"
 import { getConfig } from "./Redux/Slices/UserConfigSlice"
 import { store } from "./Redux/store"
-
-
+import UserRoutes from './UserRoutes';
+import LearnLecture from './Pages/LearnLecture';
 
 
 
@@ -40,8 +32,15 @@ function App() {
 
   });
 
+
   useEffect(() => {
-    dispatch(getConfig())
+    dispatch(getConfig());
+    let trackingId = Cookies.get('trackingId');
+
+    if (!trackingId) {
+      trackingId = trackingId = uuidv4();
+      Cookies.set('trackingId', trackingId, { expires: 365 });
+    }
   }, [])
 
   return (
@@ -49,27 +48,14 @@ function App() {
 
     <Routes>
 
-      <Route path="/" element={<HomePage />} />
-
-      <Route path="/signup" element={<SignUp />} />
-
-      {/* <Route path="/verifyEmail" element={<VerifyEmail />} /> */}
-
-      <Route path="/login" element={<LogIn />} />
-
-      <Route path="/profile" element={<Profile />} />
-
-      <Route path="/course/:course_id" element={<CourseView />} />
-
-      <Route path="/my-courses/:active" element={<Learning />} />
 
       <Route path="/learn/lecture/:course_id" element={<LearnLecture />} />
-
-      <Route path="/shoppingcart" element={<ShoppingCart />} />
 
       <Route path="/instructor/*" element={<InstructorRoutes />} />
 
       <Route path="/management/*" element={<ManagementRoutes />} />
+
+      <Route path="/*" element={<UserRoutes />} />
 
     </Routes>
 

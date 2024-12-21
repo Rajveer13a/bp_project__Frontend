@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { isValidPassword } from '@/Helpers/regexMatcher'
-import HomeLayout from '@/Layouts/HomeLayout'
 import { createAccount, sendVerifytoken } from '@/Redux/Slices/AuthSlice'
 
 import { InputField } from './LogIn'
@@ -68,7 +67,7 @@ function SignUp() {
     }
 
     return (
-        <HomeLayout>
+        <>
 
             <div className='flex  p-10 max-w-[100vw] overflow-hidden'>
 
@@ -106,7 +105,7 @@ function SignUp() {
 
             </div>
 
-        </HomeLayout>
+        </>
     )
 }
 
