@@ -105,6 +105,8 @@ function CourseView() {
 
   const userCourses = useSelector((state) => state.auth.data.purchasedCourses);
 
+  const user_id = useSelector(state => state.auth.data._id);
+
   const cart = useSelector((state) => state.config.cart);
 
   const isPurchased = userCourses?.includes(course_id);
@@ -204,7 +206,7 @@ function CourseView() {
 
   useEffect(() => {
 
-    dispatch(courseDetail({ course_id }));
+    dispatch(courseDetail({ course_id , user_id}));
 
     window.addEventListener("scroll", handleScroll);
 

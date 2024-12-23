@@ -35,12 +35,6 @@ function App() {
 
   useEffect(() => {
     dispatch(getConfig());
-    let trackingId = Cookies.get('trackingId');
-
-    if (!trackingId) {
-      trackingId = trackingId = uuidv4();
-      Cookies.set('trackingId', trackingId, { expires: 365 });
-    }
   }, [])
 
   return (
