@@ -325,3 +325,14 @@ input{
   width: 140%;
   background-color:#D1D7DC ;
 }
+
+
+.activePage::after{
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background-color: darkblue;
+}

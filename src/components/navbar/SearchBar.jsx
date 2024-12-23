@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { MdOutlineSearch } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import {termSuggestions } from '@/Redux/Slices/searchSlice';
+import { termSuggestions } from '@/Redux/Slices/searchSlice';
 
 function debounce(cb, delay = 1000) {
 
@@ -19,11 +19,14 @@ function SearchBar() {
 
   const dispatch = useDispatch();
 
+  const location = useLocation();
+  console.log();
+
   const navigate = useNavigate();
 
   const user_id = useSelector((state) => state.auth.data._id);
 
-  const term  = useSelector(state => state.search.searchTerm);
+  const term = useSelector(state => state.search.searchTerm);
 
   const [input, setInput] = useState("");
 
@@ -66,19 +69,25 @@ function SearchBar() {
 
   const onEnter = (e) => {
     console.log("here");
-    
-    if(e.key === "Enter"){
+
+    if (e.key === "Enter") {
       onSearch(input);
     }
   }
 
   useEffect(() => {
-    setInput(term);
-  }, [term])
+
+    if (location.pathname.split("/")[1] === "search") {
+      setInput(term);
+    }else{
+      setInput("");
+    }
+
+  }, [term,location.pathname])
 
   return (
     <div className='relative w-[40%] px-3 text-sm flex justify-center'>
-      <input onKeyDown={onEnter}  value={input} onChange={onUserInput} placeholder='Search for anything' className='outline-none border border-black rounded-3xl pl-12 py-[12px] w-full placeholder:text-slate-500 placeholder:text-sm pr-8' type="text" />
+      <input onKeyDown={onEnter} value={input} onChange={onUserInput} placeholder='Search for anything' className='outline-none border border-black rounded-3xl pl-12 py-[12px] w-full placeholder:text-slate-500 placeholder:text-sm pr-8' type="text" />
       <MdOutlineSearch className={`absolute size-6 top-[11px] left-8  ${input ? "fill-black" : "fill-slate-400"} `} />
 
       {

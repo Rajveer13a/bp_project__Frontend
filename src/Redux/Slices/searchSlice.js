@@ -5,7 +5,9 @@ import axiosInstance from "@/Helpers/axiosInstance";
 
 const initialState = {
     searchTerm: "",
-    result: []
+    result: [],
+    total:null,
+    limit:null
 }
 
 export const termSuggestions = createAsyncThunk("/search/term-suggestions", async (data) => {
@@ -46,6 +48,8 @@ const searchSlice = createSlice({
             .addCase(searchCourses.fulfilled, (state, action) => {
                 state.result = action.payload.data.courses;
                 state.searchTerm = action.payload.data.searchTerm;
+                state.total = action.payload.data.total;
+                state.limit = action.payload.data.limit;
             })
     }
 })
