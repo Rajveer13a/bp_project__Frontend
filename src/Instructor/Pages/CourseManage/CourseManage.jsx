@@ -301,8 +301,8 @@ function CourseManage() {
             list: [
                 { name: "Film & edits", link: "film" },
                 { name: "Curriculum", link: "curriculum" },
-                { name: "Captions (optional)", link: "captions" },
-                { name: "Accessibility (optional)", link: "accessibility" },
+                // { name: "Captions (optional)", link: "captions" },
+                // { name: "Accessibility (optional)", link: "accessibility" },
             ]
         },
 
@@ -311,8 +311,8 @@ function CourseManage() {
             list: [
                 { name: "Course landing page", link: "basics" },
                 { name: "Pricing", link: "pricing" },
-                { name: "Promotions", link: "promotions" },
-                { name: "Course messages", link: "messages" },
+                // { name: "Promotions", link: "promotions" },
+                // { name: "Course messages", link: "messages" },
             ]
         },
 
@@ -388,7 +388,7 @@ function CourseManage() {
 
                 <h1 className='font-bold text-xl'>{data?.title}</h1>
 
-                <h4 className='bg-[#6A6F73] px-2 text-sm font-bold my-auto py-[2px]'>DRAFT</h4>
+                <h4 className={` px-2 text-sm font-bold my-auto py-[2px] ${data?.approved ?"bg-gradient-to-r from-blue-900 to-blue-700" : "bg-[#6A6F73]"}`}>{data?.approved ? "LIVE" : "DRAFT"}</h4>
 
                 <h3 className='font-semibold'>{contentDuration} min of video content uploaded</h3>
 

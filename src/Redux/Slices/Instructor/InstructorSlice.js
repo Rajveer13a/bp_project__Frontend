@@ -60,7 +60,8 @@ export const addSection = createAsyncThunk("/instructor/addSection", async (data
     try {
         console.log(data)
         const res = await axiosInstance.post(`/course/section/${data.id}`, {
-            title: data.title
+            title: data.title,
+            learningObjective: data.learningObjective
         });
 
         return res.data;
@@ -98,6 +99,20 @@ export const addLecture = createAsyncThunk("/instructor/addLecture", async (data
     try {
 
         const res = await axiosInstance.post(`/course/lecture/${data.course_id}/${data.section_id}`, {
+            title: data.title
+        });
+
+        return res.data;
+
+    } catch (error) {
+        toast.error(error.response.data.message);
+    }
+})
+
+export const updateLecture = createAsyncThunk("/instructor/updateLecture", async (data) => {
+    try {
+
+        const res = await axiosInstance.patch(`/course/lecture/${data.lecture_id}`, {
             title: data.title
         });
 
@@ -305,16 +320,16 @@ export const getCourseReview = createAsyncThunk("/instructor/course/approvalStat
         
         const res =  axiosInstance.get(`/course/${course_id}/approvalStatus`);
 
-        toast.promise(res, {
-            loading: "fetching approval status",
-            success: (data)=>data.data.message
-        })
+        // toast.promise(res, {
+        //     loading: "fetching approval status",
+        //     success: (data)=>data.data.message
+        // })
 
         return (await res).data;
         
 
     } catch (error) {
-        toast.error(error.response.data.message)
+        // toast.error(error.response.data.message)
     }
 })
 

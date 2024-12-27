@@ -85,12 +85,14 @@ function SignUp() {
 
                         <InputField name={"password"} onChange={handleUserInput} value={data.password} title={"Password"} />
 
+                        <p className="text-xs text-gray-600 mt-2"> Your password must be at least <span className="font-bold">8 characters</span> long and include at least <span className="font-bold"> one uppercase letter</span>, <span className="font-bold"> one lowercase letter</span>, <span className="font-bold"> one number</span>, and <span className="font-bold"> one special character</span> (e.g., <span className="text-red-600">#</span>, <span className="text-red-600">?</span>, <span className="text-red-600">!</span>, <span className="text-red-600">@</span>, <span className="text-red-600">$</span>, <span className="text-red-600">%</span>, <span className="text-red-600">^</span>, <span className="text-red-600">&</span>, <span className="text-red-600">*</span>, or <span className="text-red-600">-</span>). </p>
+                    
                         <div className='space-y-4'>
                             <button onClick={signUp} className='w-full text-white bg-blue-600 hover:bg-blue-700 duration-150 py-3 font-bold mt-2'>Sign up</button>
 
                             <h3 className='text-xs text-center'>By signing up, you agree to our <Link className='link-primary underline'>Terms of Use</Link > and <Link className='link-primary underline'>Privacy Policy.</Link></h3>
 
-                            
+
 
                             <h2 className='text-center'>Already have an account? <Link to={"/login"} className='link-primary font-bold underline'>Log in</Link> </h2>
 

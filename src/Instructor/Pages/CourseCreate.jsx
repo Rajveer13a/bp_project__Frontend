@@ -113,7 +113,7 @@ function CourseCreate() {
 
                                 </div>
 
-                                <div name={'type'} onClick={() => setData({...data,type:2})}  className={`${data?.type == 2 ? " border-black " : "outline outline-2 outline-[#e5e7eb] border-transparent"} border-4 w-64 p-8 py-10 text-center space-y-1 hover:bg-[#E3E7EA] cursor-pointer`}>
+                                <div name={'type'} onClick={() => false && setData({...data,type:2})}  className={`${data?.type == 2 ? " border-black " : "outline outline-2 outline-[#e5e7eb] border-transparent"} border-4 w-64 p-8 py-10 text-center space-y-1  cursor-not-allowed opacity-50`}>
 
                                     <TiDocumentText className='size-8 m-auto mb-2 ' />
 

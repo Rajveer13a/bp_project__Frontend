@@ -10,7 +10,7 @@ import Profile from "./Pages/Profile"
 import SearchCourses from './Pages/SearchCourses';
 import ShoppingCart from "./Pages/ShoppingCart"
 import SignUp from "./Pages/SignUp"
-// import VerifyEmail from "./Pages/VerifyEmail"
+import VerifyEmail from "./Pages/VerifyEmail"
 
 function UserRoutes() {
     return (
@@ -21,7 +21,7 @@ function UserRoutes() {
 
                 <Route path="/signup" element={<SignUp />} />
 
-                {/* <Route path="/verifyEmail" element={<VerifyEmail />} /> */}
+                <Route path="/verifyEmail" element={<VerifyEmail />} />
 
                 <Route path="/login" element={<LogIn />} />
 

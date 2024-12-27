@@ -15,43 +15,47 @@ import { Link } from 'react-router-dom';
 
 import axiosInstance from '@/Helpers/axiosInstance';
 import FeedbackPopup from '@/Instructor/components/FeedbackPopup';
-import { courseDetails, deleteLecture, } from '@/Redux/Slices/Instructor/InstructorSlice';
+import { courseDetails, deleteLecture, updateLecture, } from '@/Redux/Slices/Instructor/InstructorSlice';
 
 import ContentTypeBox from './ContentTypeBox';
+import Input from './Input';
 // import formattedDate from './helperGetDate';
 
 export function ApprovePop() {
 
-   
 
-    const [enable , setEnable] = useState(false);
-    
 
-  return (
-    <div onMouseLeave={()=>setEnable(false)}  className='relative'>
-      <FcApproval onMouseEnter={()=>setEnable(true)}  className='size-7 fill-red-700 z-10  relative cursor-pointer' />
-      <div className={`border border-black border-dotted p-2 bg-sky-100 absolute  top-3 rounded-sm -right-[80px] ${!enable && "opacity-0 " } duration-700 transition-all animate-in -z-0 cursor-default`}>
-        Approved
-      </div>
-    </div>
-  )
+    const [enable, setEnable] = useState(false);
+
+
+    return (
+        <div onMouseLeave={() => setEnable(false)} className='relative'>
+            <FcApproval onMouseEnter={() => setEnable(true)} className='size-7 fill-red-700 z-10  relative cursor-pointer' />
+            <div className={`border border-black border-dotted p-2 bg-sky-100 absolute  top-3 rounded-sm -right-[80px] ${!enable && "opacity-0 "} duration-700 transition-all animate-in -z-0 cursor-default`}>
+                Approved
+            </div>
+        </div>
+    )
 }
 
 function Lecture({ indx, onDeleteRequest, data }) {
-    const dispatch = useDispatch();
-    
-    const course_id = useSelector((state)=>state.instructor.edit._id)
 
-    const[ currentData, setCurrentData] = useState(data);
+    const dispatch = useDispatch();
+
+    const course_id = useSelector((state) => state.instructor.edit._id)
+
+    const [currentData, setCurrentData] = useState(data);
+
+    const [ editedTitle, setEditedTitle] = useState(data?.title);
+
+    const [editLecture, setEditLecture] = useState(false);
 
     const { _id: lecture_id, title } = currentData;
 
-    console.log(currentData);
-    
     const handleDeleteLecture = () => {
         const thunk = () => {
-            dispatch(deleteLecture(lecture_id)).then((res)=>{
-                if(res.payload){
+            dispatch(deleteLecture(lecture_id)).then((res) => {
+                if (res.payload) {
                     dispatch(courseDetails(course_id))
                 }
             });
@@ -67,7 +71,19 @@ function Lecture({ indx, onDeleteRequest, data }) {
     const [addContentActive, setAddContentActive] = useState(false);
 
     const [selectedFile, setSelectedFile] = useState(null);
+
     const [fileName, setFileName] = useState("No file selected");
+
+     const onEditSectionSave = () => {
+            dispatch(updateLecture({
+                lecture_id: currentData._id,
+                title: editedTitle
+            }));
+
+            setCurrentData({...currentData, title:editedTitle})
+    
+            setEditLecture(false);
+        }
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -86,7 +102,6 @@ function Lecture({ indx, onDeleteRequest, data }) {
 
 
     let controllerRef = useRef(null);
-    console.log(uploadProgress);
 
     const onUploadVideo = async () => {
 
@@ -124,7 +139,7 @@ function Lecture({ indx, onDeleteRequest, data }) {
 
             dispatch(courseDetails(course_id));
 
-            setCurrentData(res.data.data) ;
+            setCurrentData(res.data.data);
             setAddContentActive(false);
             setSelectedFile(null);
             setAddVideoActive(false);
@@ -154,8 +169,7 @@ function Lecture({ indx, onDeleteRequest, data }) {
     }
 
     const thumbnail = currentData?.resource?.secure_url.replace(".mp4", ".jpg");
-    console.log("cccccccccc",currentData);
-    
+
     let formattedTime;
 
     if (currentData?.resource?.duration) {
@@ -170,93 +184,129 @@ function Lecture({ indx, onDeleteRequest, data }) {
     return (
         <div className='bg-white ml-14 mt-8  mr-1 py-1 border border-black'>
 
-            <div className=' flex items-center px-4 group cursor-move' >
-                {/* lecture title box */}
-                <div className='flex space-x-2 items-center'>
-                    <FaCheckCircle className='' />
-                    <h1>
-                        Lecture : {indx + 1}
-                    </h1>
-                    <IoDocumentOutline />
-                    <h1>
-                        {title}
-                    </h1>
+            {
+                !editLecture ? (
+                    <div className=' flex items-center px-4 group cursor-move' >
+                        {/* lecture title box */}
+                        <div className='flex space-x-2 items-center'>
+                            <FaCheckCircle className='' />
+                            <h1>
+                                Lecture : {indx + 1}
+                            </h1>
+                            <IoDocumentOutline />
+                            <h1>
+                                {title}
+                            </h1>
 
-                    
 
-                    <div className='gap-2 flex opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto duration-100 cursor-pointer ml-2 py-4'>
-                        <MdEdit onClick={""} />
-                        <MdDelete onClick={handleDeleteLecture} />
+
+                            <div className='gap-2 flex opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto duration-100 cursor-pointer ml-2 py-4'>
+                                <MdEdit onClick={()=>setEditLecture(true)} />
+                                <MdDelete onClick={handleDeleteLecture} />
+                            </div>
+
+                            {
+                                data.feedback && (
+                                    <FeedbackPopup data={data?.feedback} />
+                                )
+                            }
+
+                            {
+                                data.approved && (
+                                    <ApprovePop />
+                                )
+                            }
+
+
+
+
+                        </div>
+
+                        <div className='ml-auto flex items-center space-x-2'>
+
+                            {
+                                (!currentData?.resource?.secure_url || addContentActive) && (
+                                    addContentActive ? (
+                                        <div className='bg-white border-t px-2 pt-1  border-x border-black flex relative top-2.5 cursor-text'>
+
+                                            {
+                                                addvideoActive ? (
+                                                    <h1 className='font-bold text-[15px] '>
+                                                        Add Video
+                                                    </h1>) :
+                                                    (
+                                                        <h1 className='font-bold text-[15px] '>
+                                                            Select content type
+                                                        </h1>
+                                                    )
+                                            }
+
+                                            <GoPlus onClick={() => {
+                                                setAddContentActive(false);
+                                                setAddVideoActive(false);
+                                                setSelectedFile(null);
+                                                setFileName("No file selected");
+                                                setUploadProgress({
+                                                    progress: 0,
+                                                    status: null,
+                                                    error: null
+                                                })
+                                            }}
+                                                className='size-6 rotate-45 m-auto cursor-pointer fill-slate-800 hover:fill-black transition-all duration-150'
+                                            />
+
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <button onClick={() => setAddContentActive(true)} className='flex items-center space-x-2  border border-black px-3 py-2 hover:bg-[#E3E7EA]'>
+                                                <FiPlus className='size-5' />
+                                                <h1 className='font-bold text-sm'>Content</h1>
+                                            </button>
+                                            <button><RiArrowDownSLine className='size-6' /></button>
+                                        </>
+                                    )
+                                )
+                            }
+
+                            <GiHamburgerMenu className='opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto duration-100' />
+
+                        </div>
+
                     </div>
-
-                    {
-                        data.feedback && (
-                            <FeedbackPopup data={data?.feedback}/>
-                        )
-                    }
-
-                    {
-                        data.approved && (
-                            <ApprovePop/>
-                        )
-                    }
+                ) : (
+                    <div className=' flex flex-col px-4 group cursor-move pt-2' >
+                        {/* lecture title box */}
+                        <div className='flex space-x-2 items-center w-[100%]'>
+                            <FaCheckCircle className='' />
+                            <h1 className='text-nowrap'>
+                                Lecture : {indx + 1}
+                            </h1>
+                            
+                            <Input count={80} placeholder={"Enter a title"} autoFocus={true} onChange={(e)=> setEditedTitle(e.target.value) } name={"title"} value={editedTitle} />
 
 
+                        </div>
 
+                        <div className='text-sm font-bold space-x-4 ml-auto py-4 pr-3'>
+                            <button onClick={() => {
+                                setEditLecture(false);
+                                setEditedTitle(currentData.title)
 
-                </div>
+                            }} className='text-slate-900 hover:text-slate-800 duration-150'>
+                                Cancel
+                            </button>
 
-                <div className='ml-auto flex items-center space-x-2'>
+                            <button
+                                className='bg-gray-900 hover:bg-gray-800 text-white px-2 py-1 duration-150'
+                                onClick={onEditSectionSave}
+                            >
+                                Save Lecture
+                            </button>
+                        </div>                        
 
-                    {
-                        (!currentData?.resource?.secure_url || addContentActive )&& (
-                            addContentActive ? (
-                                <div className='bg-white border-t px-2 pt-1  border-x border-black flex relative top-2.5 cursor-text'>
-
-                                    {
-                                        addvideoActive ? (
-                                            <h1 className='font-bold text-[15px] '>
-                                                Add Video
-                                            </h1>) :
-                                            (
-                                                <h1 className='font-bold text-[15px] '>
-                                                    Select content type
-                                                </h1>
-                                            )
-                                    }
-
-                                    <GoPlus onClick={() => {
-                                        setAddContentActive(false);
-                                        setAddVideoActive(false);
-                                        setSelectedFile(null);
-                                        setFileName("No file selected");
-                                        setUploadProgress({
-                                            progress: 0,
-                                            status: null,
-                                            error: null
-                                        })
-                                    }}
-                                        className='size-6 rotate-45 m-auto cursor-pointer fill-slate-800 hover:fill-black transition-all duration-150'
-                                    />
-
-                                </div>
-                            ) : (
-                                <>
-                                    <button onClick={() => setAddContentActive(true)} className='flex items-center space-x-2  border border-black px-3 py-2 hover:bg-[#E3E7EA]'>
-                                        <FiPlus className='size-5' />
-                                        <h1 className='font-bold text-sm'>Content</h1>
-                                    </button>
-                                    <button><RiArrowDownSLine className='size-6' /></button>
-                                </>
-                            )
-                        )
-                    }
-
-                    <GiHamburgerMenu className='opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto duration-100' />
-
-                </div>
-
-            </div>
+                    </div>
+                )
+            }
 
             {/* lecture video display */}
 
@@ -264,35 +314,35 @@ function Lecture({ indx, onDeleteRequest, data }) {
                 !addContentActive && currentData?.resource && (
                     <div className='border-t border-black py-4 px-2 flex gap-4' >
 
-                <img className='w-36 border border-black' src={thumbnail} alt="thumbnail" />
+                        <img className='w-36 border border-black' src={thumbnail} alt="thumbnail" />
 
-                <div className='w-[55%]'>
-                    <h1 className='font-bold overflow-hidden text-ellipsis whitespace-nowrap'>
-                        {currentData?.resource?.filename}
-                    </h1>
+                        <div className='w-[55%]'>
+                            <h1 className='font-bold overflow-hidden text-ellipsis whitespace-nowrap'>
+                                {currentData?.resource?.filename}
+                            </h1>
 
-                    <h3 className=''>
-                        {formattedTime}
-                    </h3>
+                            <h3 className=''>
+                                {formattedTime}
+                            </h3>
 
-                    <div onClick={()=>setAddContentActive(true)} className=' flex gap-1 items-center cursor-pointer group'>
-                        <MdEdit className='fill-blue-700 size-5 group-hover:fill-blue-900 duration-150' />
-                        <h2 className='text-blue-700 group-hover:text-blue-900 duration-150'>
-                            Edit Content
-                        </h2>
+                            <div onClick={() => setAddContentActive(true)} className=' flex gap-1 items-center cursor-pointer group'>
+                                <MdEdit className='fill-blue-700 size-5 group-hover:fill-blue-900 duration-150' />
+                                <h2 className='text-blue-700 group-hover:text-blue-900 duration-150'>
+                                    Edit Content
+                                </h2>
+
+                            </div>
+                        </div>
+
+                        <button onClick={() => window.open(currentData?.resource?.secure_url, "_blank")} className='bg-slate-800 text-white h-9 px-3 font-bold ml-auto hover:bg-slate-900 flex items-center text-sm'>
+                            <h2>
+                                Preview
+                            </h2>
+                            <MdKeyboardArrowDown className='size-5' />
+                        </button>
+
 
                     </div>
-                </div>
-
-                <button onClick={()=>window.open(currentData?.resource?.secure_url,"_blank")} className='bg-slate-800 text-white h-9 px-3 font-bold ml-auto hover:bg-slate-900 flex items-center text-sm'>
-                    <h2>
-                    Preview 
-                    </h2>
-                    <MdKeyboardArrowDown className='size-5' />
-                </button>
-
-
-            </div>
                 )
             }
 

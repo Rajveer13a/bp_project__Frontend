@@ -4,7 +4,7 @@ import { LuWrench } from "react-icons/lu";
 import { MdOndemandVideo } from "react-icons/md";
 import { MdOutlineChat } from "react-icons/md";
 import { RiBarChartFill } from "react-icons/ri";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Footer from '@/components/Footer';
 
@@ -98,7 +98,7 @@ function LayoutIn({children,tab}) {
   <div className='ml-[65px] border-4  w-[95vw] '>
     <div className='absolute right-1 flex  px-4 pt-4  top-2  h-[80px] '>
       
-      <Hover className={"group"} contentClass={"px-4 py-2"} title={<h1 className='group-hover:text-blue-600 font-medium pt-2 mr-4' >Student</h1>}>
+      <Hover className={"group"} contentClass={"px-4 py-2"} title={<h1 className='group-hover:text-blue-600 font-medium pt-2 mr-4' ><Link to={"/"}>Student</Link></h1>}>
         <li className='w-[266px] py-2 text-sm font-medium text-center'>Switch to the student view here - get back to the courses you’re taking.</li>
       </Hover>
 

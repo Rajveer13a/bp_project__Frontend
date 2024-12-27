@@ -10,7 +10,7 @@ import Hover from './Hover';
 function Iprofile({ lists = [
     [{ text: "Students", link: "" }],
     [{ text: "Notifications", link: "" }],
-    [{ text: "Account Settings", link: "" }, { text: "Payouts & tax settings", link: "" }],
+    [{ text: "Account Settings", link: "" }, { text: "Payouts & tax settings", link: "/instructor/user/edit-instructor-info/" }],
     [{ text: "Public profile", link: "" }, { text: "Edit profile", link: "/profile" }],
     [{ text: "Help", link: "" }, { text: "Logout", link: ""}]
 

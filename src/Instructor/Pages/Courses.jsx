@@ -15,9 +15,7 @@ import { instructorDetails } from '@/Redux/Slices/Instructor/InstructorSlice';
 import LayoutIn from '../Layout/LayoutIn'
 
 
-const Select = ({ sortState }) => {
-
-    const [sortBy, setSortBy] = sortState;
+const Select = ({ sortBy, setSortBy }) => {
 
     const [dropdown, setDropDown] = useState(false)
 
@@ -33,7 +31,7 @@ const Select = ({ sortState }) => {
                 {sortBy} <IoIosArrowDown />
             </button>
 
-            <div className={`shadow-lg opacity-0 pointer-events-none border-2  absolute top-14  bg-white w-52  ${dropdown && "pointer-events-auto opacity-100"}`}>
+            <div className={`shadow-lg opacity-0 pointer-events-none border-2  absolute top-14  bg-white w-52  ${dropdown && "pointer-events-auto opacity-100"} bg-white z-20`}>
                 <ul className='p-4  text-sm cursor-pointer '>
                     <li onClick={handleSort} className='pb-2 hover:text-blue-600 pee'>Newest</li>
 
@@ -56,12 +54,52 @@ function Courses() {
 
     const dispatch = useDispatch();
 
-    const courselist = useSelector((state) => state.instructor.data.courses);
+    const courses = useSelector((state) => state.instructor.data.courses);
 
-    const sortState = useState("Newest")
+    const [courselist, setCourseList] = useState(courses);
+
+    const [sortBy, setSortBy] = useState("Newest");
+
+    const [searchTerm, setSearchTerm] = useState("")
 
 
 
+    useEffect(() => {
+        let arr = [...courses];
+
+        arr = arr.filter((value) => value.title.toLowerCase().includes(searchTerm.toLowerCase()))
+
+        switch (sortBy) {
+            case "Newest":
+                setCourseList(arr.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)));
+                break;
+
+            case "A-Z":
+                setCourseList(arr.sort((a, b) => (a.title > b.title ? 1 : -1)));
+                break;
+
+            case "Z-A":
+                setCourseList(arr.sort((a, b) => (a.title < b.title ? 1 : -1)));
+                break;
+
+            case "Oldest":
+                setCourseList(arr.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1)));
+                break;
+
+            case "Published First":
+                setCourseList(arr.sort((a, b) => (a.approved ? 1 : -1)));
+                break;
+
+            case "Unpublished First":
+                setCourseList(arr.sort((a, b) => (!a.approved ? 1 : -1)));
+                break;
+
+
+            default:
+                break;
+        }
+
+    }, [courses, sortBy, searchTerm])
 
     useEffect(() => {
         dispatch(instructorDetails())
@@ -102,7 +140,7 @@ function Courses() {
 
                 {
                     (courselist?.length == 0) && (
-                        <div className='flex justify-between p-12 border-2 py-12 shadow-md'>
+                        <div className='flex justify-between p-12 border-2 py-12 shadow-md mt-24'>
                             <h3 className=' '>Jump Into Course Creation</h3>
                             <Link to={"/instructor/course/create/1"}>
                                 <div className='bg-blue-600 text-white font-bold py-3 px-[75px] cursor-pointer hover:bg-blue-700'>Create Your Course</div>
@@ -113,96 +151,101 @@ function Courses() {
 
                 {/* Show courses */}
 
-                <h1 className='text-4xl font-semibold py-10'>Courses</h1>
+                {
+                    courselist.length > 0 && <>
+                        <h1 className='text-4xl font-semibold py-10'>Courses</h1>
 
-                <div className='flex gap-8'>
+                        <div className='flex gap-8'>
 
-                    <div className='relative h-12 w-[250px] '>
+                            <div className='relative h-12 w-[250px] '>
 
-                        <input className='border border-black h-full w-full p-4 pr-16 placeholder:text-slate-600 focus:outline-none' type="text" placeholder='Search your courses' />
+                                <input value={searchTerm} onChange={(e) => setSearchTerm(() => e.target.value)} className='border border-black h-full w-full p-4 pr-16 placeholder:text-slate-600 focus:outline-none' type="text" placeholder='Search your courses' />
 
-                        <button className=' absolute top-0 right-0 text-white bg-black h-full w-[50px] '>
-                            <IoMdSearch className='m-auto size-6' />
-                        </button>
+                                <button className=' absolute top-0 right-0 text-white bg-black h-full w-[50px] '>
+                                    <IoMdSearch className='m-auto size-6' />
+                                </button>
 
-                    </div>
+                            </div>
 
-                    <Select sortState={sortState} />
+                            <Select sortBy={sortBy} setSortBy={setSortBy} />
 
-                    <Link to={"/instructor/course/create/1"} className=' ml-auto mr-1'>
-                        <button className='bg-blue-600 font-bold text-white px-3 h-12 '>New Course</button>
-                    </Link>
-
-
-
-
-
-                </div>
-
-                <div className='pt-5 space-y-6'>
+                            <Link to={"/instructor/course/create/1"} className=' ml-auto mr-1'>
+                                <button className='bg-blue-600 font-bold text-white px-3 h-12 '>New Course</button>
+                            </Link>
 
 
-                    {
-                        courselist?.map((value, indx) => {
-                            return (
-                                <div key={indx} className={`border-2  flex w-full group relative gap-2 ${value?.reviews[0]?.approved && "bg-gradient-to-r from-blue-100 to-blue-400"} ${value?.reviews[0]?.reviewed == false && "bg-gradient-to-r from-yellow-100 via-orange-100 to-red-200"}`}>
-                                    <img className='size-32 p-1  object-cover rounded ' src={value?.thumbnail?.secure_url || "https://s.udemycdn.com/course/200_H/placeholder.jpg"} alt="" />
 
 
-                                    <div className='py-4 flex flex-col group-hover:opacity-10 duration-100 w-[300px] pl-4' >
-                                        <h1 className='font-bold'>{value?.title}</h1>
 
-                                        <h3 className='mt-auto text-sm font-semibold'>{value?.reviews[0]?.approved ? "Live" : "Draft"}   <span className='text-xs font-normal ml-1'>Public</span></h3>
-                                    </div>
+                        </div>
 
-                                    {
-                                        value?.reviews[0]?.reviewed == false && <h1 className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-100 group-hover:scale-105 duration-100 px-[220px] cursor-pointer  right-[250px]'>Waiting For Approval</h1>
-                                    }
+                        <div className='pt-5 space-y-6'>
 
-                                    {
-                                        (value?.reviews[0] == undefined || value?.reviews[0]?.reviewed == true) && <>
-                                            <div className='flex flex-grow items-center justify-center space-x-5 group-hover:opacity-10 duration-100'>
-                                                {!value?.reviews[0]?.approved && <GoAlertFill className='size-6 fill-red-700 alert-svg absolute left-[40%]' />}
 
-                                                {
-                                                    value?.reviews[0]?.approved && <>
-                                                        
-                                                        <CgMediaLive className='size-6 animate-ping  absolute left-[40%]' />
-                                                        <div className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-100 group-hover:scale-105 duration-100 px-[220px] cursor-pointer  right-[210px] space-x-4 flex'><h1>Course is Live</h1> <FcApproval className='size-8 ' /></div>
-                                                        
-                                                        {/* <div className='h-2 w-[70%] relative'>
-                                                        <FcApproval className='size-8 ' />
-                                                        </div> */}
-                                                        
-                                                    </>
-                                                }
+                            {
+                                courselist?.[0]?.title && courselist?.map((value, indx) => {
+                                    return (
+                                        <div key={indx} className={`border-2  flex w-full group relative gap-2 ${value?.review?.approved && "bg-gradient-to-r from-blue-100 to-blue-400"} ${value?.review?.reviewed == false && "bg-gradient-to-r from-yellow-100 via-orange-100 to-red-200"}`}>
+                                            <img className='size-32 p-1  object-cover rounded ' src={value?.thumbnail?.secure_url || "https://s.udemycdn.com/course/200_H/placeholder.jpg"} alt="" />
 
-                                                {
-                                                    !value?.reviews[0]?.approved && <>
-                                                        <h1 className='font-bold h-7  '>Finish your course</h1>
-                                                        <div className='h-2 w-[70%] bg-slate-300 relative'>
-                                                            <div className={`h-2 w-[${value.percentageCompleted}%] bg-blue-600 absolute`}></div>
-                                                        </div>
-                                                    </>
-                                                }
 
+                                            <div className='py-4 flex flex-col group-hover:opacity-10 duration-100 w-[300px] pl-4' >
+                                                <h1 className='font-bold'>{value?.title}</h1>
+
+                                                <h3 className='mt-auto text-sm font-semibold'>{value?.review?.approved ? "Live" : "Draft"}   <span className='text-xs font-normal ml-1'>Public</span></h3>
                                             </div>
 
-                                            <Link to={`http://localhost:5173/instructor/course/${value?._id}/manage/goals`}>
-                                                <h1 className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-0 group-hover:opacity-100 duration-100 px-[220px] cursor-pointer  right-[250px]'>Edit/ manage course</h1>
-                                            </Link>
-                                        </>
-                                    }
+                                            {
+                                                value?.review?.reviewed == false && <h1 className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-100 group-hover:scale-105 duration-100 px-[220px] cursor-pointer  right-[250px]'>Waiting For Approval</h1>
+                                            }
+
+                                            {
+                                                (value?.review == undefined || value?.review?.reviewed == true) && <>
+                                                    <div className='flex flex-grow items-center justify-center space-x-5 group-hover:opacity-10 duration-100'>
+                                                        {value?.review?.approved == false && <GoAlertFill className='size-6 fill-red-700 alert-svg absolute left-[40%]' />}
+
+                                                        {
+                                                            value?.review?.approved && <>
+
+
+                                                                <div className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-100 group-hover:scale-105 duration-100 px-[220px] cursor-pointer  right-[210px] space-x-4 flex'><h1>Course is Live</h1> <div className='relative flex items-center justify-center'>
+                                                                    <FcApproval className='size-8 z-10' /> <CgMediaLive className='size-6 animate-ping  absolute ' /></div> </div>
+
+                                                                {/* <div className='h-2 w-[70%] relative'>
+                                        <FcApproval className='size-8 ' />
+                                        </div> */}
+
+                                                            </>
+                                                        }
+
+                                                        {
+                                                            !value?.review?.approved && <>
+                                                                <h1 className='font-bold h-7  '>Finish your course</h1>
+                                                                <div className='h-2 w-[70%] bg-slate-300 relative'>
+                                                                    <div className={`h-2 w-[${value.percentageCompleted}%] bg-blue-600 absolute`}></div>
+                                                                </div>
+                                                            </>
+                                                        }
+
+                                                    </div>
+
+                                                    <Link to={`http://localhost:5173/instructor/course/${value?._id}/manage/goals`}>
+                                                        <h1 className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-0 group-hover:opacity-100 duration-100 px-[220px] cursor-pointer  right-[250px]'>Edit/ manage course</h1>
+                                                    </Link>
+                                                </>
+                                            }
 
 
 
-                                </div>
-                            )
-                        })
-                    }
+                                        </div>
+                                    )
+                                })
+                            }
 
 
-                </div>
+                        </div>
+                    </>
+                }
 
 
 

@@ -12,10 +12,12 @@ import Input from './Input';
 import Lecture from './Lecture';
 
 export default function SectionBox({ indx, value,onDeleteRequest }) {
+    
     const [editSection, setEditSection] = useState(false);
+
     const [editSectionData, setEditSectionData] = useState({
         title: value?.title,
-        learningObjective: ""
+        learningObjective: value?.learningObjective
     })
 
     const { id: course_id } = useParams();
@@ -112,7 +114,7 @@ export default function SectionBox({ indx, value,onDeleteRequest }) {
                                 setEditSection(false);
                                 setEditSectionData({
                                     title: value?.title,
-                                    learningObjective: ""
+                                    learningObjective: value?.learningObjective
                                 })
 
                             }} className='text-slate-900 hover:text-slate-800 duration-150'>
@@ -168,12 +170,12 @@ export default function SectionBox({ indx, value,onDeleteRequest }) {
                             Lecture
                         </button>
 
-                        <button className='flex items-center gap-1 hover:text-blue-900 duration-75'>
+                        <button className='flex items-center gap-1 hover:text-blue-900 duration-75 opacity-30 cursor-not-allowed'>
                             <FiPlus className='size-5' />
                             Quiz
                         </button>
 
-                        <button className='flex items-center gap-1 hover:text-blue-900 duration-75'>
+                        <button className='flex items-center gap-1 hover:text-blue-900 duration-75 opacity-30 cursor-not-allowed'>
                             <FiPlus className='size-5' />
                             Coding Exercise
                         </button>
@@ -183,7 +185,7 @@ export default function SectionBox({ indx, value,onDeleteRequest }) {
                             Practice Test
                         </button>
 
-                        <button className='flex items-center gap-1 hover:text-blue-900 duration-75'>
+                        <button className='flex items-center gap-1 hover:text-blue-900 duration-75 opacity-30 cursor-not-allowed'>
                             <FiPlus className='size-5' />
                             Assignment
                         </button>

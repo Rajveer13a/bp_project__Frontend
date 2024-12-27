@@ -93,7 +93,10 @@ function Price() {
 
                                     className="border border-black w-full  h-11 px-4 outline-none appearance-none bg-transparent relative z-10 cursor-pointer">
 
-                                    <option value={0}>Free</option>
+                                    {/* <option value={0}>Free</option> */}
+
+                                    <option selected disabled > Select Tier</option>
+                                    <option value={400}>₹400 (tier 1)</option>
                                     <option value={799}>₹799 (tier 2)</option>
                                     <option value={1199}>₹1,199 (tier 3)</option>
                                     <option value={1499}>₹1,499 (tier 4)</option>

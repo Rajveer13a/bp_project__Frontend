@@ -38,7 +38,8 @@ function Curriculum({ onDeleteRequest }) {
 
         const res = await dispatch(addSection({
             id: data._id,
-            title: sectionData.title
+            title: sectionData.title,
+            learningObjective: sectionData.learningObjective
         }));
 
         if(res?.payload){

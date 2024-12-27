@@ -4,23 +4,31 @@ import { MdInfo } from 'react-icons/md'
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom'
 
-import { connectBankAccount, getAccount, instructorDetails } from '@/Redux/Slices/Instructor/InstructorSlice';
+import { connectBankAccount, getAccount, instructorDetails, } from '@/Redux/Slices/Instructor/InstructorSlice';
+
+import Input from '../CourseManage/Pages/Curriculum/Input';
 
 function Payouts() {
 
     const [connected, setConnected] = useState(false);
 
-
     const dispatch = useDispatch();
+
+    const [edit, setEdit] = useState(false);
+
+    const [input, setInput] = useState({
+        account_number: "",
+        ifsc: "",
+        name: "",
+        account_id: ""
+    })
 
     const [data, setData] = useState({
         account_number: "",
         ifsc: "",
-        name: ""
+        name: "",
+        account_id: ""
     })
-
-    console.log(data);
-
 
     const onUserInput = (e) => {
         let { value, name } = e.target;
@@ -28,30 +36,38 @@ function Payouts() {
             value = value.replace(/[^a-zA-Z]/g, '');
         }
 
-        setData({
-            ...data,
+        setInput({
+            ...input,
             [name]: value
         })
     }
 
     const onConnect = (e) => {
         e.preventDefault();
-        dispatch(connectBankAccount(data)).then((res)=>{
-            if(res?.payload){
+
+        dispatch(connectBankAccount(input)).then((res) => {
+            if (res?.payload) {
                 setConnected(true);
+                setEdit(false);
+                getAccountDetail()
             }
         });
 
 
     }
 
-    useEffect(() => {
+    const getAccountDetail = () => {
         dispatch(getAccount()).then((res) => {
             if (res.payload) {
                 setData(res.payload.data);
+                setInput(res.payload.data)
                 setConnected(true)
             }
         });
+    }
+
+    useEffect(() => {
+        getAccountDetail()
 
     }, [connected])
 
@@ -73,10 +89,10 @@ function Payouts() {
                 </div>
             </div>
 
-            <h1 className='font-semibold text-lg'>{connected ? "Account Details":"Add Bank Account"}</h1>
+            <h1 className='font-semibold text-lg'>{connected ? "Account Details" : "Add Bank Account"}</h1>
 
-            {connected && (
-                <div>
+            {(connected && !edit) && (
+                <div className='relative'>
 
                     <table className="min-w-[80%] table-auto border-collapse border border-gray-300 shadow-lg">
                         <thead>
@@ -99,15 +115,17 @@ function Payouts() {
                         </tbody>
                     </table>
 
+                    <button onClick={() => setEdit(true)} className='bg-red-700 absolute right-10 top-0 font-bold p-2 text-white rounded-sm hover:bg-red-800 duration-100'>  Change Bank Account</button>
+
                 </div>
             )}
 
-            {!connected && <form onSubmit={onConnect} className='space-x-10 flex flex-row ' action="">
+            {(!connected || edit) && <form onSubmit={onConnect} className='space-x-10 flex flex-row ' action="">
 
                 <div className='flex gap-4'>
                     <input
-                        disabled={connected}
-                        value={data.account_number}
+                        disabled={connected && !edit}
+                        value={input.account_number}
                         name='account_number'
                         onChange={onUserInput}
                         required
@@ -121,8 +139,8 @@ function Payouts() {
                         placeholder='Account number' />
 
                     <input
-                        disabled={connected}
-                        value={data.ifsc}
+                        disabled={connected && !edit}
+                        value={input.ifsc}
                         name="ifsc"
                         onChange={onUserInput}
                         required
@@ -132,8 +150,8 @@ function Payouts() {
                         placeholder='IFSC Code' />
 
                     <input
-                        disabled={connected}
-                        value={data.name}
+                        disabled={connected && !edit}
+                        value={input.name}
                         name='name'
                         onChange={onUserInput}
                         required
@@ -146,7 +164,10 @@ function Payouts() {
 
 
                 <div className='flex justify-end w-full'>
-                    <button className='border border-black font-bold px-8 py-1 text-sm hover:bg-[#E3E7EA] mr-12'>Connect</button>
+                    {
+                        edit && <button onClick={() => { setEdit(false); }} className='border border-black font-bold px-8 py-1 text-sm  text-white bg-slate-900 mr-4'>Cancel</button>
+                    }
+                    <button type='submit' className='border border-black font-bold px-8 py-1 text-sm hover:bg-[#E3E7EA] mr-12'>Connect</button>
                 </div>
 
             </form>}

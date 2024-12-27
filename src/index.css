@@ -313,7 +313,8 @@ input{
 }
 
 * {
- outline:none; 
+ outline:none;
+ user-select: none; 
 }
 
 .underBorder::after{

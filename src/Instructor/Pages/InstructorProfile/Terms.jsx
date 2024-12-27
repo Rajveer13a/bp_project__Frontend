@@ -42,13 +42,13 @@ function Terms() {
             <form onSubmit={onSave} action="">
                 <div className='m-auto  w-[46%] space-y-4'>
 
-                    <h1>When you sign up to become an instructor on the Udemy platform, you agree to abide by the <Link className='link-primary'>Instructor Terms.</Link></h1>
-                    <p>They cover details about the Udemy platform that are relevant to instructors (including pricing, payments, and your obligations as an instructor), so it’s important to read them.</p>
+                    <h1>When you sign up to become an instructor on the Brainy platform, you agree to abide by the <Link className='link-primary'>Instructor Terms.</Link></h1>
+                    <p>They cover details about the Brainy platform that are relevant to instructors (including pricing, payments, and your obligations as an instructor), so it’s important to read them.</p>
 
                     <div className='space-x-2 flex'>
 
                         <CustomCheckbox />
-                        <div>I have read and agree to the Udemy Instructor Terms.</div>
+                        <div>I have read and agree to the Brainy Instructor Terms.</div>
 
                     </div>
 

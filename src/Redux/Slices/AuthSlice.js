@@ -175,7 +175,7 @@ export const updateAvatar = createAsyncThunk('/auth/updateAvatar', async (data) 
 
     try {
 
-        const res = axiosInstance.post('/user/updateUserAvatarImage', data.file,{
+        const res = axiosInstance.post('/user/updateUserAvatarImage', data.file, {
             headers: {
                 "Content-Type": "multipart/form-data"
             },
@@ -236,8 +236,8 @@ const authSlice = createSlice({
         resetData(state) {
             localStorage.setItem('isLoggedIn', false);
             localStorage.clear('data');
-            state.data ={};
-            state.isLoggedIn= false
+            state.data = {};
+            state.isLoggedIn = false
 
         }
     },
@@ -262,15 +262,11 @@ const authSlice = createSlice({
 
             .addCase(logout.fulfilled, (state, action) => {
 
-                localStorage.setItem('data', "");
+                localStorage.clear();
 
-                    localStorage.setItem('role', "");
-
-                    localStorage.setItem('isLoggedIn', "");
-
-                    state.data = {};
-                    state.isLoggedIn = false;
-                    state.role = "USER";
+                state.data = {};
+                state.isLoggedIn = false;
+                state.role = "USER";
             })
 
             .addCase(login.fulfilled, (state, action) => {
@@ -325,6 +321,6 @@ const authSlice = createSlice({
     }
 })
 
-export const { accountState ,resetData } = authSlice.actions;
+export const { accountState, resetData } = authSlice.actions;
 
 export default authSlice.reducer;

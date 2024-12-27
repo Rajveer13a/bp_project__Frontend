@@ -5,11 +5,14 @@ import CourseCreate from './Instructor/Pages/CourseCreate'
 import CourseManage from './Instructor/Pages/CourseManage/CourseManage'
 import Courses from './Instructor/Pages/Courses'
 import InstructorProfile from './Instructor/Pages/InstructorProfile/InstructorProfile'
+import TeachPage from './Instructor/Pages/TeachPage'
 
 
 function InstructorRoutes() {
   return (
     <Routes>
+
+        <Route path='/teach' element={<TeachPage/>} />
 
         <Route path='/courses' element={<Courses/>} />
 

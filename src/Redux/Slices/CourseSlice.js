@@ -36,6 +36,8 @@ export const courseDetail = createAsyncThunk('/course/courseDetail', async (data
 export const mylearning = createAsyncThunk('/course/mylearning', async () => {
 
     try {
+
+        if(JSON.parse(localStorage.getItem("isLoggedIn"))) return;
         
         const res = axiosInstance.get("/student/mylearning");
 

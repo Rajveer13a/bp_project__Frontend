@@ -18,7 +18,7 @@ function InstructorProfile() {
 
   const dispatch = useDispatch();
 
-  const step = useSelector((state)=>state.instructor.data?.profileCompleted?.step)
+  const step = useSelector((state)=>state.instructor.data?.profileCompleted?.step);
 
   const [active, setActive] = useState("personal-info");
 
@@ -62,6 +62,7 @@ function InstructorProfile() {
 
   return (
     <LayoutIn>
+
       <div className='pt-28 space-y-11 px-11 pb-20 '>
 
         <h1 className='text-center text-4xl font-semibold '>
@@ -73,7 +74,7 @@ function InstructorProfile() {
             <h1 className={`relative ${active == "personal-info" && "underBlack text-black"}`}>Personal Information</h1>
             <h1 className={`relative ${active == "profile-picture" && "underBlack text-black"}`}>Profile Picture</h1>
             <h1 className={`relative ${active == "terms" && "underBlack  text-black"}`}>Instructor Terms</h1>
-            <h1 className={`relative ${active == "marketing" && "underBlack text-black"}`}>Udemy Marketing </h1>
+            <h1 className={`relative ${active == "marketing" && "underBlack text-black"}`}>Brainy Marketing </h1>
             <h1 className={`relative ${active == "payouts" && "underBlack text-black"}`}>Payouts & Tax Details</h1>
 
           </div>

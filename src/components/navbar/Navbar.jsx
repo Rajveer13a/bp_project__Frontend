@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { IoIosArrowForward } from 'react-icons/io'
+import { IoIosAlert, IoIosArrowForward, IoMdAlert } from 'react-icons/io'
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -152,9 +152,27 @@ function Navbar() {
 
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
+    const { verifiedStatus, role } = useSelector((state) => state.auth.data);
+
+
+
 
     return (
         <div className='w-[100vw] flex items-center border bg-white border-black px-4 space-x-1 relative z-30'>
+
+            {
+                (!verifiedStatus && isLoggedIn) && <Link
+                    to="/verifyEmail"
+                    className="absolute top-16 right-0 bg-red-500 text-white p-4 rounded-lg shadow-lg text-lg font-bold z-10 translate-x-[85%] hover:-translate-x-0 duration-700 hover:bg-red-600 border-2 border-red-700 opacity-90 flex gap-5 items-center justify-center pr-10"
+                >
+                    <div className='relative flex items-center justify-center'>
+                        <IoMdAlert className='size-7 text-black' />
+                        <div className='absolute rounded-full bg-white size-[70%] -z-10'></div>
+                    </div>
+                    Please verify your account to access all features!
+                </Link>
+            }
+
             <Logo />
 
             <HoverTab />
@@ -164,7 +182,9 @@ function Navbar() {
             {/* <BusinessButton /> */}
 
             <div className='flex items-center justify-evenly flex-grow'>
-                <InstructorButton />
+                {
+                    role == "INSTRUCTOR" ? <InstructorButton /> : <Link to={"/instructor/teach"} className='hover:text-blue-600 py-5 px-3'>Teach on Brainy</Link>
+                }
 
                 <Link to={"/my-courses/learning"}> <MyLearningButton /> </Link>
 
@@ -187,7 +207,9 @@ function Navbar() {
                         <button className='border border-black font-bold px-4 py-2 hover:bg-[#E3E7EA] duration-100 text-sm'>Log in</button>
                     </Link>
 
-                    <button className='bg-slate-800 font-bold px-4 py-2 text-sm hover:bg-slate-700 text-white duration-100 '>Sign up</button>
+                    <Link to={"/signup"}>
+                        <button className='bg-slate-800 font-bold px-4 py-2 text-sm hover:bg-slate-700 text-white duration-100 '>Sign up</button>
+                    </Link>
                 </div>
             )
             }
