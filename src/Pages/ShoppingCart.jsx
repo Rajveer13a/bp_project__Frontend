@@ -70,7 +70,7 @@ function ShoppingCart() {
         if (res.payload.success) {
             await dispatch(getConfig())
             await dispatch(getUser());
-            navigate('/mylearning')
+            navigate('/my-courses/learning')
         }
     }
 

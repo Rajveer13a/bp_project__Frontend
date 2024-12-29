@@ -65,6 +65,13 @@ export const MyLearningButton = () => {
                         <div className='max-h-80 overflow-y-scroll scroll'>
                             {
                                 data?.map((value, indx) => {
+
+                                    const completed = value.progress?.completed?.reduce((acc, sec) => {
+                                        return acc + (sec?.reduce((sum, lec) => sum + (lec ? 1 : 0), 0) || 0);
+                                    }, 0) || 0;
+
+                                    const total = value.progress?.completed?.reduce((acc, sec) => acc + sec.length, 0);
+
                                     return (
                                         <Link to={`/learn/lecture/${value?._id}`} key={indx}>
                                             <div className='flex gap-2 border-b mb-1 px-5 py-3 '>
@@ -77,7 +84,21 @@ export const MyLearningButton = () => {
 
                                                     </h1>
 
-                                                    <h2 className='link-primary'>Start learning</h2>
+
+                                                    {
+                                                        total > 0 ? (
+                                                            <div className='h-[8px] bg-slate-300 mt-4 relative'>
+
+                                                                <div style={{
+                                                                    width: `${(completed / total) * 100 || 0}%`
+                                                                }} className='absolute h-full bg-blue-700'></div>
+                                                            </div>
+                                                        ) : (
+                                                            <h2 className='link-primary'>Start learning</h2>
+                                                        )
+                                                    }
+
+
                                                 </div>
 
                                             </div>
@@ -96,9 +117,9 @@ export const MyLearningButton = () => {
 
                 {
                     !data && <div className='pt-4 space-y-2'>
-                    <h3 className='text-center text-slate-500'>Your list is empty.</h3>
-                    <Link to={"/"} className='text-blue-700 hover:text-blue-900 duration-100 font-bold w-full  text-center block'>Explore courses</Link>
-                </div>
+                        <h3 className='text-center text-slate-500'>Your list is empty.</h3>
+                        <Link to={"/"} className='text-blue-700 hover:text-blue-900 duration-100 font-bold w-full  text-center block'>Explore courses</Link>
+                    </div>
                 }
 
             </div>
@@ -320,7 +341,7 @@ export const NotifyButton = () => {
 
                 <div className='flex justify-between px-5 pt-5  font-semibold'>
                     <h1 className='font-bold text-lg'>Notification</h1>
-                    <Link to={"/settings"}><h4 className='text-blue-500 '>Settings</h4></Link>
+                    <Link to={""}><h4 className='text-blue-500 '>Settings</h4></Link>
                 </div>
 
                 <div>

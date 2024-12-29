@@ -54,7 +54,7 @@ export const updateFavourite = createAsyncThunk("/userconfig/updateFavourite", a
 export const getConfig = createAsyncThunk('/userconfig/getconfig', async () => {
     try {
 
-        if(JSON.parse(localStorage.getItem("isLoggedIn"))) return;
+        if(!JSON.parse(localStorage.getItem("isLoggedIn"))) return;
 
         const res = await axiosInstance.get('/user/userconfig');
 

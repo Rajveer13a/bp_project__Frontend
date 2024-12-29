@@ -386,7 +386,7 @@ function CourseManage() {
                     </div>
                 </Link>
 
-                <h1 className='font-bold text-xl'>{data?.title}</h1>
+                <h1 className='font-bold text-xl truncate w-[30%]'>{data?.title}</h1>
 
                 <h4 className={` px-2 text-sm font-bold my-auto py-[2px] ${data?.approved ?"bg-gradient-to-r from-blue-900 to-blue-700" : "bg-[#6A6F73]"}`}>{data?.approved ? "LIVE" : "DRAFT"}</h4>
 

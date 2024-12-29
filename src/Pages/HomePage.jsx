@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { use } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import { Carousel } from '@/components/Carousel'
 import Tab from '@/components/Tab'
 import { getAllCourses } from '@/Redux/Slices/CourseSlice';
 import { CollaborativeRecommendations, coursesByCategory, TopicBasedRecommendations } from '@/Redux/Slices/searchSlice';
-import { Link } from 'react-router-dom';
 
 function HomePage() {
 
@@ -21,12 +21,6 @@ function HomePage() {
   const TopicBasedRecommendationsData = useSelector((state) => state.search.TopicBasedRecommendations);
 
   const CategoryData = useSelector((state) => state.search.CategoryData);
-
-
-
-  const filteredData = useMemo(() => {
-    return data?.filter((value) => !userCourses?.includes(value?._id));
-  }, [data, userCourses]);
 
   const categories = ["Web Development", "Data Science", "IT Certifications", "Leadership", "Communication", "Business Analytics & Intelligence"]
 
@@ -67,7 +61,7 @@ function HomePage() {
 
             <h1 className='text-2xl font-bold ml-10'>Learners are viewing</h1>
 
-            <Tab data={CollaborativeRecommendationsData} />
+            <Tab data={CollaborativeRecommendationsData?.filter((value) => !userCourses?.includes(value?._id))} />
 
           </div>
         )
@@ -92,7 +86,7 @@ function HomePage() {
           })}
         </ul>
 
-        <Tab data={CategoryData[active] || []} />
+        <Tab data={CategoryData[active]?.filter((value) => !userCourses?.includes(value?._id)) || []} />
 
         <Link to={`/search/${active}`}>
           <button className='border border-black p-2 font-bold mx-10 mt-14 hover:bg-slate-100 transition-colors duration-100'>Show all {active} Courses</button>
@@ -108,7 +102,7 @@ function HomePage() {
         TopicBasedRecommendationsData?.map((value, indx) => <div className='space-y-5 py-8 ' key={indx}>
           <h1 className='text-2xl font-bold ml-10'>Featured couses in  <span className='text-blue-800 underline underline-offset-2'>{value?.topic}</span></h1>
 
-          <Tab data={value?.data} />
+          <Tab data={value?.data?.filter((value) => !userCourses?.includes(value?._id))} />
         </div>)
       }
 

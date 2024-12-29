@@ -320,7 +320,7 @@ const Card = ({ course }) => {
 
         <Rating total={course?.averageRating?.toFixed(1) || 0} count={course?.totalRatings} color='#B4690E' size='text-sm' flag={true} />
 
-        <div className='text-slate-500 text-xs'> 61.5 total hours • 373 lectures • {course?.level} </div>
+        <div className='text-slate-500 text-xs'> {(course?.totalDuration/3600).toFixed(1)} total hours • {course?.totalLectures} lectures • {course?.level} </div>
 
       </div>
 
@@ -376,6 +376,8 @@ function SearchCourses() {
   const dispatch = useDispatch();
 
   const term = useParams().searchTerm;
+
+  const userCourses = useSelector((state) => state.auth.data.purchasedCourses);
 
   const user_id = useSelector((state) => state.auth.data._id);
 
@@ -460,7 +462,7 @@ function SearchCourses() {
               <div className='flex-grow space-y-4 min-w-[70vw]'>
 
                 {
-                  result?.map((course, indx) => <Card key={indx} course={course} />)
+                  result?.filter((value) => !userCourses?.includes(value?._id))?.map((course, indx) => <Card key={indx} course={course} />)
                 }
 
                 {

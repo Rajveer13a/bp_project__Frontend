@@ -83,7 +83,7 @@ function Card({ data, orignalPrice, currentIndex, cnum }) {
         <img className='h-32 object-cover w-full group-hover:contrast-75 transition-all duration-150' src={data?.thumbnail?.secure_url} alt="" />
         <h1 className='font-bold line-clamp-2'>{data?.title}</h1>
         <h3 className='text-sm text-[#6A6F85]'>{data?.instructor?.username}</h3>
-        <Rating total={"4.7"} count={231} />
+        <Rating total={ Math.round(data?.averageRating * 10)/10 || 0} count={data?.totalRatings} />
         <div className='flex space-x-3 items-center'>
           <h2 className='font-bold'>₹{data?.price}</h2>
           <h3 className='line-through text-sm text-[#6A6F73]'>₹{orignalPrice}</h3>
@@ -103,7 +103,7 @@ function Card({ data, orignalPrice, currentIndex, cnum }) {
 
           <h1 className='text-lg font-semibold hover:text-[#3B198F] duration-150 transition-all cursor-pointer'>{data?.title}</h1>
           <ol className='flex text-xs gap-2 text-[#3f4243]'>
-            <li> 9.5 total hours</li>
+            <li> {(data.totalDuration/3600).toFixed(1)} total hours</li>
             <li>• {data?.level} </li>
             <li>• Subtitles</li>
           </ol>

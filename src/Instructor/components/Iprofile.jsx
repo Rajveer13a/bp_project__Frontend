@@ -8,7 +8,7 @@ import { logout } from '@/Redux/Slices/AuthSlice';
 import Hover from './Hover';
 
 function Iprofile({ lists = [
-    [{ text: "Students", link: "" }],
+    [{ text: "Student", link: "/" }],
     [{ text: "Notifications", link: "" }],
     [{ text: "Account Settings", link: "" }, { text: "Payouts & tax settings", link: "/instructor/user/edit-instructor-info/" }],
     [{ text: "Public profile", link: "" }, { text: "Edit profile", link: "/profile" }],
@@ -86,12 +86,12 @@ function Iprofile({ lists = [
         <Hover title={<img className='rounded-full size-10' src={image} alt="profile_image" />}>
 
             <Link to={"/profile"}>
-                <li className='flex items-center space-x-2  p-4 border-b-[1px] cursor-pointer group'>
+                <li className='flex items-center space-x-2  p-4 border-b-[1px] cursor-pointer group overflow-hidden'>
 
                     <img className='rounded-full size-16' src={image} alt="profile_image" />
                     <div>
-                        <h1 className='font-bold text-lg group-hover:text-blue-700'>{data?.username}</h1>
-                        <h1 className='text-sm'>{data?.email}</h1>
+                        <h1 className='font-bold text-lg group-hover:text-blue-700 truncate w-[90%]'>{data?.username}</h1>
+                        <h1 className='text-sm  truncate w-[90%] '>{data?.email}</h1>
                     </div>
 
                 </li>

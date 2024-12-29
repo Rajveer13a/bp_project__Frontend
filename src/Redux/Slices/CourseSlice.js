@@ -37,8 +37,8 @@ export const mylearning = createAsyncThunk('/course/mylearning', async () => {
 
     try {
 
-        if(JSON.parse(localStorage.getItem("isLoggedIn"))) return;
-        
+        if (!JSON.parse(localStorage.getItem("isLoggedIn"))) return;
+
         const res = axiosInstance.get("/student/mylearning");
 
         toast.promise(res, {
@@ -48,80 +48,80 @@ export const mylearning = createAsyncThunk('/course/mylearning', async () => {
         return (await res).data
 
     } catch (error) {
-        
+
         toast.error(error.response.data.message)
     }
 })
 
-export const getlectures = createAsyncThunk('/course/getlectures', async (data)=>{
+export const getlectures = createAsyncThunk('/course/getlectures', async (data) => {
     try {
-        const res = axiosInstance.get('/student/learnLecture', { params: data});
+        const res = axiosInstance.get('/student/learnLecture', { params: data });
 
-        toast.promise(res,{
+        toast.promise(res, {
             error: "failed to get lectures"
         });
 
-        return ( await res).data
+        return (await res).data
 
     } catch (error) {
         toast.error(error.response.data.message)
     }
 })
 
-export const deleteRating = createAsyncThunk("/course/deleteRating", async (data) =>{
+export const deleteRating = createAsyncThunk("/course/deleteRating", async (data) => {
     try {
-        
+
         const res = axiosInstance.delete(`/student/deleteRating/${data?.course_id}`, data);
 
-        toast.promise(res,{
+        toast.promise(res, {
             error: "failed to delete Rating"
         });
 
-        return ( await res).data
+        return (await res).data
 
     } catch (error) {
         toast.error(error.response.data.message)
     }
 })
 
-export const rateCourse = createAsyncThunk("/course/rateCourse", async (data) =>{
+export const rateCourse = createAsyncThunk("/course/rateCourse", async (data) => {
     try {
-        
+
         const res = axiosInstance.post('/student/rateCourse', data);
 
-        toast.promise(res,{
+        toast.promise(res, {
             error: "failed to rate course"
         });
 
-        return ( await res).data
+        return (await res).data
 
     } catch (error) {
         toast.error(error.response.data.message)
     }
 })
 
-export const createProgressConfig = createAsyncThunk("/course/createProgressConfig", async (data) =>{
+export const createProgressConfig = createAsyncThunk("/course/createProgressConfig", async (data) => {
     try {
-        
+
         const res = axiosInstance.post('/student/createProgressConfig', data);
 
-        toast.promise(res,{
+        toast.promise(res, {
             error: "failed to create createProgressConfig"
         });
 
-        return ( await res).data
+        return (await res).data
 
     } catch (error) {
         toast.error(error.response.data.message)
     }
 })
 
-export const markLecture = createAsyncThunk("/course/markLecture", async (data) =>{
+export const markLecture = createAsyncThunk("/course/markLecture", async (data) => {
     try {
-        
+
         const res = axiosInstance.post('/student/markLecture', data);
 
-        toast.promise(res,{
+        toast.promise(res, {
             error: "failed to markLecture"
         });
 
@@ -132,12 +132,12 @@ export const markLecture = createAsyncThunk("/course/markLecture", async (data) 
     }
 })
 
-export const lastViewed = createAsyncThunk("/course/lastViewed", async (data) =>{
+export const lastViewed = createAsyncThunk("/course/lastViewed", async (data) => {
     try {
-        
+
         const res = axiosInstance.post('/student/setLastViewed', data);
 
-        toast.promise(res,{
+        toast.promise(res, {
             error: "failed to set last viewed"
         });
 
@@ -148,12 +148,12 @@ export const lastViewed = createAsyncThunk("/course/lastViewed", async (data) =>
     }
 })
 
-export const courseRatings = createAsyncThunk("/course/courseRatings", async(course_id)=>{
+export const courseRatings = createAsyncThunk("/course/courseRatings", async (course_id) => {
     try {
-        
+
         const res = axiosInstance.get(`/student/courseRatings/${course_id}`);
 
-        toast.promise(res,{
+        toast.promise(res, {
             error: "failed to get ratings"
         });
 
@@ -181,36 +181,43 @@ const courseSlice = createSlice({
 
                 state.content = action.payload.data;
             })
-           .addCase( mylearning.fulfilled , (state, action) =>{
-                
+            .addCase(mylearning.fulfilled, (state, action) => {
+
                 state.mylearning = action?.payload.data;
-           })
-           .addCase( getlectures.fulfilled, (state, action)=>{
+            })
+            .addCase(getlectures.fulfilled, (state, action) => {
 
-            state.learn = action?.payload?.data
+                state.learn = action?.payload?.data
 
-           })
+            })
 
-           .addCase(markLecture.fulfilled, (state, action) => {
+            .addCase(markLecture.fulfilled, (state, action) => {
 
-                const { location , flag } = action.payload;
-                
+                const { location, flag } = action.payload;
+
                 state.learn.progress.completed[location[0]][location[1]] = flag;
-           })
+            })
 
-           .addCase(courseRatings.fulfilled, (state, action) => {
+            .addCase(courseRatings.fulfilled, (state, action) => {
 
                 const ratings = action.payload.data;
-                                console.log(ratings);
-                
-                state.learn.ratings = ratings;
 
-           })
+                if (state.learn != null) state.learn.ratings = ratings;
+
+                const totalRating = ratings.reduce( (acc, curr) => acc + curr.rating , 0 );
+
+
+
+
+                state.content.ratings = ratings;
+                state.content.averageRating = totalRating / ratings.length;
+
+            })
 
         //    .addCase(lastViewed.fulfilled, (state, action) => {
 
         //         const { section_no, lecture_no } = action.payload;
-                
+
         //         state.learn.progress.lastViewed = { section_no, lecture_no }
         //    })
 

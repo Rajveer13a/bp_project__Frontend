@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AiOutlineTrophy } from 'react-icons/ai';
-import { BiMobile } from 'react-icons/bi';
-import { FaHeart, FaRegFile, FaRegHeart } from 'react-icons/fa';
+import { BiDislike, BiLike, BiMobile } from 'react-icons/bi';
+import { FaHeart, FaRegFile, FaRegHeart, FaStar } from 'react-icons/fa';
 import { GrPlayFill } from 'react-icons/gr';
 import { IoIosAlert, IoIosHeart, IoIosPlayCircle, IoMdCode } from 'react-icons/io';
 import { IoCheckmark, IoPlaySharp } from 'react-icons/io5';
@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 
 import Rating from '@/components/Rating';
-import { courseDetail } from '@/Redux/Slices/CourseSlice';
+import { courseDetail, courseRatings } from '@/Redux/Slices/CourseSlice';
 import { getConfig, updateCart, updateFavourite } from '@/Redux/Slices/UserConfigSlice';
 
 const SectionDropDown = ({ section, last, expandAll = false }) => {
@@ -23,9 +23,9 @@ const SectionDropDown = ({ section, last, expandAll = false }) => {
   const total = section?.lectures?.reduce((acc, curr) => acc += curr?.duration || 0, 0);
 
   const formatDuration = (seconds) => {
-    const minutes = Math.floor(seconds / 60); 
-    const remainingSeconds = Math.floor(seconds % 60);    
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`; 
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   }
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const SectionDropDown = ({ section, last, expandAll = false }) => {
                 <h3>{lecture?.title}</h3>
               </div>
 
-              <h3>{lecture?.duration && formatDuration(lecture?.duration) }</h3>
+              <h3>{lecture?.duration && formatDuration(lecture?.duration)}</h3>
 
             </div>
           ))}
@@ -96,6 +96,102 @@ const ShowMorePara = ({ value }) => {
 
 }
 
+const Card = ({ value }) => {
+
+  const [more, setMore] = useState(false);
+
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const textRef = useRef(null);
+
+  const [feedback, setFeedback] = useState(null);
+
+  const getRelativeTime = (timestamp) => {
+    const now = new Date();
+    const past = new Date(timestamp);
+    const diffInSeconds = Math.floor((now - past) / 1000);
+
+    const units = [
+      { unit: "year", seconds: 31536000 },
+      { unit: "month", seconds: 2592000 },
+      { unit: "day", seconds: 86400 },
+      { unit: "hour", seconds: 3600 },
+      { unit: "minute", seconds: 60 },
+      { unit: "second", seconds: 1 },
+    ];
+
+    for (const { unit, seconds } of units) {
+      const interval = Math.floor(diffInSeconds / seconds);
+      if (interval >= 1) {
+        return new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(-interval, unit);
+      }
+    }
+
+    return "just now";
+  }
+
+  useEffect(() => {
+    if (textRef.current) {
+      const isOverflow = textRef.current.scrollHeight > 120;
+      setIsOverflowing(isOverflow);
+    }
+  }, []);
+
+  return (
+    <div className='flex gap-8 w-[40vw] relative underBorder pb-6'>
+
+      <div className='h-14 w-14 flex-shrink-0'> <img className='h-full w-full object-cover rounded-full' src={value?.profileImage?.secure_url || "https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/1015f/MainBefore.jpg"} alt="" /></div>
+
+      <div className='space-y-1 text-[#2D2F31]'>
+        <h3 className='font-bold'>{value?.username}</h3>
+
+        <div className='flex gap-2'><Rating total={value?.rating || 5} flag={false} size='text-lg' /> <h3 className='text-sm text-slate-500'> {getRelativeTime(value?.updatedAt)} </h3></div>
+
+        <div className='relative'>
+
+          <p ref={textRef} className={`text-sm tracking-wide leading-loose ${!more && "max-h-[120px]"} overflow-clip pb-3`}>
+            {value?.comment}
+          </p>
+
+          {
+            (!more && isOverflowing) && <div className='bg-gradient-to-t from-white to-transparent absolute bottom-0 left-0 h-[55%] w-full '></div>
+          }
+
+          {
+            isOverflowing && (
+              <div onClick={() => setMore(!more)} className='flex gap-1 text-blue-700 cursor-pointer hover:text-blue-900 duration-150 absolute -bottom-3 -left-0 '>
+                <button className='font-bold text-sm'>Show {more ? "less" : "more"}</button>
+                <MdKeyboardArrowDown className={`size-4 mt-auto ${more && "rotate-180"} duration-150`} />
+              </div>
+            )
+          }
+
+        </div>
+
+        <h3 className={`text-xs pb-2 ${isOverflowing && "pt-6 "} `}>
+          {
+            feedback == null ? "Was this review helpful?" : "Thank you for your feedback"
+          }
+        </h3>
+
+        <div className='flex gap-3 '>
+
+          <div onClick={() => setFeedback(feedback == 0 ? null : 0)} className={`flex items-center justify-center p-2 rounded-full border border-black cursor-pointer  ${feedback == 0 ? "bg-slate-800 hover:bg-[#2D2F31]" : "hover:bg-[#E3E7EA]"}  `}>
+            <BiLike className={`flex-shrink-0 size-5 ${feedback == 0 && "text-white"}`} />
+          </div>
+
+          <div onClick={() => setFeedback(feedback == 1 ? null : 1)} className={`flex items-center justify-center p-2 rounded-full border border-black cursor-pointer  ${feedback == 1 ? "bg-slate-800 hover:bg-[#2D2F31]" : "hover:bg-[#E3E7EA]"}  `}>
+            <BiDislike className={`flex-shrink-0 size-5 ${feedback == 1 && "text-white"}`} />
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+  )
+}
+
 function CourseView() {
   const { course_id } = useParams();
 
@@ -128,14 +224,14 @@ function CourseView() {
   const totalLectures = useMemo(() => {
     return data?.sections?.reduce((acc, section) => acc + (section?.lectures?.length || 0), 0);
   }, [data?.sections]);
-  
+
   const totalDuration = useMemo(() => {
     return data?.sections?.reduce((acc, section) => {
       acc += section?.lectures?.reduce((total, lecture) => total += lecture?.duration || 0, 0) || 0;
       return acc;
     }, 0);
   }, [data?.sections]);
-  
+
 
   const handleScroll = () => {
 
@@ -204,9 +300,13 @@ function CourseView() {
     ]))
   }
 
+
   useEffect(() => {
 
-    dispatch(courseDetail({ course_id , user_id}));
+    (async () => {
+      await dispatch(courseDetail({ course_id, user_id }));
+      dispatch(courseRatings(course_id));
+    })()
 
     window.addEventListener("scroll", handleScroll);
 
@@ -265,7 +365,9 @@ function CourseView() {
                   </Link>
                 ) : (
                   isPurchased ? (
-                    <button className='font-bold w-[75%] h-full text-white duration-150  bg-slate-800 hover:bg-slate-700 group'>Go to Course 😎</button>
+
+                    <Link to={`/learn/lecture/${data._id}`} className='font-bold w-[75%] h-full text-white duration-150  bg-slate-800 hover:bg-slate-700 group flex items-center justify-center'>Go to Course 😎</Link>
+
                   ) : (
                     <button onClick={addToCart} className='font-bold w-[75%] h-full bg-blue-600 text-white hover:bg-blue-700 duration-150'>Add to cart</button>
                   )
@@ -273,9 +375,9 @@ function CourseView() {
               }
               {
                 infavourite ? (
-                  <button onClick={removeFromFavourite} className='border border-black h-full w-[20%] hover:bg-[#E3E7EA] duration-150 '><FaHeart className='size-5 m-auto' /></button>
+                  <button onClick={!isPurchased && removeFromFavourite} className='border border-black h-full w-[20%] hover:bg-[#E3E7EA] duration-150 '><FaHeart className='size-5 m-auto' /></button>
                 ) : (
-                  <button onClick={addToFavourite} className='border border-black h-full w-[20%] hover:bg-[#E3E7EA] duration-150 '><FaRegHeart className='size-5 m-auto' /></button>
+                  <button onClick={!isPurchased && addToFavourite} className='border border-black h-full w-[20%] hover:bg-[#E3E7EA] duration-150 '><FaRegHeart className='size-5 m-auto' /></button>
                 )
               }
             </div>
@@ -294,10 +396,10 @@ function CourseView() {
       <div className='bg-[#1C1D1F] w-full h-16 fixed top-0 text-white p-3 shadow-2xl z-10'>
         <h1 className='font-bold'>{data?.title}</h1>
         <div className='text-[#F69C08] flex text-sm gap-2'>
-          <h4 >{4.7}</h4>
-          <Rating total={4.7} color='#F69C08' flag={false} />
-          <h4 className='text-[#C0C4FC] underline'>(3,479 ratings)</h4>
-          <h4 className='text-white'>15,266 students</h4>
+          <h4 >{Math.round(data?.averageRating * 10) / 10}</h4>
+          <Rating total={Math.round(data?.averageRating * 10) / 10 || 0} color='#F69C08' flag={false} />
+          <h4 className='text-[#C0C4FC] underline'>({data?.ratings?.length} ratings)</h4>
+          <h4 className='text-white'>{data?.totalStudents} students</h4>
         </div>
       </div>
 
@@ -311,10 +413,10 @@ function CourseView() {
           <h3 className='font-semibold text-lg'> {data?.subtitle} </h3>
 
           <div className='text-[#F69C08] flex text-sm gap-2'>
-            <h4 >{4.7}</h4>
-            <Rating total={4.7} color='#F69C08' flag={false} />
-            <h4 className='text-[#C0C4FC] underline'>(3,479 ratings)</h4>
-            <h4 className='text-white'>15,266 students</h4>
+            <h4 >{Math.round(data?.averageRating * 10) / 10}</h4>
+            <Rating total={Math.round(data?.averageRating * 10) / 10 || 0} color='#F69C08' flag={false} />
+            <h4 className='text-[#C0C4FC] underline'>({data?.ratings?.length} ratings)</h4>
+            <h4 className='text-white'>{data?.totalStudents} students</h4>
           </div>
 
           <h3 className='text-sm'>Created by <span className='text-[#C0C4FC] underline'>{data?.instructor?.username}</span></h3>
@@ -350,7 +452,7 @@ function CourseView() {
           <h1 className='text-2xl font-bold'>This course includes:</h1>
 
           <div className='columns-2 space-y-1'>
-            <div className='flex items-center gap-3 flex-shrink-0'> <MdOutlineSmartDisplay /> {(totalDuration/3600).toFixed(1)} hours on-demand video</div>
+            <div className='flex items-center gap-3 flex-shrink-0'> <MdOutlineSmartDisplay /> {(totalDuration / 3600).toFixed(1)} hours on-demand video</div>
             {/* <div className='flex items-center gap-3 flex-shrink-0'><IoMdCode /> 45 coding exercises</div> */}
             {/* <div className='flex items-center gap-3 flex-shrink-0'><FaRegFile />3 articles</div> */}
             {/* <div className='flex items-center gap-3 flex-shrink-0'><RiFolderDownloadLine />20 downloadable resources</div> */}
@@ -366,7 +468,7 @@ function CourseView() {
           <h1 className='text-2xl font-bold'>Course content</h1>
 
           <div className='flex justify-between mt-5 text-sm'>
-            <h1>{data?.sections?.length} sections • {totalLectures} lecutres • { (totalDuration/3600).toFixed(0) }hr { (totalDuration/60).toFixed(0) } min total length</h1>
+            <h1>{data?.sections?.length} sections • {totalLectures} lecutres • {(totalDuration / 3600).toFixed(0)}hr {(totalDuration / 60).toFixed(0)} min total length</h1>
             <button onClick={() => setExpandAll(!expandAll)} className='text-blue-700 font-bold hover:text-blue-900 duration-150'>{expandAll ? "Collapse" : "Expand"} all sections</button>
           </div>
 
@@ -420,6 +522,23 @@ function CourseView() {
 
         </div>
 
+
+        {/* comments */}
+        {
+          data?.averageRating > 0 && (
+            <div className='space-y-10'>
+
+          <h1 className='flex text-2xl font-bold items-center text-[#2D2F31]'><FaStar className='text-[#B4690E]' />{Math.round(data?.averageRating * 10) / 10} course rating •  {data?.ratings?.length} ratings</h1>
+
+          <div className='space-y-3'>
+            {
+              data?.ratings?.map((value, indx) => <Card key={indx} value={value} />)
+            }
+          </div>
+
+        </div>
+          )
+        }
 
 
 

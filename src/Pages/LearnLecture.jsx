@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import toast from 'react-hot-toast';
 import { BiDislike, BiLike } from 'react-icons/bi';
 import { BsGlobe } from 'react-icons/bs';
 import { FaLinkedin, FaRegStar, FaStar, FaStarHalf, FaYoutube } from 'react-icons/fa';
-import { FaSquareXTwitter } from 'react-icons/fa6';
+import { FaSquareFacebook, FaSquareXTwitter } from 'react-icons/fa6';
 import { FiCheck } from 'react-icons/fi';
 import { IoIosAlert, IoIosShareAlt, IoMdStar, IoMdStarOutline } from 'react-icons/io';
 import { MdClose, MdKeyboardArrowDown, MdOndemandVideo, MdOutlineArrowBack } from 'react-icons/md';
+import { PiCactusFill } from "react-icons/pi";
 import { RxCross2 } from 'react-icons/rx';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
@@ -169,7 +171,11 @@ const ContentTab = ({ data, setCurrentLecture, currentLecture, setPanel, full = 
   )
 }
 
-const Feedback = ({ panel,data }) => {
+const Feedback = ({ panel, data }) => {
+
+  const totalRating = data?.ratings?.reduce((acc, curr) => acc + (curr.rating || 0), 0);
+
+  const averageRating = totalRating / data?.ratings?.length;
 
   const Bars = ({ percentage = 20, star = 5 }) => {
 
@@ -188,7 +194,7 @@ const Feedback = ({ panel,data }) => {
     )
   }
 
-  const Card = ({value}) => {
+  const Card = ({ value }) => {
 
     const [more, setMore] = useState(false);
 
@@ -201,25 +207,25 @@ const Feedback = ({ panel,data }) => {
       const now = new Date();
       const past = new Date(timestamp);
       const diffInSeconds = Math.floor((now - past) / 1000);
-  
+
       const units = [
-          { unit: "year", seconds: 31536000 },
-          { unit: "month", seconds: 2592000 },
-          { unit: "day", seconds: 86400 },
-          { unit: "hour", seconds: 3600 },
-          { unit: "minute", seconds: 60 },
-          { unit: "second", seconds: 1 },
+        { unit: "year", seconds: 31536000 },
+        { unit: "month", seconds: 2592000 },
+        { unit: "day", seconds: 86400 },
+        { unit: "hour", seconds: 3600 },
+        { unit: "minute", seconds: 60 },
+        { unit: "second", seconds: 1 },
       ];
-  
+
       for (const { unit, seconds } of units) {
-          const interval = Math.floor(diffInSeconds / seconds);
-          if (interval >= 1) {
-              return new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(-interval, unit);
-          }
+        const interval = Math.floor(diffInSeconds / seconds);
+        if (interval >= 1) {
+          return new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(-interval, unit);
+        }
       }
-  
+
       return "just now";
-  }
+    }
 
     useEffect(() => {
       if (textRef.current) {
@@ -236,7 +242,7 @@ const Feedback = ({ panel,data }) => {
         <div className='space-y-1 text-[#2D2F31]'>
           <h3 className='font-bold'>{value?.username}</h3>
 
-          <div className='flex gap-2'><Rating total={value?.rating||5} flag={false} size='text-lg' /> <h3 className='text-sm text-slate-500'> {getRelativeTime(value?.updatedAt)} </h3></div>
+          <div className='flex gap-2'><Rating total={value?.rating || 5} flag={false} size='text-lg' /> <h3 className='text-sm text-slate-500'> {getRelativeTime(value?.updatedAt)} </h3></div>
 
           <div className='relative'>
 
@@ -260,7 +266,7 @@ const Feedback = ({ panel,data }) => {
           </div>
 
           <h3 className={`text-xs pb-2 ${isOverflowing && "pt-6 "} `}>
-            { 
+            {
               feedback == null ? "Was this review helpful?" : "Thank you for your feedback"
             }
           </h3>
@@ -285,46 +291,54 @@ const Feedback = ({ panel,data }) => {
   }
 
   return (
-    <div className={`text-[#2D2F31]  py-4 ${panel ? "px-8" : "px-24"}`}>
+    <>
+      {
+        data?.ratings?.length > 0 ? (
+          <div className={`text-[#2D2F31]  py-4 ${panel ? "px-8" : "px-24"}`}>
 
-      <h1 className='text-2xl font-bold'>Student feedback</h1>
+            <h1 className='text-2xl font-bold'>Student feedback</h1>
 
-      {/* review stats */}
-      <div className='flex gap-8 mt-4 items-center'>
+            {/* review stats */}
+            <div className='flex gap-8 mt-4 items-center'>
 
-        <div className='text-[#B4690E]  space-y-1'>
-          <h1 className='text-6xl font-bold'>
-            4.0
-          </h1>
-          <Rating size='text-xl' total={4} flag={false} />
-          <h2 className='font-bold text-sm'>Course Rating</h2>
-        </div>
+              <div className='text-[#B4690E]  space-y-1'>
+                <h1 className='text-6xl font-bold'>
+                  {Math.round(averageRating * 10) / 10}
+                </h1>
+                <Rating size='text-xl' total={Math.round(averageRating * 10) / 10 || 0} flag={false} />
+                <h2 className='font-bold text-sm'>Course Rating</h2>
+              </div>
 
-        <div className='space-y-1 w-full'>
-          <Bars star={5} percentage={52} />
-          <Bars star={4} percentage={28} />
-          <Bars star={3} percentage={13} />
-          <Bars star={2} percentage={4} />
-          <Bars star={1} percentage={3} />
-        </div>
+              <div className='space-y-1 w-full'>
+                <Bars star={5} percentage={52} />
+                <Bars star={4} percentage={28} />
+                <Bars star={3} percentage={13} />
+                <Bars star={2} percentage={4} />
+                <Bars star={1} percentage={3} />
+              </div>
 
-      </div>
+            </div>
 
-      <div className='mt-8 space-y-6'>
-        <h1 className='text-2xl font-bold'>Reviews</h1>
+            <div className='mt-8 space-y-6'>
+              <h1 className='text-2xl font-bold'>Reviews</h1>
 
-        <div className='space-y-8'>
+              <div className='space-y-8'>
 
-          {
-            data?.ratings?.map((value,indx)=> value?.comment && <Card key={indx} value={value} />)
-          }
+                {
+                  data?.ratings?.map((value, indx) => value?.comment && <Card key={indx} value={value} />)
+                }
 
-        </div>
+              </div>
 
 
-      </div>
+            </div>
 
-    </div>
+          </div>
+        ) : (
+          <h1 className='text-2xl w-full flex items-center gap-5 justify-center h-[30vh]'><PiCactusFill className='size-16' /> Empty here</h1>
+        )
+      }
+    </>
   )
 }
 
@@ -336,7 +350,7 @@ export const RateCourse = ({ course_id, setter, userRating }) => {
 
   const [starindx, setStarIndx] = useState(-2);
 
-  const [rating, setRating] = useState(userRating ? ( (userRating?.rating - 1)*2 - 1 ) : -2);
+  const [rating, setRating] = useState(userRating ? ((userRating?.rating - 1) * 2 - 1) : -2);
 
   const [interact, setInteract] = useState(false);
 
@@ -362,15 +376,17 @@ export const RateCourse = ({ course_id, setter, userRating }) => {
 
     setter(false);
 
-    dispatch(getlectures({ course_id }))
+    await dispatch(getlectures({ course_id }));
+
+    dispatch(courseRatings(course_id));
 
   }
 
-  const onDeleteRating = async() => {
+  const onDeleteRating = async () => {
 
-    const res = await dispatch(deleteRating({course_id}));
+    const res = await dispatch(deleteRating({ course_id }));
 
-    if(res?.payload){
+    if (res?.payload) {
       setter(false);
       dispatch(getlectures({ course_id }))
     }
@@ -419,9 +435,9 @@ export const RateCourse = ({ course_id, setter, userRating }) => {
 
               <div className='w-full flex gap-4 pt-4'>
 
-              <button onClick={()=>setStep(-1)} className='h-12font-bold px-3 ml-auto duration-100 shrink-0 font-bold'>Cancel</button>
+                <button onClick={() => setStep(-1)} className='h-12font-bold px-3 ml-auto duration-100 shrink-0 font-bold'>Cancel</button>
 
-              <button onClick={onDeleteRating} className='h-12 bg-slate-900 text-white font-bold px-3 hover:bg-slate-800 duration-100 shrink-0'>Yes, Delete My Review</button>
+                <button onClick={onDeleteRating} className='h-12 bg-slate-900 text-white font-bold px-3 hover:bg-slate-800 duration-100 shrink-0'>Yes, Delete My Review</button>
 
               </div>
 
@@ -434,10 +450,10 @@ export const RateCourse = ({ course_id, setter, userRating }) => {
             <div className='w-full space-y-2'>
               <h2 className='text-xl font-bold  relative bottom-5 w-[20vw]'>Your Review</h2>
 
-              <Rating total={userRating?.rating} flag={false} size='text-xl'/>
+              <Rating total={userRating?.rating} flag={false} size='text-xl' />
 
               {/* <h3 className='pt-4'>{userRating?.comment || "There are no written comments for your review." }</h3> */}
-              
+
               <div className=' relative'>
 
                 <h3 ref={textRef} className={`leading-relaxed relative overflow-hidden ${(!showMore && overflowNeeded) && "max-h-52"}`}>
@@ -461,9 +477,9 @@ export const RateCourse = ({ course_id, setter, userRating }) => {
 
               <div className='w-full flex gap-4 pt-4'>
 
-              <button onClick={()=>setStep(-2)} className='h-12font-bold px-3 ml-auto duration-100 shrink-0 font-bold'>Delete</button>
+                <button onClick={() => setStep(-2)} className='h-12font-bold px-3 ml-auto duration-100 shrink-0 font-bold'>Delete</button>
 
-              <button onClick={()=>setStep(0)} className='h-12 bg-slate-900 text-white font-bold px-3 hover:bg-slate-800 duration-100 shrink-0'>Edit Review</button>
+                <button onClick={() => setStep(0)} className='h-12 bg-slate-900 text-white font-bold px-3 hover:bg-slate-800 duration-100 shrink-0'>Edit Review</button>
 
               </div>
 
@@ -585,6 +601,19 @@ export const RateCourse = ({ course_id, setter, userRating }) => {
 }
 
 
+const copyToClipboard = (link) => {
+  if (!link) return;
+  navigator.clipboard
+    .writeText(link)
+    .then(() => {
+      toast.success("Course Link copied to clipboard!");
+    })
+    .catch((err) => {
+      console.error("Failed to copy the link: ", err);
+    });
+};
+
+
 function LearnLecture() {
 
   const { course_id } = useParams();
@@ -620,6 +649,10 @@ function LearnLecture() {
       return total;
     }, 0);
   }, 0);
+
+  const totalRating = data?.ratings?.reduce((acc, curr) => acc + (curr.rating || 0), 0);
+
+  const averageRating = totalRating / data?.ratings?.length;
 
   const heightRef = useRef(null);
 
@@ -661,13 +694,13 @@ function LearnLecture() {
 
   useEffect(() => {
 
-    const execute = async() => {
+    const execute = async () => {
       await dispatch(getlectures({ course_id }));
       dispatch(courseRatings(course_id));
     }
 
     execute();
-    
+
   }, [])
 
   return (
@@ -709,7 +742,7 @@ function LearnLecture() {
 
 
 
-          <button className='border border-white h-10 p-3 flex items-center text-sm font-bold gap-1'>Share <IoIosShareAlt className='size-5' /></button>
+          <button onClick={() => copyToClipboard(`${window.location.origin}/course/${data?._id}`)} className='border border-white h-10 p-3 flex items-center text-sm font-bold gap-1'>Share <IoIosShareAlt className='size-5' /></button>
 
 
 
@@ -779,13 +812,13 @@ function LearnLecture() {
                       <div className='flex gap-8 mt-7'>
 
                         <div>
-                          <div className='flex items-center gap-1 font-bold'>4.0 <FaStar className='text-[#B4690E]' /></div>
-                          <h3 className='text-xs text-slate-500'>6,011 ratings</h3>
+                          <div className='flex items-center gap-1 font-bold'>{Math.round(averageRating * 10) / 10 || 0 } <FaStar className='text-[#B4690E]' /></div>
+                          <h3 className='text-xs text-slate-500'>{data?.ratings?.length} ratings</h3>
                         </div>
 
                         <div>
-                          <h3 className='font-bold'>192,195</h3>
-                          <h3 className='text-xs text-slate-500'>6,011 ratings</h3>
+                          <h3 className='font-bold'>{data?.totalStudents}</h3>
+                          <h3 className='text-xs text-slate-500'>Students</h3>
                         </div>
 
                         <div>
@@ -855,23 +888,52 @@ function LearnLecture() {
 
                               <div>
                                 <h2 className='font-bold'>{data?.instructor?.username}</h2>
-                                <h2>We are Security Enginners, who keeps the internt world safer</h2>
+                                <h2>{data?.instructor?.headline}</h2>
                               </div>
 
                             </div>
 
                             <div className='flex gap-5'>
 
-                              <Link className='bg-black p-2 opacity-40 cursor-pointer hover:opacity-100 duration-100 '>
+                              <Link
+                                to="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  window.open(`https://www.x.com/${data?.instructor?.social?.twitter}`, "_blank", "noopener,noreferrer");
+                                }}
+                                className='bg-black p-2 opacity-40 cursor-pointer hover:opacity-100 duration-100 '>
                                 <FaSquareXTwitter className='size-4   text-white' />
                               </Link>
 
-                              <Link className='bg-black p-2 opacity-40 cursor-pointer hover:opacity-100 duration-100 '>
+                              <Link
+                                to="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  window.open(`https://www.linkedin.com/${data?.instructor?.social?.linkedIn}`, "_blank", "noopener,noreferrer");
+                                }}
+                                className='bg-black p-2 opacity-40 cursor-pointer hover:opacity-100 duration-100 '>
                                 <FaLinkedin className='size-4   text-white' />
 
                               </Link>
 
-                              <Link className='bg-black p-2 opacity-40 cursor-pointer hover:opacity-100 duration-100 '>
+                              <Link
+                                to="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  window.open(`https://www.facebook.com/${data?.instructor?.social?.facebook}`, "_blank", "noopener,noreferrer");
+                                }}
+                                className='bg-black p-2 opacity-40 cursor-pointer hover:opacity-100 duration-100 '>
+                                <FaSquareFacebook className='size-4   text-white' />
+
+                              </Link>
+
+                              <Link
+                                to="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  window.open(`https://www.youtube.com/${data?.instructor?.social?.youtube}`, "_blank", "noopener,noreferrer");
+                                }}
+                                className='bg-black p-2 opacity-40 cursor-pointer hover:opacity-100 duration-100 '>
                                 <FaYoutube className='size-4   text-white' />
                               </Link>
 
@@ -914,7 +976,7 @@ function LearnLecture() {
           {/* right content panel */}
           {
             panel && (
-              <div className='w-[50vw]'>
+              <div className='w-[100vw]'>
                 <div style={{ height: `${height - 100}px` }} className={`absolute`}>
                   <div className='sticky top-0 '>
                     <ContentTab data={data} setCurrentLecture={setCurrentLecture} currentLecture={currentLecture} setPanel={setPanel} progress={data?.progress} />

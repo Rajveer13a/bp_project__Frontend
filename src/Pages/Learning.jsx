@@ -7,14 +7,27 @@ import { Link, useParams } from 'react-router-dom';
 import Rating from '@/components/Rating';
 import { mylearning } from '@/Redux/Slices/CourseSlice';
 
-const Courses = ({ data }) => {
+import { RateCourse } from './LearnLecture';
 
-  const percentage = 4;
+const Courses = ({ data, onRate }) => {
+
+
+
 
   return (
     <>
+
+
       {data?.map((value, indx) => {
+
+        const completed = value.progress?.completed?.reduce((acc, sec) => {
+          return acc + (sec?.reduce((sum, lec) => sum + (lec ? 1 : 0), 0) || 0);
+        }, 0) || 0;
+
+        const total = value.progress?.completed?.reduce((acc, sec) => acc + sec.length, 0);
+
         return (
+
           <Link to={`/learn/lecture/${value?._id}`} key={indx} className=' w-56 space-y-1 cursor-pointer group block'>
 
             <div className='relative h-32'>
@@ -42,16 +55,16 @@ const Courses = ({ data }) => {
               <div className='h-[2px] bg-slate-300 mt-4 relative'>
 
                 <div style={{
-                  width: `${percentage}%`
+                  width: `${(completed / total) * 100 || 0}%`
                 }} className='absolute h-full bg-blue-900'></div>
               </div>
 
               <div className='flex justify-between'>
-                <h5 className='text-xs mt-[5px]'>{percentage}% complete</h5>
+                <h5 className='text-xs mt-[5px]'>{(completed / total) * 100 || 0}% complete</h5>
 
-                <div className='text-xs mt-1 flex flex-col items-end'>
-                  <Rating total={0} flag={false} />
-                  <h5>Leave a rating</h5>
+                <div onClick={(e) => { if(value?.review?.rating) return ; e.preventDefault(); e.stopPropagation(); onRate(value?._id) }} className='text-xs mt-1 flex flex-col items-end space-y-1'>
+                  <Rating total={value?.review?.rating || 0} flag={false} />
+                  <h5 > {value?.review?.rating ? "Your rating" : "Leave a rating"}</h5>
                 </div>
               </div>
 
@@ -113,6 +126,11 @@ const Whislist = () => {
           </Link>
         )
       })}
+
+      {
+        data?.length == 0 && <h1 className='text-center font-bold text-lg w-[80vw] h-[20vh]'>Organize and access your courses faster!
+          Go to the All Courses tab to create a list.</h1>
+      }
     </>
   )
 
@@ -121,16 +139,25 @@ const Whislist = () => {
 function Learning() {
 
   const { active } = useParams();
-  
+
   const dispatch = useDispatch();
 
   const data = useSelector((state) => state?.course?.mylearning);
 
-  const [tab, setTab] = useState(active=="learning" ? 0 : 1);
+  const [rating, setRating] = useState(false);
 
-  useEffect(()=>{
-    setTab(active=="learning" ? 0 : 1);
-  },[active])
+  const [course_id, setCourse_id] = useState(null);
+
+  const onRate = (course_id) => {
+    setRating(true);
+    setCourse_id(course_id)
+  }
+
+  const [tab, setTab] = useState(active == "learning" ? 0 : 1);
+
+  useEffect(() => {
+    setTab(active == "learning" ? 0 : 1);
+  }, [active])
 
   useEffect(() => {
 
@@ -142,12 +169,16 @@ function Learning() {
   return (
     <>
 
+      {
+        rating && <RateCourse course_id={course_id} setter={setRating} />
+      }
+
       <div className='bg-[#1C1D1F]  px-36 text-white '>
 
         <h1 className='text-4xl merriweather-black py-12'>My learning</h1>
 
         <div className="font-bold flex gap-5 pb-3 cursor-pointer">
-          <Link 
+          <Link
             to={"/my-courses/learning"}
             className={`relative px-2 ${tab === 0 ? 'active-tab' : 'text-slate-300'} duration-100`}
           >
@@ -168,7 +199,7 @@ function Learning() {
 
         {
           tab === 0 ? (
-            <Courses data={data} />
+            <Courses data={data} onRate={onRate} />
           ) : (
             <Whislist data={data} />
           )

@@ -65,38 +65,40 @@ function Courses() {
 
 
     useEffect(() => {
-        let arr = [...courses];
+        if (courses) {
+            let arr = [...courses];
 
-        arr = arr.filter((value) => value.title.toLowerCase().includes(searchTerm.toLowerCase()))
+            arr = arr.filter((value) => value.title.toLowerCase().includes(searchTerm.toLowerCase()))
 
-        switch (sortBy) {
-            case "Newest":
-                setCourseList(arr.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)));
-                break;
+            switch (sortBy) {
+                case "Newest":
+                    setCourseList(arr.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)));
+                    break;
 
-            case "A-Z":
-                setCourseList(arr.sort((a, b) => (a.title > b.title ? 1 : -1)));
-                break;
+                case "A-Z":
+                    setCourseList(arr.sort((a, b) => (a.title > b.title ? 1 : -1)));
+                    break;
 
-            case "Z-A":
-                setCourseList(arr.sort((a, b) => (a.title < b.title ? 1 : -1)));
-                break;
+                case "Z-A":
+                    setCourseList(arr.sort((a, b) => (a.title < b.title ? 1 : -1)));
+                    break;
 
-            case "Oldest":
-                setCourseList(arr.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1)));
-                break;
+                case "Oldest":
+                    setCourseList(arr.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1)));
+                    break;
 
-            case "Published First":
-                setCourseList(arr.sort((a, b) => (a.approved ? 1 : -1)));
-                break;
+                case "Published First":
+                    setCourseList(arr.sort((a, b) => (a.approved ? 1 : -1)));
+                    break;
 
-            case "Unpublished First":
-                setCourseList(arr.sort((a, b) => (!a.approved ? 1 : -1)));
-                break;
+                case "Unpublished First":
+                    setCourseList(arr.sort((a, b) => (!a.approved ? 1 : -1)));
+                    break;
 
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
 
     }, [courses, sortBy, searchTerm])
@@ -139,7 +141,7 @@ function Courses() {
             <div className='px-12 pt-14'>
 
                 {
-                    (courselist?.length == 0) && (
+                    (courses?.length == 0) && (
                         <div className='flex justify-between p-12 border-2 py-12 shadow-md mt-24'>
                             <h3 className=' '>Jump Into Course Creation</h3>
                             <Link to={"/instructor/course/create/1"}>
@@ -152,7 +154,7 @@ function Courses() {
                 {/* Show courses */}
 
                 {
-                    courselist.length > 0 && <>
+                    courses?.length > 0 && <>
                         <h1 className='text-4xl font-semibold py-10'>Courses</h1>
 
                         <div className='flex gap-8'>
