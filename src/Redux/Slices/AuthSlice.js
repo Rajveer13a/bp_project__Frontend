@@ -224,6 +224,40 @@ export const changePassword = createAsyncThunk('/auth/changePassword', async (da
     }
 })
 
+export const forgotPassword = createAsyncThunk('/auth/forgotPassword', async (data) => {
+
+    try {
+
+        const res = axiosInstance.post('/user/forgotPassword', data);
+
+        toast.promise(res, {
+            loading: "forgot pass request sending... ",
+            success: (data) => data.data.message,
+            error: "failed to reset password"
+        });
+        
+        return (await res)?.data;
+
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
+export const resetPassword = createAsyncThunk('/auth/resetPassword', async (data) => {
+
+    try {
+
+        const res = axiosInstance.post('/user/resetPassword', data);
+        
+        return (await res)?.data;
+
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
 
 const authSlice = createSlice({
     name: "auth",

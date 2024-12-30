@@ -36,7 +36,7 @@ export const searchCourses = createAsyncThunk("/search/searchCourses", async (da
         return res.data;
 
     } catch (error) {
-        toast.error(error.response.data.message)
+        // toast.error(error.response.data.message)
     }
 });
 
@@ -50,7 +50,7 @@ export const CollaborativeRecommendations = createAsyncThunk("/search/Collaborat
         return res.data;
 
     } catch (error) {
-        toast.error(error.response.data.message)
+        // toast.error(error.response.data.message)
     }
 });
 
@@ -64,7 +64,7 @@ export const TopicBasedRecommendations = createAsyncThunk("/search/TopicBasedRec
         return res.data;
 
     } catch (error) {
-        toast.error(error.response.data.message)
+        // toast.error(error.response.data.message)
     }
 });
 
@@ -79,7 +79,7 @@ export const coursesByCategory = createAsyncThunk("/search/coursesByCategory", a
         return res.data;
 
     } catch (error) {
-        toast.error(error.response.data.message)
+        // toast.error(error.response.data.message)
     }
 
 });

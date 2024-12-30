@@ -3,10 +3,12 @@ import { Route, Routes } from 'react-router-dom'
 
 import HomeLayout from './Layouts/HomeLayout'
 import CourseView from "./Pages/CourseView"
+import ForgotPass from './Pages/ForgotPass'
 import HomePage from "./Pages/HomePage"
 import Learning from "./Pages/Learning"
 import LogIn from "./Pages/LogIn"
 import Profile from "./Pages/Profile"
+import ResetPass from './Pages/ResetPass'
 import SearchCourses from './Pages/SearchCourses';
 import ShoppingCart from "./Pages/ShoppingCart"
 import SignUp from "./Pages/SignUp"
@@ -22,6 +24,10 @@ function UserRoutes() {
                 <Route path="/signup" element={<SignUp />} />
 
                 <Route path="/verifyEmail" element={<VerifyEmail />} />
+
+                <Route path="/reset-password/:token" element={<ResetPass />} />
+
+                <Route path="/forgot-password" element={<ForgotPass />} />
 
                 <Route path="/login" element={<LogIn />} />
 

@@ -19,7 +19,7 @@ export function InputField({ value, name, onChange, title }) {
 
     return (
         <div onClick={foucusInput} className='border border-black pt-5 px-5 relative group cursor-text'>
-            <input ref={inputRef} onChange={onChange} value={value} name={name} className=' placeholder:text-slate-800 py-2 w-full outline-none ' type={visible ? "text" : "password"} />
+            <input ref={inputRef} required onChange={onChange} value={value} name={name} className=' placeholder:text-slate-800 py-2 w-full outline-none ' type={visible ? "text" : "password"} />
 
             <h3 className={`absolute text-sm font-bold top-5 left-4 group-focus-within:-translate-y-4 group-focus-within:scale-90 transition-all group-focus-within:text-slate-700 duration-150 ${value && "-translate-y-4 scale-90 text-slate-700"}`}>{title}</h3>
 
@@ -96,7 +96,7 @@ function LogIn() {
                         <div className='space-y-4'>
                             <button onClick={onLogin} className='w-full text-white bg-blue-600 hover:bg-blue-700 duration-150 py-3 font-bold mt-2'>Log in</button>
 
-                            <h3 className='text-center'>or <Link className='link-primary font-bold underline'>Forget Password</Link></h3>
+                            <h3 className='text-center'>or <Link to={"/forgot-password"} className='link-primary font-bold underline'>Forget Password</Link></h3>
 
                             <div className='flex items-center text-sm text-slate-600 '><hr className='w-[30%] h-[1.5px] bg-slate-300' /><h1>Other log in options</h1><hr className='w-[30%] h-[1.5px] bg-slate-300' /></div>
 

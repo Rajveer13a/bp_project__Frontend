@@ -8,6 +8,7 @@ const initialState = {
     data: localStorage.getItem('instructor_data') ? JSON.parse(localStorage.getItem('instructor_data')) : "",
 
     edit: "",
+    sales: []
 
 }
 
@@ -280,6 +281,23 @@ export const getAccount = createAsyncThunk("/instructor/payouts/getAccount", asy
     }
 })
 
+export const mySales = createAsyncThunk("/instructor/payment/mySales", async () => {
+    try {
+
+        const res = axiosInstance.get("/payment/mySales");
+
+        toast.promise(res, {
+            loading: "fetching account",
+            success: (data) => data.data.message
+        })
+
+        return (await res).data;
+
+    } catch (error) {
+        toast.error(error.response.data.message)
+    }
+})
+
 export const updatePrice = createAsyncThunk("/instructor/course/updatePrice", async (data) => {
     try {
 
@@ -441,6 +459,10 @@ const ManageCourseSlice = createSlice({
                     step: 2,
                 }
             }
+        })
+
+        builder.addCase(mySales.fulfilled, (state, action) => {
+            state.sales = action?.payload?.data;
         })
 
 

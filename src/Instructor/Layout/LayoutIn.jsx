@@ -42,13 +42,13 @@ function LayoutIn({children,tab}) {
 
       </li>
 
-      <li onClick={() => setCurrent(0)} className={`${listStyle}  ${current == 0 ? " border-blue-700 " : "border-transparent"}`}>
+      <Link to={"/instructor/courses"} onClick={() => setCurrent(0)} className={`${listStyle}  ${current == 0 ? " border-blue-700 " : "border-transparent"}`}>
 
         <MdOndemandVideo className='size-[26px]' />
 
         <h1 className={` transition ease-in-out duration-500 ${!open ? "opacity-0" : ""} `}>Courses</h1>
 
-      </li>
+      </Link>
 
 
 
@@ -62,13 +62,13 @@ function LayoutIn({children,tab}) {
 
 
 
-      <li onClick={() => setCurrent(2)} className={`${listStyle}  ${current == 2 ? leftbar : "border-transparent"}`}>
+      <Link to={"/instructor/performance"} onClick={() => setCurrent(2)} className={`${listStyle}  ${current == 2 ? leftbar : "border-transparent"}`}>
 
         <RiBarChartFill className='size-[26px]' />
 
         <h1 className={` transition ease-in-out duration-500 ${!open ? "opacity-0" : ""} `}>Performance</h1>
 
-      </li>
+      </Link>
 
 
 

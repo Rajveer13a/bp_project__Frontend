@@ -5,8 +5,8 @@ import CourseCreate from './Instructor/Pages/CourseCreate'
 import CourseManage from './Instructor/Pages/CourseManage/CourseManage'
 import Courses from './Instructor/Pages/Courses'
 import InstructorProfile from './Instructor/Pages/InstructorProfile/InstructorProfile'
+import Performance from './Instructor/Pages/Performance'
 import TeachPage from './Instructor/Pages/TeachPage'
-
 
 function InstructorRoutes() {
   return (
@@ -15,6 +15,8 @@ function InstructorRoutes() {
         <Route path='/teach' element={<TeachPage/>} />
 
         <Route path='/courses' element={<Courses/>} />
+
+        <Route path='/performance' element={<Performance/>} />
 
         <Route path='/user/edit-instructor-info/' element={<InstructorProfile/>} />
         

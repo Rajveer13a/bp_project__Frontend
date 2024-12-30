@@ -142,7 +142,7 @@ function HoverTab() {
 function Navbar() {
 
     const lists = [
-        [{ text: "My learning", link: "" }],
+        [{ text: "My learning", link: "/my-courses/learning" }],
         [{ text: "My cart", link: "/shoppingCart" }, { text: "Instructor dashboard", link: "/instructor/courses" }],
         [{ text: "Account Settings", link: "" }],
         [{ text: "Public profile", link: "" }, { text: "Edit profile", link: "/profile" }],
