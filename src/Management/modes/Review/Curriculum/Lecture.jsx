@@ -17,10 +17,11 @@ function Lecture({ lecture, section_indx, lecture_indx }) {
 
 
 
-    const [approve, setApprove] = useState(lecture?.approved);
+    const [approve, setApprove] = useState(lecture?.approved || null);
 
-    const [feedback, setFeedback] = useState(lecture?.feedback)
-
+    const [feedback, setFeedback] = useState(lecture?.feedback || "")
+    console.log(feedback, approve,"here",lecture?.approve);
+    
     const [data, setdata] = useState(lecture?.feedback);
 
     const onApproveLecture = async() => {

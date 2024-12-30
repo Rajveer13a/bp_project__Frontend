@@ -28,11 +28,11 @@ const Input = ({ onChange, value, name, count }) => {
 }
 
 
-export const Review = ({holder}) => {
+export const Review = ({ holder }) => {
 
     const dispatch = useDispatch();
 
-    const {flag, value} = useSelector((state)=> state.management.feedback.message[holder])
+    const { flag, value } = useSelector((state) => state.management.feedback.message[holder])
 
     const [approve, setApprove] = useState(flag);
 
@@ -41,35 +41,35 @@ export const Review = ({holder}) => {
     const [data, setData] = useState("")
 
     const onReset = () => {
-        setApprove(null); setFeedback(""); setData(""); 
+        setApprove(null); setFeedback(""); setData("");
 
         dispatch(setFeedbackMessage({
-            flag:null,
-            value:"",
-            name:holder
+            flag: null,
+            value: "",
+            name: holder
         }))
     }
 
-    const onApprove = () =>{
+    const onApprove = () => {
 
         setApprove(true);
 
         dispatch(setFeedbackMessage({
             name: holder,
             value: "",
-            flag:true
+            flag: true
         }))
     }
 
     const onDisapprove = () => {
-        setFeedback(data); 
+        setFeedback(data);
 
         dispatch(setFeedbackMessage({
             name: holder,
             value: data,
-            flag:false
+            flag: false
         }))
-        
+
     }
 
     return (
@@ -106,8 +106,12 @@ export const Review = ({holder}) => {
 
             {
                 approve == false && !feedback && (
-                    <div className='absolute top-11 space-x-8 flex items-center '>
-                        <textarea value={data} onChange={(e) => setData(e.target.value)} className=' border border-black outline-none h-14 px-3 py-1 w-80 resize-none bg-white' name="" id=""></textarea>
+                    <div className='absolute top-11 space-x-8 flex '>
+                        <textarea style={{ overflowY: 'hidden' }} value={data} onChange={(e) => {
+                            setData(e.target.value); const textarea = e.target;
+                            textarea.style.height = 'auto';
+                            textarea.style.height = `${textarea.scrollHeight}px`;
+                        }} className=' border border-black outline-none h-14 px-3 py-1 w-80 resize-none bg-white z-50' name="" id=""></textarea>
                         <button onClick={onDisapprove} className='font-semibold bg-blue-500 text-white h-full border px-4 hover:bg-blue-600 duration-100 border-black hover:scale-110'>Add</button>
                     </div>
                 )
@@ -116,7 +120,7 @@ export const Review = ({holder}) => {
             {
                 feedback && (
                     <div className='absolute top-11 space-x-8 flex items-center '>
-                        <div className='border border-dashed border-black outline-none overflow-scroll h-52  px-3 py-1 w-80 resize-none bg-white  ' name="" id="">{feedback}</div>
+                        <div className='border border-dashed border-black outline-none overflow-y-scroll max-h-24  px-3 py-1 w-80 resize-none bg-white' name="" id="">{feedback}</div>
 
                     </div>
                 )

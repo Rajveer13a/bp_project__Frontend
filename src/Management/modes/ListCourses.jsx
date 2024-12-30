@@ -12,9 +12,7 @@ import { Link } from 'react-router-dom';
 import axiosInstance from '@/Helpers/axiosInstance';
 
 
-const Select = ({ sortState }) => {
-
-    const [sortBy, setSortBy] = sortState;
+const Select = ({ sortBy, setSortBy }) => {
 
     const [dropdown, setDropDown] = useState(false)
 
@@ -23,8 +21,6 @@ const Select = ({ sortState }) => {
         setDropDown(false)
     }
 
-
-
     return (
         <div className='relative group'>
 
@@ -32,7 +28,7 @@ const Select = ({ sortState }) => {
                 {sortBy} <IoIosArrowDown />
             </button>
 
-            <div className={`shadow-lg opacity-0 pointer-events-none border-2  absolute top-14  bg-white w-52  ${dropdown && "pointer-events-auto opacity-100"}`}>
+            <div className={`shadow-lg opacity-0 pointer-events-none border-2  absolute top-14  bg-white w-52  ${dropdown && "pointer-events-auto opacity-100"} bg-white z-20`}>
                 <ul className='p-4  text-sm cursor-pointer '>
                     <li onClick={handleSort} className='pb-2 hover:text-blue-600 pee'>Newest</li>
 
@@ -42,9 +38,7 @@ const Select = ({ sortState }) => {
 
                     <li onClick={handleSort} className='py-2 hover:text-blue-600'>Z-A</li>
 
-                    <li onClick={handleSort} className='py-2 hover:text-blue-600'>Published First</li>
-
-                    <li onClick={handleSort} className='pt-2 hover:text-blue-600'>Unpublished First</li>
+                
                 </ul>
             </div>
         </div>
@@ -57,7 +51,45 @@ function ListCourses() {
 
     const [ids, setIds] = useState(null);
 
-    const sortState = useState("Newest")
+
+    const [courselist, setCourseList] = useState(data);
+
+    const [sortBy, setSortBy] = useState("Newest");
+
+    const [searchTerm, setSearchTerm] = useState("")
+
+
+
+    useEffect(() => {
+        if (data) {
+            let arr = [...data];
+
+            arr = arr.filter((value) => value.title.toLowerCase().includes(searchTerm.toLowerCase()))
+
+            switch (sortBy) {
+                case "Newest":
+                    setCourseList(arr.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)));
+                    break;
+
+                case "A-Z":
+                    setCourseList(arr.sort((a, b) => (a.title > b.title ? 1 : -1)));
+                    break;
+
+                case "Z-A":
+                    setCourseList(arr.sort((a, b) => (a.title < b.title ? 1 : -1)));
+                    break;
+
+                case "Oldest":
+                    setCourseList(arr.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1)));
+                    break;
+
+
+                default:
+                    break;
+            }
+        }
+
+    }, [data, sortBy, searchTerm])
 
     // get courses ids
     useEffect(() => {
@@ -71,16 +103,16 @@ function ListCourses() {
 
         res.then((res) => {
             let id_arr = res?.data?.data?.filter((value) => {
-                if(value.reviewed == false ){
-                    return value.course_id 
+                if (value.reviewed == false) {
+                    return value.course_id
                 }
             });
 
-            id_arr =  id_arr.map((value)=> value.course_id)
+            id_arr = id_arr.map((value) => value.course_id)
 
             setIds(id_arr);
             console.log(id_arr);
-            
+
 
         }).catch((error) => {
             toast.error(error.response.data.message);
@@ -106,9 +138,9 @@ function ListCourses() {
                 const result = await Promise.all(promiseArray);
 
                 const courseDetails = result.map((result) => result.data.data[0]);
-                console.log(courseDetails);
 
                 setData(courseDetails);
+                setCourseList(courseDetails)
             }
 
 
@@ -172,7 +204,7 @@ function ListCourses() {
 
                 <div className='relative h-12 w-[250px] '>
 
-                    <input className='border border-black h-full w-full p-4 pr-16 placeholder:text-slate-600 focus:outline-none' type="text" placeholder='Search for courses' />
+                    <input onChange={(e) => setSearchTerm(() => e.target.value)}  className='border border-black h-full w-full p-4 pr-16 placeholder:text-slate-600 focus:outline-none' type="text" placeholder='Search for courses' />
 
                     <button className=' absolute top-0 right-0 text-white bg-black h-full w-[50px] '>
                         <IoMdSearch className='m-auto size-6' />
@@ -180,7 +212,7 @@ function ListCourses() {
 
                 </div>
 
-                <Select sortState={sortState} />
+                <Select sortBy={sortBy} setSortBy={setSortBy} />
 
 
 
@@ -192,17 +224,17 @@ function ListCourses() {
 
 
                 {
-                    data?.map((value, indx) => (
+                    courselist?.map((value, indx) => (
                         <div key={indx} className='border-2  flex w-full group relative gap-2 searchParent'>
-                            <img className='size-32' src={value.thumbnial || "https://s.udemycdn.com/course/200_H/placeholder.jpg"} alt="" />
+                            <img className='size-32 p-1  object-cover rounded ' src={value?.thumbnail?.secure_url || "https://s.udemycdn.com/course/200_H/placeholder.jpg"} alt="" />
 
                             <div className='py-4 flex flex-col group-hover:opacity-10 duration-100 w-[300px] pl-4' >
-                                <h1 className='font-bold'>{value.title}</h1>
+                                <h1 className='font-bold'>{value?.title}</h1>
 
                                 <h3 className='mt-auto text-sm font-bold '>
                                     Category:
                                     <span className='font-semibold pl-2'>
-                                        {value.category}
+                                        {value?.category}
                                     </span>
                                 </h3>
                             </div>

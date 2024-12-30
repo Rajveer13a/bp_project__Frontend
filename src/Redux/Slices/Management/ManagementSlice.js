@@ -9,11 +9,11 @@ const initialState = {
         curr: null,
         landingpage: {},
         message: {
-            landing:{
+            landing: {
                 flag: null,
                 value: ""
             },
-            intended:{
+            intended: {
                 flag: null,
                 value: ""
             },
@@ -25,22 +25,22 @@ const initialState = {
 }
 
 
-export const reviewCourse = createAsyncThunk("/management/approveCourse", async(data, { getState })=>{
+export const reviewCourse = createAsyncThunk("/management/approveCourse", async (data, { getState }) => {
 
     try {
 
         const state = getState();
 
-        const res =  axiosInstance.post("/manage/review", {
+        const res = axiosInstance.post("/manage/review", {
             course_id: data.course_id,
             flag: data.flag,
             message: state.management.feedback.message
-            
+
         })
 
         toast.promise(res, {
-            loading:"approving course",
-            success:(data)=> data.data.message
+            loading: "approving course",
+            success: (data) => data.data.message
         })
 
         return (await res).data;
@@ -51,18 +51,18 @@ export const reviewCourse = createAsyncThunk("/management/approveCourse", async(
 
 })
 
-export const feedbackLecture = createAsyncThunk("/management/approveLecture", async(data)=>{
+export const feedbackLecture = createAsyncThunk("/management/approveLecture", async (data) => {
     try {
-        
+
         const res = axiosInstance.post("manage/review/lecture", {
-            lecture_id : data.lecture_id,
-            feedback : data?.feedback,
-            flag : data.flag
+            lecture_id: data.lecture_id,
+            feedback: data?.feedback,
+            flag: data.flag
         })
 
         toast.promise(res, {
-            loading : "updating lecture status",
-            success: (data)=> data.data.message
+            loading: "updating lecture status",
+            success: (data) => data.data.message
         })
 
         return (await res).data;
@@ -78,13 +78,13 @@ const manangeSlice = createSlice({
     initialState,
     reducers: {
 
-        addReviewData: (state,action)=>{
+        addReviewData: (state, action) => {
 
-            const {data} = action.payload;
+            const { data } = action.payload;
 
             state.feedback.curr = data.sections;
-            state.feedback.landingpage = {...data};
-            state.feedback.goals = {...data?.goals};
+            state.feedback.landingpage = { ...data };
+            state.feedback.goals = { ...data?.goals };
 
         },
 
@@ -95,22 +95,22 @@ const manangeSlice = createSlice({
             state.feedback.curr[section_indx].lectures[lecture_indx].approved = true;
             state.feedback.curr[section_indx].lectures[lecture_indx].feedback = "";
 
-            console.log(section_indx,"------------>>>>>",lecture_indx);
-                       
+            console.log(section_indx, "------------>>>>>", lecture_indx);
+
         },
 
 
         disapproveLecture: (state, action) => {
 
-            const { section_indx, lecture_indx , feedback } = action.payload;
+            const { section_indx, lecture_indx, feedback } = action.payload;
 
             state.feedback.curr[section_indx].lectures[lecture_indx].approved = false;
-            state.feedback.curr[section_indx].lectures[lecture_indx].feedback = feedback ;
+            state.feedback.curr[section_indx].lectures[lecture_indx].feedback = feedback;
 
 
         },
 
-        setFeedbackMessage: (state,action) =>{
+        setFeedbackMessage: (state, action) => {
 
             const { value, name, flag } = action.payload;
 
@@ -124,9 +124,26 @@ const manangeSlice = createSlice({
 
     },
 
+    extraReducers: (builder) => {
+        builder
+            .addCase(reviewCourse.fulfilled, (state, action) => {
+                if (action?.payload) {
+                    state.feedback.message.landing = {
+                        flag: null,
+                        value: ""
+                    }
+
+                    state.feedback.message.intended = {
+                        flag: null,
+                        value: ""
+                    }
+                }
+            })
+    }
+
 })
 
-export const { approveLecture ,addReviewData ,disapproveLecture, setFeedbackMessage} = manangeSlice.actions;
+export const { approveLecture, addReviewData, disapproveLecture, setFeedbackMessage } = manangeSlice.actions;
 
 export default manangeSlice.reducer;
 

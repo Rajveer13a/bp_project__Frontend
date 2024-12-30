@@ -39,6 +39,7 @@ function ReviewCourse() {
 
     const [active, setActive] = useState("curriculum");
 
+    const [contentDuration, setContentDuration] = useState(0);
 
     let render;
     switch (active) {
@@ -164,6 +165,26 @@ function ReviewCourse() {
         })()
     }, [])
 
+    useEffect(() => {
+
+        
+            let accum = 0
+            data.curr?.forEach((section) => {
+                section?.lectures.forEach((lecture) => {
+                    accum += lecture?.resource?.duration || 0;
+    
+                })
+            });
+    
+            accum = accum / 60;
+    
+            accum = Math.round(accum * 10) / 10;
+    
+            setContentDuration(accum);
+    
+    
+        }, [data])
+
 
     return (
         <div className=''>
@@ -182,7 +203,7 @@ function ReviewCourse() {
 
                 <h4 className='bg-[#6A6F73] px-2 text-sm font-bold my-auto py-[2px]'>DRAFT</h4>
 
-                <h3 className='font-semibold'>0min of video content uploaded</h3>
+                <h3 className='font-semibold'>{contentDuration} min of video content uploaded</h3>
 
                 <IoMdSettings className='size-6 cursor-pointer  h-[40px]' />
 
