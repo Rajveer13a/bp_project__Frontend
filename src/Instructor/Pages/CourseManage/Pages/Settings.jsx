@@ -43,7 +43,7 @@ function Settings({onDeleteRequest}) {
                 </h1>
 
                 <p>
-                    This course is not published on the Udemy marketplace.
+                    This course is not published on the Brainy marketplace.
                 </p>
 
                 <div className='flex gap-6 items-center'>

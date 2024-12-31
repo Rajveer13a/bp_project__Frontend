@@ -41,7 +41,7 @@ function Setup() {
     const resources = [
         {heading:"Teaching Center: Guide to equipment", para:"Make a home studio on a budget" },
 
-        {heading:"Udemy Trust & Safety", para:"Our policies for instructors and students" },
+        {heading:"Brainy Trust & Safety", para:"Our policies for instructors and students" },
 
         {heading:"Join the community", para:"A place to talk with other instructors" },
     ]

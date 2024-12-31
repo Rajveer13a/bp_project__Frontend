@@ -44,11 +44,11 @@ function CourseStructure() {
     ];
 
     const resources = [
-        {heading:"Udemy Trust & Safety", para:"Our policies for instructors and students" },
+        {heading:"Brainy Trust & Safety", para:"Our policies for instructors and students" },
 
         {heading:"Join the instructor community", para:"A place to connect with other instructors" },
 
-        {heading:"Official Udemy Course: How to Create an Online Course", para:"Learn about course creation from the Udemy Instructor Team and experienced instructors" },
+        {heading:"Official Brainy Course: How to Create an Online Course", para:"Learn about course creation from the Brainy Instructor Team and experienced instructors" },
     ]
 
     return (

@@ -42,7 +42,7 @@ function Film() {
 
         {heading:"Teaching Center: Guide to quality A/V", para:"Film and edit with confidence" },
 
-        {heading:"Udemy trust & safety", para:"Our policies for instructors and students" },
+        {heading:"Brainy trust & safety", para:"Our policies for instructors and students" },
     ]
 
     return (
@@ -58,7 +58,7 @@ function Film() {
             right: {
                 image: "https://s.udemycdn.com/instructor/manage/video-help-2x.jpg",
                 heading:"You’re in good company",
-                para: "Chat and get production help with other Udemy instructors",
+                para: "Chat and get production help with other Brainy instructors",
                 button: "Join the community"
             }
         }}
