@@ -1,6 +1,8 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 
+import NotFound from '@/Pages/NotFound'
+
 import Sales from '../Management/admin/Sales'
 import ListCourses from '../Management/modes/ListCourses'
 import ReviewCourse from '../Management/modes/ReviewCourse'
@@ -20,6 +22,7 @@ function ManagementRoutes() {
 
       </Route>
 
+      <Route path='*' element={<NotFound/>}/>
 
     </Routes>
   )

@@ -2,6 +2,7 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 
 import AuthProtectedRoutes from '@/ProtectedRoutes/AuthProtectedRoutes'
+import RedirectManagementToRoutes from '@/ProtectedRoutes/RedirectManagementToRoutes'
 
 import HomeLayout from '../Layouts/HomeLayout'
 import CourseView from "../Pages/CourseView"
@@ -15,7 +16,7 @@ import SearchCourses from '../Pages/SearchCourses';
 import ShoppingCart from "../Pages/ShoppingCart"
 import SignUp from "../Pages/SignUp"
 import VerifyEmail from "../Pages/VerifyEmail"
-import RedirectManagementToRoutes from '@/ProtectedRoutes/RedirectManagementToRoutes'
+import NotFound from '@/Pages/NotFound'
 
 function UserRoutes() {
     return (
@@ -57,7 +58,7 @@ function UserRoutes() {
                 </Route>
 
 
-
+                <Route path='*' element={<NotFound />} />
 
             </Routes>
 

@@ -14,6 +14,7 @@ import InstructorRoutes from "./Routes/InstructorRoutes"
 import ManagementRoutes from "./Routes/ManagementRoutes"
 import UserRoutes from './Routes/UserRoutes';
 import RedirectManagementToRoutes from './ProtectedRoutes/RedirectManagementToRoutes';
+import NotFound from './Pages/NotFound';
 
 
 

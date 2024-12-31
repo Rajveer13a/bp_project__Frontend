@@ -1,6 +1,7 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 
+import NotFound from '@/Pages/NotFound'
 import InstructorProtectedRoutes from '@/ProtectedRoutes/InstructorProtectedRoutes'
 
 import CourseCreate from '../Instructor/Pages/CourseCreate'
@@ -29,6 +30,8 @@ function InstructorRoutes() {
         <Route path='/course/:id/manage/:section' element={<CourseManage />} />
 
       </Route>
+      
+      <Route path='*' element={<NotFound/>}/>
 
     </Routes>
   )

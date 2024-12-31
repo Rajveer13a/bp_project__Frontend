@@ -4,7 +4,9 @@ import { MdFormatBold, MdFormatItalic, MdKeyboardArrowDown } from 'react-icons/m
 import { useDispatch, useSelector } from 'react-redux'
 
 import { FileUpload } from '@/Instructor/Pages/InstructorProfile/ProfilePicture'
-import { getUser, updateUserDetails } from '@/Redux/Slices/AuthSlice'
+import { changePassword, getUser, updateUserDetails } from '@/Redux/Slices/AuthSlice'
+import toast from 'react-hot-toast'
+import { isValidPassword } from '@/Helpers/regexMatcher'
 
 
 const Input = ({ headline, placeholder = "", count = false, name, inputData, setInputData, setButtonDisabled, data }) => {
@@ -154,6 +156,53 @@ function Profile() {
 
     const textRef = useRef(null);
 
+    const [passData, setPassData] = useState({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+    })
+    
+
+    const onPassChange = async (e) => {
+
+        e.preventDefault();
+
+        const { oldPassword, newPassword, confirmPassword } = passData
+        console.log(newPassword, confirmPassword);
+        
+        if(newPassword !== confirmPassword){
+            toast.error("new password and confirm password are not same");
+            return;
+        }
+
+        if( !isValidPassword(newPassword) ){
+            toast.error("password does not met critera");
+            return;
+        }
+
+        const res = await dispatch(changePassword(passData));
+
+        if (res?.payload) {
+            setPassData({
+                oldPassword: "",
+                newPassword: "",
+                confirmPassword: ""
+            })
+        }
+    }
+
+
+    const handlePassInput = (e) => {
+
+        const { name, value } = e.target;
+
+        setPassData({
+            ...passData,
+            [name]: value
+        });
+
+    }
+
     const handleUserInput = (e) => {
 
         const { name, value } = e.target;
@@ -232,6 +281,8 @@ function Profile() {
                     <button onClick={() => setTab(0)} className={`h-14 flex items-center relative ${tab == 0 ? "select-tab" : "text-slate-500 hover:text-slate-900 duration-100"}`}>Brainy Profile</button>
 
                     <button onClick={() => setTab(1)} className={`h-14 flex items-center relative ${tab == 1 ? "select-tab" : "text-slate-500 hover:text-slate-900 duration-100"}`}>Profile Picture</button>
+
+                    <button onClick={() => setTab(2)} className={`h-14 flex items-center relative ${tab == 2 ? "select-tab" : "text-slate-500 hover:text-slate-900 duration-100"}`}>Change Password</button>
 
                 </div>
 
@@ -328,6 +379,36 @@ function Profile() {
                     tab == 1 && <div className='mt-5 space-y-4'>
                         <ProfilePicture />
                     </div>
+                }
+
+                {
+
+                    tab == 2 && <form onSubmit={onPassChange} className='mt-5 space-y-5 '>
+
+                        <div className='space-y-1'>
+                            <h1 className="font-bold">Password</h1>
+                            <input required value={passData.oldPassword} name='oldPassword' onChange={handlePassInput} placeholder='Enter current Password' className='border border-black py-2 px-3 w-[40vw] rounded-sm placeholder:text-slate-400' type="password" />
+                        </div>
+
+                        <div className='space-y-1'>
+                            <h1 className="font-bold">New Password</h1>
+
+                            <input required value={passData.newPassword} name='newPassword' onChange={handlePassInput} placeholder='Enter current Password' className='border border-black py-2 px-3 w-[40vw] rounded-sm placeholder:text-slate-400' type="password" />
+                        </div>
+                        
+                        <div className='space-y-1'>
+                            <h1 className="font-bold">Confirm New Password</h1>
+
+                            <input required value={passData.confirmPassword} name='confirmPassword' onChange={handlePassInput} placeholder='Enter current Password' className='border border-black py-2 px-3 w-[40vw] rounded-sm placeholder:text-slate-400' type="password" />
+
+                            <p className="text-xs text-gray-600 mt-2 w-[41vw]"> Your password must be at least <span className="font-bold">8 characters</span> long and include at least <span className="font-bold"> one uppercase letter</span>, <span className="font-bold"> one lowercase letter</span>, <span className="font-bold"> one number</span>, and <span className="font-bold"> one special character</span> (e.g., <span className="text-red-600">#</span>, <span className="text-red-600">?</span>, <span className="text-red-600">!</span>, <span className="text-red-600">@</span>, <span className="text-red-600">$</span>, <span className="text-red-600">%</span>, <span className="text-red-600">^</span>, <span className="text-red-600">&</span>, <span className="text-red-600">*</span>, or <span className="text-red-600">-</span>). </p>
+                        </div>
+
+                        
+
+                        <button type='submit' className='bg-slate-900 hover:bg-slate-800 duration-100 text-white py-3 font-bold rounded-sm px-3'>Change password</button>
+
+                    </form>
                 }
 
             </div>
