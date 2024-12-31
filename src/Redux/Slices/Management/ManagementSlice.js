@@ -21,7 +21,8 @@ const initialState = {
         intended_learners: {},
         captions: {},
 
-    }
+    },
+    allSales: []
 }
 
 
@@ -70,6 +71,25 @@ export const feedbackLecture = createAsyncThunk("/management/approveLecture", as
     } catch (error) {
         toast.error(error.response.data.message);
     }
+})
+
+export const AllSales = createAsyncThunk("/management/AllSales", async (data) => {
+    const res = await axiosInstance.get("/payment/allSales");
+
+    return res.data
+})
+
+export const ChangeRole = createAsyncThunk("/management/ChangeRole", async (data) => {
+
+    const res =  axiosInstance.patch("/manage/changeRoles", data);
+
+
+    toast.promise(res, {
+        success: (data) => data.data.message,
+        error: "failed to change role"
+    })
+
+    return (await res)?.data;
 })
 
 
@@ -138,6 +158,10 @@ const manangeSlice = createSlice({
                         value: ""
                     }
                 }
+            })
+
+            .addCase(AllSales.fulfilled, (state, action) => {
+                state.allSales = action.payload.data;
             })
     }
 

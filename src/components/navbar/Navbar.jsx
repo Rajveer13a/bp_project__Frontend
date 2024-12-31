@@ -186,9 +186,11 @@ function Navbar() {
                     role == "INSTRUCTOR" ? <InstructorButton /> : <Link to={"/instructor/teach"} className='hover:text-blue-600 py-5 px-3'>Teach on Brainy</Link>
                 }
 
-                <Link to={"/my-courses/learning"}> <MyLearningButton /> </Link>
 
                 {isLoggedIn && <>
+
+                    <Link to={"/my-courses/learning"}> <MyLearningButton /> </Link>
+
                     <Link to={"/my-courses/wishlist"}><FavouriteButton /></Link>
 
                     <Link to={"/shoppingcart"}> <CartButton /> </Link>
@@ -202,7 +204,7 @@ function Navbar() {
             </div>
 
             {!isLoggedIn && (
-                <div className='space-x-2'>
+                <div className='space-x-2 pr-10'>
                     <Link to={"/login"}>
                         <button className='border border-black font-bold px-4 py-2 hover:bg-[#E3E7EA] duration-100 text-sm'>Log in</button>
                     </Link>

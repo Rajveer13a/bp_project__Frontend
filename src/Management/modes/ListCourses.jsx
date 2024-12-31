@@ -7,9 +7,12 @@ import { HiSearch } from "react-icons/hi";
 import { IoIosArrowDown, IoMdChatboxes, IoMdSearch } from 'react-icons/io';
 import { LiaChalkboardTeacherSolid } from 'react-icons/lia';
 import { MdAutoGraph, MdOutlineOndemandVideo } from 'react-icons/md';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import axiosInstance from '@/Helpers/axiosInstance';
+import { isEmail } from '@/Helpers/regexMatcher';
+import { ChangeRole } from '@/Redux/Slices/Management/ManagementSlice';
 
 
 const Select = ({ sortBy, setSortBy }) => {
@@ -38,7 +41,7 @@ const Select = ({ sortBy, setSortBy }) => {
 
                     <li onClick={handleSort} className='py-2 hover:text-blue-600'>Z-A</li>
 
-                
+
                 </ul>
             </div>
         </div>
@@ -46,6 +49,10 @@ const Select = ({ sortBy, setSortBy }) => {
 }
 
 function ListCourses() {
+
+    const dispatch = useDispatch();
+
+    const isAdmin =  useSelector( (state) => state?.auth?.role) === "ADMIN";
 
     const [data, setData] = useState(null);
 
@@ -58,7 +65,27 @@ function ListCourses() {
 
     const [searchTerm, setSearchTerm] = useState("")
 
+    const [roleData, setRoleData] = useState({
+        role: "MODE",
+        email: ""
+    })
 
+    const onChangeRole = async (e) => {
+        e.preventDefault();
+
+        if (!isEmail(roleData.email)) {
+            toast.error("invalid email address")
+            return;
+        }
+
+        const res = await dispatch(ChangeRole(roleData));
+
+        if (res?.payload) setRoleData({
+            role: "MODE",
+            email: ""
+        });
+
+    }
 
     useEffect(() => {
         if (data) {
@@ -185,11 +212,33 @@ function ListCourses() {
 
     return (
 
-        <div className='px-12 pt-14'>
+        <div className='px-12 pt-14 relative'>
+
+            {
+                isAdmin && <>
+                    <Link to={"/management/admin"} className='link-primary font-bold absolute right-36'>Admin</Link>
+
+                    <form onSubmit={onChangeRole} className='flex' action="">
+                        <div className='border border-black w-[30vw] ml-48 flex'>
+                            <select onClick={(e) => setRoleData({ ...roleData, role: e.target.value })} className='border-r py-2 px-3 border-black h-full ' name="" id="">
+                                <option value="MODE">Mode</option>
+                                <option value="null">terminate</option>
+                            </select>
+                            <input value={roleData.email} onChange={(e) => setRoleData({ ...roleData, email: e.target.value })} className='px-3 py-2 placeholder:text-slate-500 h-full flex-grow' placeholder='email' type="text" name="" id="" />
+
+
+
+                        </div>
+                        <button type='submit' className='font-bold text-white bg-slate-900 p-2 hover:bg-slate-800 duration-100'>Set Role</button>
+                    </form>
+                </>
+            }
+            
+            <h1 className='text-4xl font-semibold py-10'>Courses</h1>
 
             {
                 (data?.length == 0) && (
-                    <div className='flex justify-between p-12 border-2 py-12 shadow-md'>
+                    <div className='flex justify-between p-12 border-2 py-12 shadow-md mt-10'>
                         <h3 className=' '>Empty here!!</h3>
 
                     </div>
@@ -198,27 +247,31 @@ function ListCourses() {
 
             {/* Show courses */}
 
-            <h1 className='text-4xl font-semibold py-10'>Courses</h1>
+            {
+                data?.length > 0 && (<>
+                    
 
-            <div className='flex gap-8'>
+                    <div className='flex gap-8'>
 
-                <div className='relative h-12 w-[250px] '>
+                        <div className='relative h-12 w-[250px] '>
 
-                    <input onChange={(e) => setSearchTerm(() => e.target.value)}  className='border border-black h-full w-full p-4 pr-16 placeholder:text-slate-600 focus:outline-none' type="text" placeholder='Search for courses' />
+                            <input onChange={(e) => setSearchTerm(() => e.target.value)} className='border border-black h-full w-full p-4 pr-16 placeholder:text-slate-600 focus:outline-none' type="text" placeholder='Search for courses' />
 
-                    <button className=' absolute top-0 right-0 text-white bg-black h-full w-[50px] '>
-                        <IoMdSearch className='m-auto size-6' />
-                    </button>
+                            <button className=' absolute top-0 right-0 text-white bg-black h-full w-[50px] '>
+                                <IoMdSearch className='m-auto size-6' />
+                            </button>
 
-                </div>
+                        </div>
 
-                <Select sortBy={sortBy} setSortBy={setSortBy} />
-
-
+                        <Select sortBy={sortBy} setSortBy={setSortBy} />
 
 
 
-            </div>
+
+
+                    </div>
+                </>)
+            }
 
             <div className='pt-5 space-y-6'>
 
