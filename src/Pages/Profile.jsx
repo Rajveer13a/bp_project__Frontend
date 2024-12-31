@@ -147,7 +147,6 @@ function Profile() {
         },
         language: "en"
     })
-    console.log(inputData);
 
     const [tab, setTab] = useState(0);
 
@@ -208,7 +207,7 @@ function Profile() {
     }, [data]);
 
     useEffect(() => {
-        if (tab == 0) {
+        if (tab == 0 && data.role === "INSTRUCTOR") {
 
             textRef.current.style.height = "auto";
             textRef.current.style.height = `${textRef.current.scrollHeight}px`;

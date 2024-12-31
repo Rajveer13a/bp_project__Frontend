@@ -5,13 +5,15 @@ import { Route, Routes, useNavigate } from "react-router-dom"
 import { v4 as uuidv4 } from 'uuid';
 
 import eventEmitter from "./Helpers/eventEmitter"
-import InstructorRoutes from "./InstructorRoutes"
-import ManagementRoutes from "./ManagementRoutes"
+import LearnLecture from './Pages/LearnLecture';
+import AuthProtectedRoutes from './ProtectedRoutes/AuthProtectedRoutes';
 import { resetData } from "./Redux/Slices/AuthSlice"
 import { getConfig } from "./Redux/Slices/UserConfigSlice"
 import { store } from "./Redux/store"
-import UserRoutes from './UserRoutes';
-import LearnLecture from './Pages/LearnLecture';
+import InstructorRoutes from "./Routes/InstructorRoutes"
+import ManagementRoutes from "./Routes/ManagementRoutes"
+import UserRoutes from './Routes/UserRoutes';
+import RedirectManagementToRoutes from './ProtectedRoutes/RedirectManagementToRoutes';
 
 
 
@@ -43,9 +45,19 @@ function App() {
     <Routes>
 
 
-      <Route path="/learn/lecture/:course_id" element={<LearnLecture />} />
+      <Route element={<RedirectManagementToRoutes />}>
 
-      <Route path="/instructor/*" element={<InstructorRoutes />} />
+        <Route element={<AuthProtectedRoutes />}>
+
+          <Route path="/learn/lecture/:course_id" element={<LearnLecture />} />
+
+        </Route>
+
+        <Route path="/instructor/*" element={<InstructorRoutes />} />
+
+      </Route>
+
+
 
       <Route path="/management/*" element={<ManagementRoutes />} />
 

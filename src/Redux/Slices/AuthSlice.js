@@ -328,7 +328,10 @@ const authSlice = createSlice({
 
                     localStorage.setItem('data', JSON.stringify(data));
 
+                    localStorage.setItem('role', JSON.stringify(data.role));
 
+                    state.role = data.role;
+                    
                     state.data = data;
 
                 }

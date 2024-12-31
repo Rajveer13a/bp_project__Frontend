@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import axiosInstance from '@/Helpers/axiosInstance';
 import { isEmail } from '@/Helpers/regexMatcher';
 import { ChangeRole } from '@/Redux/Slices/Management/ManagementSlice';
+import { logout } from '@/Redux/Slices/AuthSlice';
 
 
 const Select = ({ sortBy, setSortBy }) => {
@@ -52,7 +53,9 @@ function ListCourses() {
 
     const dispatch = useDispatch();
 
-    const isAdmin =  useSelector( (state) => state?.auth?.role) === "ADMIN";
+    const isAdmin = useSelector((state) => state?.auth?.role) === "ADMIN";
+
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
     const [data, setData] = useState(null);
 
@@ -69,6 +72,10 @@ function ListCourses() {
         role: "MODE",
         email: ""
     })
+
+    const onLogout = () => {
+        dispatch(logout());
+    }
 
     const onChangeRole = async (e) => {
         e.preventDefault();
@@ -214,6 +221,24 @@ function ListCourses() {
 
         <div className='px-12 pt-14 relative'>
 
+            {!isLoggedIn ? (
+                <div className='space-x-2 pr-10'>
+                    <Link to={"/login"}>
+                        <button className='border border-black font-bold px-4 py-2 hover:bg-[#E3E7EA] duration-100 text-sm'>Log in</button>
+                    </Link>
+
+                    <Link to={"/signup"}>
+                        <button className='bg-slate-800 font-bold px-4 py-2 text-sm hover:bg-slate-700 text-white duration-100 '>Sign up</button>
+                    </Link>
+                </div>
+            ) : (
+                <div className='flex'>
+                    <button onClick={onLogout} className='bg-slate-800 font-bold px-4 py-2 text-sm hover:bg-slate-700 text-white duration-100 ml-auto'>Log out</button>
+                </div>
+            )
+
+            }
+
             {
                 isAdmin && <>
                     <Link to={"/management/admin"} className='link-primary font-bold absolute right-36'>Admin</Link>
@@ -233,7 +258,7 @@ function ListCourses() {
                     </form>
                 </>
             }
-            
+
             <h1 className='text-4xl font-semibold py-10'>Courses</h1>
 
             {
@@ -249,7 +274,7 @@ function ListCourses() {
 
             {
                 data?.length > 0 && (<>
-                    
+
 
                     <div className='flex gap-8'>
 

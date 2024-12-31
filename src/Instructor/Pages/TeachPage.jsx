@@ -14,7 +14,6 @@ function TeachPage() {
     const onGetStarted = async()=>{
 
         const res = await axiosInstance.post("/instructor/create");
-        console.log(res);
         
         if(res.data.success){
             dispatch(getUser());
