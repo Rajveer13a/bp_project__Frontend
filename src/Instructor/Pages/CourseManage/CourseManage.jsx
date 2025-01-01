@@ -319,10 +319,10 @@ function CourseManage() {
     ]
 
     const onSubmitForApproval = async() => {
-        // if(Object.values(checked).some((value)=> value == false)){
-        //     setShowSubmit(true);
-        //     return;
-        // }
+        if(Object.values(checked).some((value)=> value == false)){
+            setShowSubmit(true);
+            return;
+        }
         
         await dispatch(submitForApproval({
             course_id: id
