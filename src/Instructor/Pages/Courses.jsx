@@ -231,7 +231,7 @@ function Courses() {
 
                                                     </div>
 
-                                                    <Link to={`http://localhost:5173/instructor/course/${value?._id}/manage/goals`}>
+                                                    <Link to={`${import.meta.env.VITE_API_URL}/instructor/course/${value?._id}/manage/goals`}>
                                                         <h1 className='font-bold text-xl text-[#3B198F] h-full  absolute   py-12 opacity-0 group-hover:opacity-100 duration-100 px-[220px] cursor-pointer  right-[250px]'>Edit/ manage course</h1>
                                                     </Link>
                                                 </>
