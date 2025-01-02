@@ -88,7 +88,7 @@ function Iprofile({ lists = [
             <Link to={"/profile"}>
                 <li className='flex items-center space-x-2  p-4 border-b-[1px] cursor-pointer group overflow-hidden'>
 
-                    <img className='rounded-full size-16' src={image} alt="profile_image" />
+                    <img className='rounded-full size-16' src={image || "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA0L2pvYjY4Ni0yNTMteC5qcGc.jpg" } alt="profile_image" />
                     <div>
                         <h1 className='font-bold text-lg group-hover:text-blue-700 truncate w-[90%]'>{data?.username}</h1>
                         <h1 className='text-sm  truncate w-[90%] '>{data?.email}</h1>
