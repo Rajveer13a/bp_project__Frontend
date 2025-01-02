@@ -1,5 +1,6 @@
 
 import axios from "axios";
+
 import eventEmitter from "./eventEmitter";
 
 // import { resetData } from "@/Redux/Slices/AuthSlice";
@@ -12,7 +13,7 @@ import eventEmitter from "./eventEmitter";
 
 const axiosInstance = axios.create();
 
-axiosInstance.defaults.baseURL = 'http://127.0.0.1:5575/api/v1';
+axiosInstance.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 axiosInstance.defaults.withCredentials = true
 
@@ -27,7 +28,7 @@ axiosInstance.interceptors.response.use(
 
         if (err.response.status === 401) {
             try {
-                await axios.get('http://127.0.0.1:5575/api/v1/user/refreshToken', {
+                await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/user/refreshToken`, {
                     withCredentials: true
                 });
                 return axiosInstance(err.config);
