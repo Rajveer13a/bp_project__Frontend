@@ -172,14 +172,14 @@ const FileUpload = ({ type, name, course_id }) => {
     )
 }
 
-const Tags = ({data,setData, setSaveEnable}) => {
+const Tags = ({ data, setData, setSaveEnable }) => {
 
-    const [showInput ,setShowInput ] = useState(data?.tags?.length ? false : true);
+    const [showInput, setShowInput] = useState(data?.tags?.length ? false : true);
 
     const onEnter = (e) => {
         if (e.key === "Enter") {
 
-            setData({...data, tags: [...data.tags, e.target.value] })
+            setData({ ...data, tags: [...data.tags, e.target.value] })
 
             setShowInput(false);
             setSaveEnable(true);
@@ -191,17 +191,17 @@ const Tags = ({data,setData, setSaveEnable}) => {
 
         const filteredTags = data?.tags.filter((_, index) => index !== indx);
         !filteredTags.length && setShowInput(true);
-        setData({...data, tags: filteredTags });
+        setData({ ...data, tags: filteredTags });
         setSaveEnable(true);
     }
 
     return <div className='space-y-3'>
         <div className='flex gap-3 '>
             {data?.tags?.map((value, indx) => {
-                return <button onClick={()=>onRemove(indx)} className='bg-slate-800 text-white font-bold hover:bg-slate-700 px-4 py-2 text flex rounded-full gap-1' key={indx}>
+                return <button onClick={() => onRemove(indx)} className='bg-slate-800 text-white font-bold hover:bg-slate-700 px-4 py-2 text flex rounded-full gap-1' key={indx}>
                     <h1 className='align-middle'>{value}</h1>
                     <RxCross2 className='flex-shrink-0 m-auto ' />
-                    
+
                 </button>
             })}
         </div>
@@ -210,7 +210,7 @@ const Tags = ({data,setData, setSaveEnable}) => {
         }
 
         {
-            !showInput && <button onClick={()=>setShowInput(true)} className='text-xs underline text-slate-600 underline-offset-4 '>Propose another topic...</button>
+            !showInput && <button onClick={() => setShowInput(true)} className='text-xs underline text-slate-600 underline-offset-4 '>Propose another topic...</button>
         }
     </div>
 }
@@ -230,7 +230,7 @@ function LandingPage({ setSaveThunk, setSaveEnable, approvalStatus }) {
         level: "",
         category: "",
         subcategory: "",
-        tags:[]
+        tags: []
     });
 
 
@@ -286,7 +286,7 @@ function LandingPage({ setSaveThunk, setSaveEnable, approvalStatus }) {
             level: stateData?.level || "",
             category: stateData?.category || "",
             subcategory: stateData?.subcategory || "",
-            tags:stateData?.tags || []
+            tags: stateData?.tags || []
         })
     }, [stateData])
 
@@ -416,7 +416,7 @@ function LandingPage({ setSaveThunk, setSaveEnable, approvalStatus }) {
                             </div>
                         </div>
 
-                        {/* Category Select */}
+                        { /* Category Select */}
                         <div className='group relative'>
                             <select
                                 value={data?.category}
@@ -424,20 +424,20 @@ function LandingPage({ setSaveThunk, setSaveEnable, approvalStatus }) {
                                 name="category"
                                 className="border border-black w-[250px] h-11 px-4 outline-none appearance-none bg-transparent relative z-10 cursor-pointer">
                                 <option value="" selected>--Select Category--</option>
-                                <option value="music">Music</option>
-                                <option value="development">Development</option>
-                                <option value="business">Business</option>
-                                <option value="finance">Finance</option>
-                                <option value="accounting">Accounting</option>
-                                <option value="it-software">IT & Software</option>
-                                <option value="office-productivity">Office Productivity</option>
-                                <option value="personal-development">Personal Development</option>
-                                <option value="design">Design</option>
-                                <option value="marketing">Marketing</option>
-                                <option value="lifestyle">Lifestyle</option>
-                                <option value="photography-video">Photography & Video</option>
-                                <option value="health-fitness">Health & Fitness</option>
-                                <option value="teaching-academics">Teaching & Academics</option>
+                                <option value="Music">Music</option>
+                                <option value="Development">Development</option>
+                                <option value="Business">Business</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Accounting">Accounting</option>
+                                <option value="IT & Software">IT & Software</option>
+                                <option value="Office Productivity">Office Productivity</option>
+                                <option value="Personal Development">Personal Development</option>
+                                <option value="Design">Design</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Lifestyle">Lifestyle</option>
+                                <option value="Photography & Video">Photography & Video</option>
+                                <option value="Health & Fitness">Health & Fitness</option>
+                                <option value="Teaching & Academics">Teaching & Academics</option>
                             </select>
                             <div className='w-[250px] h-11 px-4 absolute group-hover:bg-[#E3E7EA] top-0 -z-0'></div>
                             <div className='absolute right-3 top-4'>
