@@ -83,7 +83,7 @@ function Iprofile({ lists = [
 
         //       </ul>
         //     </div>
-        <Hover title={<img className='rounded-full size-10' src={image} alt="profile_image" />}>
+        <Hover title={<img className='rounded-full size-10' src={image || "https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA0L2pvYjY4Ni0yNTMteC5qcGc.jpg"} alt="profile_image" />}>
 
             <Link to={"/profile"}>
                 <li className='flex items-center space-x-2  p-4 border-b-[1px] cursor-pointer group overflow-hidden'>
