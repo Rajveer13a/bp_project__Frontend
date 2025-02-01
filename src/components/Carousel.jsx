@@ -1,36 +1,39 @@
 import { useEffect, useRef, useState } from "react"
 import { IoChevronForwardCircle } from "react-icons/io5";
 
+import image1 from "../carouselImages/1.jpg"
+import image2 from "../carouselImages/2.jpg"
+import image3 from "../carouselImages/3.webp"
+import image4 from "../carouselImages/4.jpg"
+import image5 from "../carouselImages/5.jpg"
+
+
 export function Carousel({ time = 5000, autoSlide = true }) {
 
     const cardContent = [
+
         {
-            image: "https://img-b.udemycdn.com/notices/web_carousel_slide/image/0661bb90-3d05-4709-95a2-c61f927cf78c.jpg",
-            heading: "Jump into learning for less",
-            text: "If you’re new to Brainy, we’ve got good news: For a limited time, courses start at just ₹449 for new learners! Shop now."
-        },
-        {
-            image: "https://img-c.udemycdn.com/notices/web_carousel_slide/image/a5f2c3b6-fbad-42a9-be8a-5f430ed2d4f9.jpg",
+            image: image1,
             heading: "Skills for your future",
             text: "Expand your potential with a course. Starting at just ₹549 through June 5."
         },
         {
-            image: "https://img-c.udemycdn.com/notices/featured_carousel_slide/image/3ec4a7a2-a96f-4671-a784-462bdcb1afcc.jpg",
+            image: image2,
             heading: "We’ll get you to your goals",
             text: "Go from beginner to advanced in the topic of your choice. Courses from ₹549 through May 8."
         },
         {
-            image: "https://img-c.udemycdn.com/notices/web_carousel_slide/image/beeee76b-b4f1-4dbc-a165-c825285f6fbb.jpg",
+            image: image3,
             heading: "We’ll get you to your goals",
             text: "Go from beginner to advanced in the topic of your choice. Courses from ₹549 through May 8."
         },
         {
-            image: "https://img-c.udemycdn.com/notices/web_carousel_slide/image/3cde0b2b-6a65-4627-acb6-f84fa1895a76.jpg",
+            image: image4,
             heading: "We’ll get you to your goals",
             text: "Go from beginner to advanced in the topic of your choice. Courses from ₹549 through May 8."
         },
         {
-            image: "https://img-c.udemycdn.com/notices/web_carousel_slide/image/3386029b-4e1c-4114-8e12-c0851a375545.png",
+            image: image5,
             heading: "Sale ends today",
             text: "But there’s no limit on your skills with courses as low as ₹549."
         },
