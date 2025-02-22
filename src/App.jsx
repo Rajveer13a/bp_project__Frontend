@@ -42,29 +42,31 @@ function App() {
 
   return (
 
-
-    <Routes>
-
+    <>
       <Analytics />
-      <Route element={<RedirectManagementToRoutes />}>
 
-        <Route element={<AuthProtectedRoutes />}>
+      <Routes>
 
-          <Route path="/learn/lecture/:course_id" element={<LearnLecture />} />
+        <Route element={<RedirectManagementToRoutes />}>
+
+          <Route element={<AuthProtectedRoutes />}>
+
+            <Route path="/learn/lecture/:course_id" element={<LearnLecture />} />
+
+          </Route>
+
+          <Route path="/instructor/*" element={<InstructorRoutes />} />
 
         </Route>
 
-        <Route path="/instructor/*" element={<InstructorRoutes />} />
-
-      </Route>
 
 
+        <Route path="/management/*" element={<ManagementRoutes />} />
 
-      <Route path="/management/*" element={<ManagementRoutes />} />
+        <Route path="/*" element={<UserRoutes />} />
 
-      <Route path="/*" element={<UserRoutes />} />
-
-    </Routes>
+      </Routes>
+    </>
 
 
 
