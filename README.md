@@ -10,7 +10,7 @@
 ## 🔗 **Repository Links**
 
 ### Backend Repository
-[BrainyPath Backend](https://github.com/Rajveer13a/BrainyPath_backend)
+[BrainyPath Backend](https://github.com/Rajveer13a/bp_project__backend)
 
 
 ## 🌈 **Key Features at a Glance**  
