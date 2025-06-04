@@ -1,16 +1,16 @@
 
-# 🌟 BrainyPath E-learning Platform  
+# 🌟 bp E-learning Platform  
 
 ### 🚀 **Empowering Education for Everyone**  
 
-**BrainyPath** is an innovative, feature-rich e-learning platform inspired by Udemy, designed to revolutionize online education for learners and instructors. Developed over a year using the **MERN stack**, it offers seamless UI, robust functionality, and powerful automation.  
+**bp** is an innovative, feature-rich e-learning platform inspired by Udemy, designed to revolutionize online education for learners and instructors. Developed over a year using the **MERN stack**, it offers seamless UI, robust functionality, and powerful automation.  
 
 ---
 
 ## 🔗 **Repository Links**
 
 ### Backend Repository
-[BrainyPath Backend](https://github.com/Rajveer13a/bp_project__backend)
+[bp Backend](https://github.com/Rajveer13a/bp_project__backend)
 
 
 ## 🌈 **Key Features at a Glance**  
@@ -62,7 +62,7 @@
 ## ✨ **Project Structure**  
 
 ```plaintext
-BrainyPath_Frontend/
+bp_Frontend/
 ├── index.html                 # Main HTML entry point
 ├── jsconfig.json             # JavaScript config for path aliases
 ├── package.json             # Project dependencies and scripts
@@ -114,8 +114,8 @@ BrainyPath_Frontend/
 
 1. **Clone the Repository**  
    ```bash  
-   git clone https://github.com/your-username/brainypath.git  
-   cd brainypath  
+   git clone https://github.com/your-username/bp.git  
+   cd bp  
    ```  
 
 2. **Install Dependencies**  
@@ -149,7 +149,7 @@ BrainyPath_Frontend/
      npm start  
      ```  
 5. **Admin Credentials**  
-     - Email: `kangtheconqueror@admin.brainypath`  
+     - Email: `kangtheconqueror@admin.bp`  
      - Password: `adminpassword`     
 ---
 
